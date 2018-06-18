@@ -1,0 +1,77 @@
+.hex-bg {
+  position: relative;
+  z-index: map-get($z-index, hex-bg);
+
+  display: flex;
+  flex-wrap: wrap;
+
+  transition: opacity 1s cubic-bezier(.55, 0, .1, 1);
+
+  opacity: 0;
+
+
+  &.-visible {
+    opacity: 1;
+  }
+
+  & > .element {
+    position: absolute;
+
+    width: 300px;
+    height: 330px;
+
+    animation-name: floating-bg;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+
+    background-image: url('../img/hex-blur.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    @keyframes floating-bg {
+      from {
+        transform: translate(0, 0) translateZ(0);
+      }
+      55% {
+        transform: translate(5%, 5%) translateZ(0);
+      }
+      to {
+        transform: translate(0, 0) translateZ(0);
+      }
+    }
+
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        animation-duration: (random(6) + 4)+s;
+      }
+    }
+  }
+
+  & > .element:nth-child(odd) {
+    left: -100px;
+  }
+
+  & > .element:nth-child(even) {
+    right: -100px;
+  }
+
+  & > .element:nth-child(1) {
+    top: 0;
+  }
+
+  & > .element:nth-child(2) {
+    top: 300px;
+  }
+
+  & > .element:nth-child(3) {
+    top: 600px;
+  }
+
+  & > .element:nth-child(4) {
+    top: 900px;
+  }
+
+  & > .element:nth-child(5) {
+    top: 1200px;
+  }
+}

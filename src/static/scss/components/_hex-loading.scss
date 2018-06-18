@@ -1,0 +1,70 @@
+.hex-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+
+  transition: opacity .35s cubic-bezier(.55, 0, .1, 1);
+  transform: translate(-50%, -50%);
+
+  opacity: 0;
+
+  &.-visible {
+    opacity: 1;
+  }
+
+  & > svg {
+    width: 60px;
+    height: 60px;
+
+    fill: #FFF;
+  }
+
+  & > svg > path {
+    transform-origin: 50% 50%;
+    animation: fadein 3.3s infinite;
+
+    opacity: 0;
+
+    fill: rgba(255,255,255,.9);
+  }
+
+  & > svg > path:nth-child(2) {
+    animation-delay: .2s;
+  }
+
+  & > svg > path:nth-child(3) {
+    animation-delay: .4s;
+  }
+
+  & > svg > path:nth-child(4) {
+    animation-delay: .6s;
+  }
+
+  & > svg > path:nth-child(5) {
+    animation-delay: .8s;
+  }
+
+  & > svg > path:nth-child(6) {
+    animation-delay: 1.0s;
+  }
+
+  & > svg > path:nth-child(7) {
+    animation-delay: 1.2s;
+  }
+
+  @keyframes fadein {
+    0%,
+    100% {
+      transform: scale(.001,.001);
+
+      opacity: 0;
+    }
+
+    33%,
+    66% {
+      transform: scale(.9,.9);
+
+      opacity: 1;
+    }
+  }
+}

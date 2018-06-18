@@ -1,0 +1,14 @@
+.simple-link {
+  align-self: center;
+
+  margin-top: 10px;
+  padding: 20px;
+
+  text-decoration: underline;
+
+  color: #000;
+
+  &:active {
+    color: $color-purple;
+  }
+}

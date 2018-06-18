@@ -1,0 +1,30 @@
+{% load compress staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Babel</title>
+    {% compress css %}
+      <link type="text/x-scss" rel="stylesheet" href="{% static '/scss/app.scss' %}"/>
+    {% endcompress %}
+  </head>
+  <body>
+    <div class="ball-animation"></div>
+    {% include "navbar.html" %}
+    {% include "filter-modal.html" %}
+    {% block content %}
+
+    {% endblock %}
+
+    <script src="{% static "jquery/dist/jquery.min.js" %}" charset="utf-8"></script>
+    <script src="{% static "hammerjs/hammer.min.js" %}" charset="utf-8"></script>
+    <script src="{% static "d3/d3.min.js" %}" charset="utf-8"></script>
+
+    <script src="{% static "js/scroll.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/chart.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/scripts.js" %}" charset="utf-8"></script>
+  </body>
+</html>

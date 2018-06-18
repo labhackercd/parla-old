@@ -1,0 +1,128 @@
+.filter-modal {
+  position: fixed;
+  z-index: map-get($z-index, filter-modal);
+  top: 0;
+  left: 0;
+
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px 8vw;
+
+  transition: transform cubic-bezier(.55,0,.1,1) .5s;
+  transform: translateY(-105%);
+
+  color: #000;
+  background-color: #FFF;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, .25);
+
+  &.-active {
+    transform: translateY(0);
+  }
+
+  & > .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  & > .content {
+    display: flex;
+    flex-direction: column;
+
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+
+  & > .content > label {
+    font-size: 12px;
+    font-weight: bold;
+
+    margin-top: 30px;
+
+    text-transform: uppercase;
+
+    color: #000;
+  }
+
+  & > .content > input {
+    font-size: 14px;
+
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    transition: all cubic-bezier(.55,0,.1,1) .25s;
+
+    color: #000;
+    border: none;
+    border-bottom: 1px solid #000;
+    background: none;
+
+    &:focus {
+      transition: none;
+
+      color: $color-purple-dark;
+      border-color: $color-purple-dark;
+      outline: none;
+    }
+  }
+
+  & > .content > .button {
+    font-size: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 30px;
+    padding: 10px;
+
+    text-decoration: none;
+
+    color: #FFF;
+    background-color: $color-purple;
+
+    &:hover {
+      background-color: $color-purple-dark;
+    }
+  }
+
+  & > .content > select {
+    margin-top: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid #000;
+  }
+
+  & > .nav > a {
+    color: #000;
+  }
+
+  & > .nav > .close {
+    display: inline-block;
+
+    width: 16px;
+    height: 16px;
+    margin-right: -10px;
+    padding: 10px;
+
+    cursor: pointer;
+
+    background-image: url('../img/close.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+  }
+
+  & > .nav > .title {
+    font-family: 'Roboto';
+    font-size: 17px;
+    font-weight: bold;
+
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+}

@@ -1,0 +1,57 @@
+.manifestation-page {
+  position: fixed;
+
+  overflow: none;
+
+  box-sizing: border-box;
+  height: calc(100% - 80px);
+
+  transition: all .35s cubic-bezier(.55, 0, .1, 1);
+  transform: translateY(100%);
+
+  color: #000;
+  background-color: #FFF;
+
+  &.-open {
+    transform: translateY(0);
+  }
+
+  & > .header {
+    padding: 30px 8vw 20px 8vw;
+  }
+
+  & > .header > strong {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  & > .header > .close-manifestation {
+    position: absolute;
+    top: 22px;
+    right: 8vw;
+
+    display: inline-block;
+
+    width: 16px;
+    height: 16px;
+    margin-right: -10px;
+    padding: 10px;
+
+    background-image: url('../img/close.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+  }
+
+  & > .content {
+    overflow-y: scroll;
+
+    height: calc(100% - 104px);
+    padding: 0 8vw 30px 8vw;
+  }
+
+  & > .content > p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

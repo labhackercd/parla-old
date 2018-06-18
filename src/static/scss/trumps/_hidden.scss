@@ -1,0 +1,12 @@
+._hidden {
+  visibility: hidden;
+
+  width: 0;
+  height: 0 !important;
+
+  opacity: 0;
+
+  &.-active {
+    transition: opacity .3s 0s, visibility 0s .3s, width 0s .3s, height 0s .3s;
+  }
+}
