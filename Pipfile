@@ -7,6 +7,11 @@ name = "pypi"
 
 [packages]
 django = "*"
+python-decouple = "*"
+django-compressor = "*"
+django-compressor-toolkit = "*"
+django-npm = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"
