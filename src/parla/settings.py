@@ -38,6 +38,8 @@ INSTALLED_APPS = [
 
     'compressor',
     'compressor_toolkit',
+
+    'apps.data',
 ]
 
 MIDDLEWARE = [
@@ -153,3 +155,8 @@ TEMPLATES = [
         },
     },
 ]
+
+# BABEL SETTINGS
+BABEL_API_URL = config('BABEL_API_URL',
+                       default='http://localhost:8888/api/v1/')
+BABEL_SPEECH_TYPE_ID = config('BABEL_SPEECH_TYPE_ID', default='2')
