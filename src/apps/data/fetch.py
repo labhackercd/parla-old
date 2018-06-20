@@ -39,10 +39,15 @@ def get_json_data(resource_name, resource_id, page=1):
     return full_data
 
 
+@transaction.atomic
 def create_speeches(data_list):
     speech_list = []
     for data in data_list:
-        speech = models.Speech()
+        try:
+            speech = models.Speech.objects.get(id=data['id'])
+        except models.Speech.DoesNotExist:
+            speech = models.Speech()
+            speech.id = data['id']
         speech.id_in_channel = data['id_in_channel']
         speech.content = data['content']
         speech.author = data['profile']['author']['name']
@@ -54,11 +59,6 @@ def create_speeches(data_list):
             if hasattr(speech, attr['field']):
                 setattr(speech, attr['field'], attr['value'])
 
+        speech.save()
         speech_list.append(speech)
     return speech_list
-
-
-def save(model_list):
-    with transaction.atomic():
-        for model_instance in model_list:
-            model_instance.save()
