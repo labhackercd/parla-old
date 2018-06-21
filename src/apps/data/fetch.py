@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import transaction
 from apps.data import models
+from apps.nlp import pre_processing
 from datetime import datetime
 import requests
 import urllib
@@ -49,7 +50,6 @@ def create_speeches(data_list):
             speech = models.Speech()
             speech.id = data['id']
         speech.id_in_channel = data['id_in_channel']
-        speech.content = data['content']
         speech.author = data['profile']['author']['name']
         timestamp = datetime.strptime(data['timestamp'][:-6],
                                       '%Y-%m-%dT%H:%M:%S')
@@ -59,6 +59,7 @@ def create_speeches(data_list):
             if hasattr(speech, attr['field']):
                 setattr(speech, attr['field'], attr['value'])
 
+        speech.content = pre_processing.clear_speech(speech.original)
         speech.save()
         speech_list.append(speech)
     return speech_list

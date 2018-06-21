@@ -4,8 +4,8 @@ import json
 
 
 class Token(models.Model):
-    stem = models.CharField(max_length=255)
-    bigram = models.BooleanField(default=False)
+    stem = models.CharField(max_length=255, unique=True)
+    ngrams = models.IntegerField(default=1)
     _originals = models.TextField(default="{}")
 
     class Meta:

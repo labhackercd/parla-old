@@ -8,6 +8,7 @@ class Speech(models.Model):
     date = models.DateField()
     time = models.TimeField()
     author = models.CharField(max_length=255)
+    pre_processed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Speech"
