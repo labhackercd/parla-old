@@ -41,6 +41,19 @@ def get_json_data(resource_name, resource_id, page=1):
 
 
 @transaction.atomic
+def create_author(author_data):
+    try:
+        author = models.Author.objects.get(id=author_data['id'])
+    except models.Author.DoesNotExist:
+        author = models.Author()
+        author.id = author_data['id']
+    author.name = author_data['name']
+    author.author_type = author_data['author_type']
+    author.save()
+    return author
+
+
+@transaction.atomic
 def create_speeches(data_list):
     speech_list = []
     for data in data_list:
@@ -50,7 +63,7 @@ def create_speeches(data_list):
             speech = models.Speech()
             speech.id = data['id']
         speech.id_in_channel = data['id_in_channel']
-        speech.author = data['profile']['author']['name']
+        speech.author = create_author(data['profile']['author'])
         timestamp = datetime.strptime(data['timestamp'][:-6],
                                       '%Y-%m-%dT%H:%M:%S')
         speech.date = timestamp.date()

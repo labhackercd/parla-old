@@ -14,6 +14,8 @@ django-compressor-toolkit = "*"
 django-npm = "*"
 requests = "*"
 nltk = "*"
+python-dateutil = "*"
+click = "*"
 
 [requires]
 python_version = "3.6"

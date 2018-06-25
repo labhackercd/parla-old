@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from apps.nlp import tokenizer
+from apps.nlp import tokenizer, models
 
 
 class Command(BaseCommand):
@@ -9,4 +9,10 @@ class Command(BaseCommand):
         parser.add_argument('ngrams', type=int)
 
     def handle(self, *args, **options):
-        tokenizer.process_speeches(ngrams=options['ngrams'])
+        ngrams = options['ngrams']
+        if ngrams == 1:
+            algorithm = models.Analysis.UNIGRAM_BOW
+        else:
+            algorithm = models.Analysis.BIGRAM_BOW
+
+        tokenizer.process_speeches(algorithm, ngrams=ngrams)

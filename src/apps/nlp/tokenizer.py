@@ -5,7 +5,7 @@ from apps.data import models
 
 @transaction.atomic
 def process_speech(speech, ngrams=1):
-    speech.tokens.all().delete()
+    speech.tokens.filter(token__ngrams=ngrams).delete()
     bow, reference = pre_processing.bow(speech.content, ngrams=ngrams)
     if len(bow) > 0:
         max_occurrences = max(bow.values())
@@ -35,6 +35,13 @@ def process_speech(speech, ngrams=1):
         speech.save()
 
 
-def process_speeches(ngrams=1):
-    for speech in models.Speech.objects.filter(pre_processed=False):
+def process_speeches(algorithm, ngrams=1):
+    last = nlp.PreProcessing.objects.filter(algorithm=algorithm).last()
+    if last:
+        queryset = models.Speech.objects.filter(timestamp__gte=last.timestamp)
+    else:
+        queryset = models.Speech.objects.all()
+
+    for speech in queryset:
         process_speech(speech, ngrams=ngrams)
+    nlp.PreProcessing.objects.create(algorithm=algorithm)

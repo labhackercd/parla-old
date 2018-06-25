@@ -7,8 +7,9 @@ class Speech(models.Model):
     original = models.TextField()
     date = models.DateField()
     time = models.TimeField()
-    author = models.CharField(max_length=255)
-    pre_processed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey('data.Author', on_delete=models.CASCADE,
+                               related_name='speeches')
 
     class Meta:
         verbose_name = "Speech"
@@ -17,3 +18,15 @@ class Speech(models.Model):
 
     def __str__(self):
         return self.content[:50]
+
+
+class Author(models.Model):
+    name = models.CharField(max_length=250)
+    author_type = models.CharField(max_length=250, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Author"
+        verbose_name_plural = "Authors"
+
+    def __str__(self):
+        return self.name
