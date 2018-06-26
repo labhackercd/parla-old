@@ -32,7 +32,8 @@ def default_stopwords():
     twords = floresta.tagged_words()
     stopwords = nltk.corpus.stopwords.words('portuguese')
     stopwords += ['srs', 'sr', 'sras', 'sra', 'deputado', 'presidente',
-                  'é', 'nº', 's.a.', 'v.exa.', 'v.exa', '#']
+                  'é', 'nº', 's.a.', 'v.exa.', 'v.exa', '#', 'anos', 'º',
+                  'exa', 'mesa', 'legislatura', 'sessão', 'maioria']
 
     valid_tags = ['adj', 'n']
     for (word, tag) in twords:
