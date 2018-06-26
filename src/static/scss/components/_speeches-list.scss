@@ -1,0 +1,87 @@
+.speeches-list {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 8vw 40px 8vw;
+
+  &::before {
+    position: absolute;
+    top: 70px;
+
+    display: block;
+
+    width: 2px;
+    height: 100%;
+    margin-left: 19px;
+
+    content: '';
+
+    background-color: #FFF;
+  }
+
+  & > .item {
+    display: flex;
+
+    margin-top: 20px;
+
+    cursor: pointer;
+  }
+
+  & > .item > .hex {
+    width: 40px;
+
+    transform-origin: center;
+
+    background-image: url('../img/hexagon.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    &.-size5 {
+      transform: scale(1);
+    }
+
+    &.-size4 {
+      transform: scale(0.8);
+    }
+
+    &.-size3 {
+      transform: scale(0.6);
+    }
+
+    &.-size2 {
+      transform: scale(0.4);
+    }
+
+    &.-size1 {
+      transform: scale(0.2);
+    }
+  }
+
+  & > .item > .content {
+    flex: 1;
+
+    margin-left: 30px;
+  }
+
+  & > .item > .content > p {
+    font-size: .75rem;
+
+    margin-top: 2px;
+  }
+
+  & > .item > .content > .timestamp {
+    display: flex;
+  }
+
+  & > .item > .content > .timestamp > * + * {
+    margin-left: 5px;
+  }
+
+  & > .item > .content > .timestamp > span {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+}

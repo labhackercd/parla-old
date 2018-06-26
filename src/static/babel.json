@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "token": "Legalização da Maconha",
+    "size": 1
+  },
+  {
+    "id": 2,
+    "token": "erivanio",
+    "size": 0.7
+  },
+  {
+    "id": 3,
+    "token": "caio",
+    "size": 0.49
+  },
+  {
+    "id": 4,
+    "token": "pet",
+    "size": 0.343
+  },
+  {
+    "id": 5,
+    "token": "erivanio",
+    "size": 0.240
+  },
+  {
+    "id": 6,
+    "token": "pet",
+    "size": 0.168
+  },
+  {
+    "id": 7,
+    "token": "pet",
+    "size": 0.117
+  },
+  {
+    "id": 8,
+    "token": "erivanio",
+    "size": 0.082
+  }
+]

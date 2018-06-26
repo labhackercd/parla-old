@@ -130,11 +130,52 @@ function hexagonOnClick(hexagonGroup, callback) {
 }
 
 function addHexagons(hexagonGroup, radius) {
+  var filter = hexagonGroup.append("defs")
+  .append("filter")
+  .attr("id", function(d){
+    return "hexagon-filter-"+d.id;
+  })
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", "300%")
+  .attr("height", "300%");
+
+  filter.append("feOffset")
+  .attr("result", "offOut")
+  .attr("in", "SourceGraphic")
+  .attr("dx", function(d) {
+    return 8*d.size;
+  })
+  .attr("dy", function(d) {
+    return 8*d.size;
+  });
+
+  filter.append("feColorMatrix")
+  .attr("in", "offOut")
+  .attr("result", "matrixOut")
+  .attr("type", "matrix")
+  .attr("values", `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0`);
+
+  filter.append("feGaussianBlur")
+  .attr("result", "blurOut")
+  .attr("in", "matrixOut")
+  .attr("stdDeviation", function(d){
+    return 6*d.size;
+  })
+
+  filter.append("feBlend")
+  .attr("in", "SourceGraphic")
+  .attr("in2", "blurOut")
+  .attr("mode", "normal");
+
   hexagonGroup.append("path")
   .classed('js-hexagon', true)
   .attr("fill", "white")
   .attr("d", function(d, i) {
     return drawHexagon(d.size, radius);
+  })
+  .attr("filter", function(d){
+    return `url(#hexagon-filter-${d.id})`;
   })
 }
 
@@ -171,6 +212,7 @@ function addText(hexagonGroup) {
     .attr('width', function(d, i) { return d.element.getBBox().width; })
     .attr('height', function(d, i) { return d.element.getBBox().height; })
     .attr('transform', function(d, i) { return `scale(${d.size})`})
+    .attr('overflow', 'visible')
     .append('xhtml:div')
       .attr("class", 'text-box')
       .append('xhtml:p')
@@ -239,24 +281,27 @@ function authorsChart(tokenId, authorId) {
     speechesPage.addClass('speeches js-page');
     addPage(speechesPage);
 
-    var hexGrid = $("<div class='hex-grid page-content'>");
+    var hexGrid = $("<div class='speeches-list page-content'>");
+    console.log(data);
     data.forEach(function(element, index) {
-      var hexWrapper = $(`<div class="hex-wrapper">`);
-      var hex = $(`<div class="hex js-manifestation" data-manifestation-id=${element.id}>`);
 
-      var header = $('<div class="header">');
-      header.append($('<div class="icon">'));
+      var content = $('<div class="content">');
 
-      var headerContent = $('<div class="content">');
-      headerContent.append($(`<span class="date">${element.date}</span>`));
-      headerContent.append($(`<span class="time">${element.time}</span>`));
+      var timestamp = $('<div class="timestamp">');
+      timestamp.append($(`<span class="date">${element.date}</span>`));
+      timestamp.append($(`<span> às </span>`));
+      timestamp.append($(`<span class="time">${element.time}</span>`));
 
-      header.append(headerContent);
+      content.append(timestamp);
+      content.append($(`<p>${element.preview}</p>`));
 
-      hexWrapper.append(hex);
-      hex.append(header);
-      hex.append($(`<p>${element.preview}</p>`));
-      hexGrid.append(hexWrapper);
+      var hex = $(`<div class="hex">`);
+      hex.addClass(element.hexagon_size);
+
+      var item = $(`<div class="item js-manifestation" data-manifestation-id=${element.id}>"`);
+      hexGrid.append(item);
+      item.append(hex);
+      item.append(content);
     })
 
     speechesPage.append(hexGrid);

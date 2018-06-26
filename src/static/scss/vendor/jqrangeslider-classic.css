@@ -1,0 +1,163 @@
+.ui-rangeSlider{
+	height:65px;
+	margin-top: 10px;
+}
+
+.ui-rangeSlider .ui-rangeSlider-innerBar{
+	height:3px;
+	background:#ffffff66
+}
+
+.ui-rangeSlider .ui-rangeSlider-handle{
+	width:0;
+	height:0;
+	cursor:col-resize;
+}
+
+.ui-rangeSlider-handle.ui-rangeSlider-rightHandle {
+  z-index: 2;
+}
+
+.ui-rangeSlider-handle.ui-rangeSlider-leftHandle {
+  z-index: 1;
+}
+
+.ui-rangeSlider-handle-inner {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  top: -9px;
+  left: -9px;
+  border-radius: 50%;
+  box-shadow: -1px 1px 1px 0px hsla(0, 0%, 30%, 0.25);
+}
+
+.ui-rangeSlider-handle-inner::after {
+	content: '';
+  height: 16px;
+  width: 2px;
+  background-color: white;
+  display: block;
+  top: 100%;
+  position: absolute;
+}
+
+.ui-rangeSlider .ui-rangeSlider-bar{
+	background:#fff;
+	height:5px;
+	margin-top:-2px;
+	cursor:move;
+	cursor:grab;
+	cursor: -moz-grab;
+}
+
+.ui-rangeSlider .ui-rangeSlider-bar::after{
+	content: '';
+  position: absolute;
+  display: block;
+  top: 5px;
+  width: 100%;
+  background: hsla(0, 0%, 100%, 0.2);
+  height: 22px;
+  z-index: 3;
+}
+
+.ui-rangeSlider .ui-rangeSlider-bar::before{
+  content: '';
+  position: absolute;
+  display: block;
+  margin: auto;
+  top: 15px;
+  width: 10px;
+  height: 2px;
+  max-width: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0, 0.2);
+}
+
+.ui-rangeSlider .ui-rangeSlider-bar.ui-draggable-dragging{
+	cursor:	-moz-grabbing;
+	cursor:grabbing;
+}
+
+.ui-rangeSlider-arrow{
+	height:16px;
+	margin:2px 0;
+	width:16px;
+	background-repeat:no-repeat;
+}
+
+.ui-rangeSlider-arrow-inner{
+	display: none;
+}
+
+.ui-rangeSlider-withArrows .ui-rangeSlider-container{
+	margin:0 11px;
+}
+
+.ui-rangeSlider-noArrow .ui-rangeSlider-container{
+	margin:0;
+}
+
+.ui-rangeSlider-label{
+	margin:0 2px 2px;
+	background-image:url('icons-classic/label.png');
+	background-position:bottom center;
+	background-repeat:no-repeat;
+  white-space: nowrap;
+  top:-30px;
+  padding:3px 6px 7px;
+  cursor:col-resize;
+}
+
+.ui-rangeSlider-label-value {
+	font-size: 12px;
+	text-transform: uppercase;
+}
+
+.ui-rangeSlider-label-inner{
+	display:none;
+}
+
+/*
+ * Edit slider
+ */
+
+input.ui-editRangeSlider-inputValue{
+	width:3em;
+	vertical-align: middle;
+	text-align:center;
+}
+
+.ui-ruler-scale {
+  display: flex;
+  justify-content: center;
+}
+
+.ui-ruler-scale0 {
+	margin-top: 16px;
+}
+
+.month-label {
+  height: 3px;
+  border-left: 1px solid white;
+  box-sizing: border-box;
+}
+
+.month-label:nth-child(12n + 1) {
+  height: 9px;
+}
+
+.month-label:last-child {
+  border-right: 1px solid white;
+}
+
+.year-label .ui-ruler-tick-label {
+	display: inline-flex;
+	transform: translateX(-50%);
+	font-size: 12px;
+}

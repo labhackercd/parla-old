@@ -10,6 +10,7 @@
     {% compress css %}
       <link type="text/x-scss" rel="stylesheet" href="{% static '/scss/app.scss' %}"/>
     {% endcompress %}
+      <link rel="stylesheet" href="{% static '/scss/vendor/jqrangeslider-classic.css' %}"/>
   </head>
   <body>
     <div class="ball-animation"></div>
@@ -22,9 +23,13 @@
     <script src="{% static "jquery/dist/jquery.min.js" %}" charset="utf-8"></script>
     <script src="{% static "hammerjs/hammer.min.js" %}" charset="utf-8"></script>
     <script src="{% static "d3/d3.min.js" %}" charset="utf-8"></script>
-
-    <script src="{% static "js/scroll.js" %}" charset="utf-8"></script>
-    <script src="{% static "js/chart.js" %}" charset="utf-8"></script>
+    
+    <script src="{% static "js/jquery-ui.min.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/jQDateRangeSlider-withRuler-min.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/teste.js" %}" charset="utf-8"></script>
     <script src="{% static "js/scripts.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/slider.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/chart.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/scroll.js" %}" charset="utf-8"></script>
   </body>
 </html>

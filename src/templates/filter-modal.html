@@ -4,15 +4,10 @@
     <div class="close"></div>
   </div>
   <div class="content">
-    <label for="data">Escolha a data de início</label>
-    <input name="initialDate" class="js-initial-date" type="month">
-    <label for="data">Escolha a data final</label>
-    <input name="endDate" class="js-end-date" type="month">
-    <label for="data">Fonte de dados</label>
-    <select name="manifestationType">
-      {% for man_type in manifestation_types %}
-        <option value="{{man_type.id}}">{{man_type.name}} - {{man_type.channel.name}}</option>
-      {% endfor %}
+    <label for="data">Algorítimos</label>
+    <select class="algorithm">
+      <option value="1">Algorítimo 1</option>
+      <option value="2">Algorítimo 2</option>
     </select>
     <button class="button">Aplicar filtros</button>
     <button type="reset" value="Clear" class="simple-link">Limpar</button>

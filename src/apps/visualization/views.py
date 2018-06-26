@@ -32,7 +32,7 @@ def get_algorithm_filter(request):
     if algorithm:
         return Q(algorithm=algorithm)
     else:
-        return Q(algorithm='bigram_bow')
+        return Q(algorithm='unigram_bow')
 
 
 def tokens(request):
