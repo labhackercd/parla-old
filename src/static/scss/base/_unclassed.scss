@@ -18,7 +18,7 @@ body {
   height: 100%;
   max-height: 100%;
 
-  background: linear-gradient(180deg, #9951F5 0%, #7256E3 100%);
+  background: linear-gradient(180deg, $color-purple 0%, $color-purple-dark 100%);
 
   &.-invertedbg {
     background: #FFF;
