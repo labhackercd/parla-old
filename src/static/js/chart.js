@@ -339,47 +339,27 @@ function manifestationPage(manifestationId, tokenId) {
   })
 }
 
-function wordChart() {
-  $('.js-page').remove();
-  loadData("/visualizations/tokens/", function(data) {
-    var canvas = drawCanvas('.wrapper', 'token');
-    var hexagonGroup = createHexagonGroup(canvas, data);
-    addHexagons(hexagonGroup, 90);
-    hexagonOnClick(hexagonGroup, function(data) {
-      var currentPage = $(data.element).closest('.js-page');
-      currentPage.removeClass('-active');
-      $('.ball-animation').one('animationend', function(){
-        currentPage.addClass('_hidden');
-        setNavigationTitle(data.token);
-        $('.js-back').removeClass('_hidden');
-      });
-      tokensScroll = scrollPosition;
-      hammertime.destroy();
-      tokensChart(data.stem);
+loadData("/visualizations/tokens/", function(data) {
+  var canvas = drawCanvas('.wrapper', 'token');
+  var hexagonGroup = createHexagonGroup(canvas, data);
+  addHexagons(hexagonGroup, 90);
+  hexagonOnClick(hexagonGroup, function(data) {
+    var currentPage = $(data.element).closest('.js-page');
+    currentPage.removeClass('-active');
+    $('.ball-animation').one('animationend', function(){
+      currentPage.addClass('_hidden');
+      setNavigationTitle(data.token);
+      $('.js-back').removeClass('_hidden');
     });
-    positionHexagon(hexagonGroup);
-    addText(hexagonGroup);
-    showHexagonGroup(hexagonGroup);
-    updateCanvasSize(canvas);
-    setTransformOrigin(canvas);
-    enableScroll();
-    $('.range-slider').removeClass('-hide');
-    visiblePage = 'tokens';
+    tokensScroll = scrollPosition;
+    hammertime.destroy();
+    tokensChart(data.stem);
   });
-};
-
-wordChart();
-
-$(".js-slider").bind("valuesChanged", function(e, data){
-  var minValue = $(".js-slider").dateRangeSlider("values").min;
-  var maxValue = $(".js-slider").dateRangeSlider("values").max;
-  var parsedMinValue = minValue.getFullYear()+"-"+("0" + (minValue.getMonth() + 1)).slice(-2);
-  var parsedMaxValue = maxValue.getFullYear()+"-"+("0" + (maxValue.getMonth() + 1)).slice(-2);
-
-  const params = new URLSearchParams(window.location.search);
-  params.set('initialDate', parsedMinValue);
-  params.set('endDate', parsedMaxValue);
-  window.history.replaceState({}, '', `${location.pathname}?${params}`);
-
-  wordChart();
-});
+  positionHexagon(hexagonGroup);
+  addText(hexagonGroup);
+  showHexagonGroup(hexagonGroup);
+  updateCanvasSize(canvas);
+  setTransformOrigin(canvas);
+  enableScroll();
+  visiblePage = 'tokens';
+})
