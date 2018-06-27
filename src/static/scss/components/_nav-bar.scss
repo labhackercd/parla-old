@@ -1,97 +1,84 @@
-.nav-bar
-{
+.nav-bar {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  justify-content: space-between;
+
+  height: 80px;
+  padding-right: 8vw;
+  padding-left: 8vw;
+
+  transition: all .4s linear;
+
+  color: #FFF;
+
+  & a {
+    text-decoration: none;
+  }
+
+  & > .info {
     display: flex;
-
-    height: 80px;
-    padding-right: 8vw;
-    padding-left: 8vw;
-
-    transition: all .4s linear;
-
-    color: #fff;
-
     align-items: center;
-    flex: 0 0 auto;
-    justify-content: space-between;
+  }
 
-    & a
-    {
-        text-decoration: none;
+  & > .info > .back {
+    position: relative;
+    z-index: map-get($z-index, back);
+
+    width: 22px;
+    height: 20px;
+    margin-left: -10px;
+    padding: 10px;
+
+    cursor: pointer;
+
+    background-image: url('../img/arrow-white.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  & > .info > .breadcrumb {
+    font-size: 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 90%;
+
+    text-transform: uppercase;
+  }
+
+  & > .info > .breadcrumb > .title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  & > .info > .breadcrumb > .name {
+    font-size: 10px;
+  }
+
+  & > .filter {
+    width: 22px;
+    height: 20px;
+    margin-right: -10px;
+    padding: 10px;
+
+    cursor: pointer;
+
+    background-image: url('../img/filter-white.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  &.-negative {
+    color: #000;
+
+    & > .filter {
+      background-image: url('../img/filter-black.svg');
     }
 
-    & > .info
-    {
-        display: flex;
-
-        align-items: center;
+    & > .info > .back {
+      background-image: url('../img/arrow-black.svg');
     }
-
-    & > .info > .back
-    {
-        position: relative;
-        z-index: map-get($z-index, back);
-
-        width: 22px;
-        height: 20px;
-        margin-left: -10px;
-        padding: 10px;
-
-        cursor: pointer;
-
-        background-image: url('../img/arrow-white.svg');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    & > .info > .breadcrumb
-    {
-        font-size: 16px;
-
-        display: flex;
-        flex-direction: column;
-
-        width: 90%;
-
-        text-transform: uppercase;
-    }
-
-    & > .info > .breadcrumb > .title
-    {
-        font-size: 20px;
-        font-weight: bold;
-    }
-
-    & > .info > .breadcrumb > .name
-    {
-        font-size: 10px;
-    }
-
-    & > .filter
-    {
-        width: 22px;
-        height: 20px;
-        margin-right: -10px;
-        padding: 10px;
-
-        cursor: pointer;
-
-        background-image: url('../img/filter-white.svg');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    &.-negative
-    {
-        color: #000;
-
-        & > .filter
-        {
-            background-image: url('../img/filter-black.svg');
-        }
-
-        & > .info > .back
-        {
-            background-image: url('../img/arrow-black.svg');
-        }
-    }
+  }
 }
