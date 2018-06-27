@@ -1,3 +1,10 @@
 .range-slider {
+  user-select: none;
   padding: 0 10vw;
+  transition: opacity 0.7s 0.5s $swift-out, transform 0.6s 0.25s $swift-out;
+
+  &.-hide {
+    opacity: 0;
+    transform: translateY(100%);
+  }
 }
