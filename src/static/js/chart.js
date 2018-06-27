@@ -341,6 +341,9 @@ function manifestationPage(manifestationId, tokenId) {
 
 function wordChart() {
   $('.js-page').remove();
+  var tokensScroll = 0;
+  var authorsScroll = 0;
+  var scrollPosition = 0;
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -381,5 +384,6 @@ $(".js-slider").bind("valuesChanged", function(e, data){
   params.set('endDate', parsedMaxValue);
   window.history.replaceState({}, '', `${location.pathname}?${params}`);
 
+  hammertime.destroy();
   wordChart();
 });
