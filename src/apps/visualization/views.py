@@ -98,7 +98,7 @@ def token_authors(request, token):
 
 
 def token_author_manifestations(request, token, author_id):
-    date_filter = get_date_filter('timestamp', 'timestamp', request)
+    date_filter = get_date_filter('speech__date', 'speech__date', request)
     token_filter = Q(token__stem=token) & date_filter
     token_filter = token_filter & Q(speech__author__id=author_id)
     man_tokens = models.SpeechToken.objects.filter(
