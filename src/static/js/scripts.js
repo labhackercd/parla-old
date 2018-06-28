@@ -55,3 +55,14 @@ function setNavigationName(name){
 document.addEventListener('touchmove', function(e) {
   return false;
 });
+
+$('.js-filter-form').submit(function(e) {
+  searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.get('initialDate')) {
+    $(e.target).append(`<input type="hidden" name="initialDate" value="${searchParams.get('initialDate')}" />`)
+  }
+
+  if (searchParams.get('endDate')) {
+    $(e.target).append(`<input type="hidden" name="endDate" value="${searchParams.get('endDate')}" />`)
+  }
+})
