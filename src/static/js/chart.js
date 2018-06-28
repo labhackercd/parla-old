@@ -292,7 +292,6 @@ function authorsChart(tokenId, authorId) {
     addPage(speechesPage);
 
     var hexGrid = $("<div class='speeches-list page-content'>");
-    console.log(data);
     data.forEach(function(element, index) {
 
       var content = $('<div class="content">');
