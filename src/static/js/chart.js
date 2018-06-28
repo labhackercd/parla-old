@@ -4,7 +4,7 @@ function getUrlParameters() {
   searchParams = new URLSearchParams(window.location.search);
   var initialDate = searchParams.get('initialDate');
   var endDate = searchParams.get('endDate');
-  var manifestationType = searchParams.get('manifestationType');
+  var algorithm = searchParams.get('algorithm');
   var urlParameters = {};
 
   if (initialDate) {
@@ -19,8 +19,8 @@ function getUrlParameters() {
     urlParameters['final_date'] = endDate.toISOString().split('T')[0];
   }
 
-  if (manifestationType) {
-    urlParameters['manifestation_type'] = manifestationType;
+  if (algorithm) {
+    urlParameters['algorithm'] = algorithm;
   }
   return $.param(urlParameters);
 }
@@ -292,7 +292,6 @@ function authorsChart(tokenId, authorId) {
     addPage(speechesPage);
 
     var hexGrid = $("<div class='speeches-list page-content'>");
-    console.log(data);
     data.forEach(function(element, index) {
 
       var content = $('<div class="content">');
