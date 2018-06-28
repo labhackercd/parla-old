@@ -34,10 +34,20 @@ function loadData(url, callback) {
     beforeSend: function() {
       $('.hex-loading').addClass('-visible');
     },
-    success: function(json){
-      $('.hex-loading').removeClass('-visible');
+    success: function(data){
       $('.hex-bg').addClass('-visible');
-      callback(json);
+      $('.hex-loading').removeClass('-visible');
+
+      if (data.length === 0) {
+        $('.js-error-data').removeClass('-hide');
+      } else {
+        $('.js-error-data').addClass('-hide');
+        callback(data);
+      }
+    },
+    error: function(data) {
+      $('.js-error-server').removeClass('-hide');
+      $('.hex-loading').removeClass('-visible');
     }
   });
 
