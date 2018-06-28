@@ -283,7 +283,7 @@ function wordChart() {
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
-    $('.range-slider').removeClass('-hide');
+    $('.js-active-slider').removeClass('-hide');
     visiblePage = 'tokens';
   });
 };
@@ -312,14 +312,22 @@ function tokensChart(tokenId) {
       authorsScroll = scrollPosition;
       hammertime.destroy();
     })
+
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
+    var minValue = $(".js-slider").dateRangeSlider("values").min;
+    var maxValue = $(".js-slider").dateRangeSlider("values").max;
+    var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
+    var parsedMaxValue = monthShortNames[maxValue.getMonth()]+"/"+maxValue.getFullYear()
+    $('.js-slider-min').text(parsedMinValue);
+    $('.js-slider-max').text(parsedMaxValue);
+    $('.js-inactive-slider').removeClass('-hide');
+    $('.js-inactive-slider').addClass('-negative');
+    $('.js-active-slider').addClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
     visiblePage = 'authors';
-    $('.js-inactive-slider').removeClass('-hide');
-    $('.js-active-slider').addClass('-hide');
   })
 }
 
@@ -362,22 +370,10 @@ function authorsChart(tokenId, authorId) {
       manifestationPageElement.addClass('manifestation-page js-page');
 
       $('main').append(manifestationPageElement);
+      $('.js-inactive-slider').removeClass('-negative');
       visiblePage = 'manifestations';
     });
 
-<<<<<<< HEAD
-=======
-    speechesPage.append(hexGrid);
-    $('.js-manifestation').on('click', function(e) {
-      manifestationPage($(this).data('manifestationId'), tokenId);
-    })
-
-    var manifestationPageElement = $(document.createElement('div'))
-    manifestationPageElement.addClass('manifestation-page js-page');
-    $('main').append(manifestationPageElement);
-    $('.js-inactive-slider').removeClass('-negative');
-    visiblePage = 'manifestations';
->>>>>>> Add selected-range styles and js
   })
 }
 
@@ -404,44 +400,6 @@ function manifestationPage(manifestationId, tokenId) {
   })
 }
 
-<<<<<<< HEAD
-=======
-function wordChart() {
-  $('.js-page').remove();
-  var tokensScroll = 0;
-  var authorsScroll = 0;
-  var scrollPosition = 0;
-  loadData("/visualizations/tokens/", function(data) {
-    var canvas = drawCanvas('.wrapper', 'token');
-    var hexagonGroup = createHexagonGroup(canvas, data);
-    addHexagons(hexagonGroup, 90);
-    hexagonOnClick(hexagonGroup, function(data) {
-      var currentPage = $(data.element).closest('.js-page');
-      currentPage.removeClass('-active');
-      $('.ball-animation').one('animationend', function(){
-        currentPage.addClass('_hidden');
-        setNavigationTitle(data.token);
-        $('.js-back').removeClass('_hidden');
-      });
-      tokensScroll = scrollPosition;
-      hammertime.destroy();
-      tokensChart(data.stem);
-    });
-    positionHexagon(hexagonGroup);
-    addText(hexagonGroup);
-    showHexagonGroup(hexagonGroup);
-    updateCanvasSize(canvas);
-    setTransformOrigin(canvas);
-    enableScroll();
-    $('.js-active-slider').removeClass('-hide');
-    $('.js-inactive-slider').addClass('-negative');
-    visiblePage = 'tokens';
-  });
-};
-
-wordChart();
-
->>>>>>> Add selected-range styles and js
 $(".js-slider").bind("valuesChanged", function(e, data){
   var minValue = $(".js-slider").dateRangeSlider("values").min;
   var maxValue = $(".js-slider").dateRangeSlider("values").max;
