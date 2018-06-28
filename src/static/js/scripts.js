@@ -21,7 +21,6 @@ $('.back').on('click', function() {
     }
     var current = $('.js-page.-active');
     var prev = current.prev('.js-page');
-    current.addClass('_hidden');
     current.one('transitionend', function(){
       current.removeClass('-active');
       $('body').removeClass('-invertedbg');
@@ -46,6 +45,7 @@ $('.back').on('click', function() {
           $('.js-back').addClass('_hidden');
           enableScroll(tokensScroll);
         }
+        current.addClass('_hidden');
         visiblePage = previousPageRelation[visiblePage];
       });
     });
