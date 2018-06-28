@@ -18,16 +18,20 @@
     width: 100%;
     height: 5px;
 
+    transition: background-color .3s $swift-out;
+
     background-color: currentColor;
 
     &::before,
     &::after {
-      content: '';
       position: absolute;
       top: -4px;
 
       width: 2px;
       height: 13px;
+
+      content: '';
+      transition: background-color .3s $swift-out;
 
       background-color: currentColor;
     }

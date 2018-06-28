@@ -34,6 +34,7 @@ $('.back').on('click', function() {
     if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
       $('body').addClass('-invertedbg');
       $('.nav-bar').addClass('-negative');
+      $('.js-inactive-slider').addClass('-negative');
     } else if (visiblePage === 'authors') {
       $('body').removeClass('-invertedbg');
       $('.nav-bar').removeClass('-negative');
@@ -44,7 +45,6 @@ $('.back').on('click', function() {
       if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
         setNavigationName('');
         enableScroll(authorsScroll);
-        $('.js-inactive-slider').removeClass('-negative');
       } else if (visiblePage === 'authors') {
         setNavigationTitle('Parla');
         $('.js-back').addClass('_hidden');
