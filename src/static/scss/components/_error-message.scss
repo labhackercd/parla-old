@@ -1,0 +1,53 @@
+.error-message {
+  display: flex;
+  visibility: visible;
+  align-items: center;
+  flex: 1 0 auto;
+  flex-direction: column;
+  justify-content: center;
+
+  padding-right: 8vw;
+  padding-left: 8vw;
+
+  transition: opacity .3s .15s, visibility 0s .15s, width 0s .15s, height 0s .15s;
+
+  opacity: 1;
+
+  &.-hide {
+    visibility: hidden;
+    flex: 0;
+
+    width: 0;
+    height: 0;
+
+    transition: opacity .3s .3s, visibility 0s 0s, width 0s 0s, height 0s 0s;
+
+    opacity: 0;
+  }
+
+  &.-server {
+    transform: translateY(-4rem);
+
+    & > .icon {
+      width: 100%;
+    }
+  }
+
+  & > .icon {
+    width: 8rem;
+  }
+
+  & > .message {
+    line-height: 1.4;
+
+    margin-top: 2rem;
+
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  & > .message > h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}
