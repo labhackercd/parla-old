@@ -5,7 +5,7 @@
   flex-direction: column;
 
   min-height: 0 !important;
-  padding: 20px 8vw 40px 8vw;
+  padding: 20px 8vw 100px 8vw;
 
   transition: opacity .35s cubic-bezier(.55,0,.1,1) .7s;
 
@@ -16,7 +16,7 @@
     display: block;
 
     width: 2px;
-    height: 100%;
+    height: calc(100% - 200px);
     margin-left: 19px;
 
     content: '';
