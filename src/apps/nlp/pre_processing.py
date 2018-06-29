@@ -33,7 +33,37 @@ def default_stopwords():
     stopwords = nltk.corpus.stopwords.words('portuguese')
     stopwords += ['srs', 'sr', 'sras', 'sra', 'deputado', 'presidente',
                   'é', 'nº', 's.a.', 'v.exa.', 'v.exa', '#', 'anos', 'º',
-                  'exa', 'mesa', 'legislatura', 'sessão', 'maioria']
+                  'exa', 'mesa', 'legislatura', 'sessão', 'maioria',
+                  'seguinte', 'mandato', 'bilhões', 'quilômetros', 'maçã',
+                  'ª', 'parabéns', 'membros', 'convido', 'usual', 'biênio',
+                  'brasil', 'palavra', 'discussão', 'período', 'início',
+                  'pronunciamento', 'suplente', 'atividade', 'ação', 'ações',
+                  'daqueles', 'diferenças', 'pasta', 'milhares', 'srªs',
+                  'emenda', 'àqueles', 'tamanha', 'mês', 'capaz', 'km',
+                  'modelo', 'tarefas', 'colegas', 'programa', 'voz',
+                  'meios de comunicação', 'pronunciamento', 'casa', 'sessão',
+                  'deliberativa', 'solene', 'ordinária', 'extraordinária',
+                  'encaminhado', 'orador', 'tv', 'divulgar', 'deputado',
+                  'parlamento', 'parlamentar', 'projeto',
+                  'proposta', 'requerimento', 'destaque', 'veto', 'federal',
+                  'câmara', 'senado', 'congresso', 'nacional', 'país',
+                  'estado', 'brasil', 'lei', 'política', 'povo', 'voto',
+                  'partido', 'liderança', 'bancada', 'bloco', 'líder',
+                  'lider', 'frente', 'governo', 'oposição', 'presença',
+                  'presente', 'passado', 'ausência', 'ausencia', 'ausente',
+                  'obstrução', 'registrar', 'aprovar', 'rejeitar', 'rejeição',
+                  'sabe', 'matéria', 'materia', 'questão', 'ordem', 'emenda',
+                  'sistema', 'processo', 'legislativo', 'plenário', 'pedir',
+                  'peço', 'comissão', 'especial', 'permanente', 'apresentar',
+                  'encaminhar', 'encaminho', 'orientar', 'liberar', 'apoiar',
+                  'situação', 'fato', 'revisão', 'tempo', 'pauta', 'discutir',
+                  'discussão', 'debater', 'retirar', 'atender', 'colegas',
+                  'autor', 'texto', 'medida', 'união', 'república',
+                  'audiência', 'audiencia', 'público', 'publico', 'reunião',
+                  'agradecer', 'solicitar', 'assistir', 'contrário',
+                  'favorável', 'pessoa', 'comemorar', 'ato', 'momento',
+                  'diretora', 'possível', 'atenção', 'agradeço', 'naquele',
+                  'necessárias', 'presidenta', 'compromisso']
 
     valid_tags = ['adj', 'n']
     for (word, tag) in twords:
