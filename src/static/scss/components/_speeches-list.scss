@@ -4,7 +4,10 @@
   display: flex;
   flex-direction: column;
 
-  padding: 20px 8vw 40px 8vw;
+  min-height: 0 !important;
+  padding: 20px 8vw 100px 8vw;
+
+  transition: opacity .35s cubic-bezier(.55,0,.1,1) .7s;
 
   &::before {
     position: absolute;
@@ -13,7 +16,7 @@
     display: block;
 
     width: 2px;
-    height: 100%;
+    height: calc(100% - 200px);
     margin-left: 19px;
 
     content: '';
@@ -44,19 +47,19 @@
     }
 
     &.-size4 {
-      transform: scale(0.8);
+      transform: scale(.8);
     }
 
     &.-size3 {
-      transform: scale(0.6);
+      transform: scale(.6);
     }
 
     &.-size2 {
-      transform: scale(0.4);
+      transform: scale(.4);
     }
 
     &.-size1 {
-      transform: scale(0.2);
+      transform: scale(.2);
     }
   }
 

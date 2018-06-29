@@ -1,9 +1,11 @@
 .hex-bg {
-  position: relative;
+  position: absolute;
   z-index: map-get($z-index, hex-bg);
 
   display: flex;
   flex-wrap: wrap;
+
+  width: 100%;
 
   transition: opacity 1s cubic-bezier(.55, 0, .1, 1);
 

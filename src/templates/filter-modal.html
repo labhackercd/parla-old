@@ -1,15 +1,14 @@
-<form class="filter-modal" action="/" method="GET">
+<form class="filter-modal js-filter-form" action="/" method="GET">
   <div class="nav">
     <a href="#" class="title">Filtros</a>
     <div class="close"></div>
   </div>
   <div class="content">
-    <label for="data">Algorítimos</label>
-    <select class="algorithm">
-      <option value="1">Algorítimo 1</option>
-      <option value="2">Algorítimo 2</option>
+    <label for="data">Algoritimos</label>
+    <select name="algorithm" class="algorithm">
+      <option value="unigram_bow" {% if request.GET.algorithm == 'unigram_bow' %}selected{% endif %}>Saco de Palavras - 1 Token</option>
+      <option value="bigram_bow" {% if request.GET.algorithm == 'bigram_bow' %}selected{% endif %}>Saco de Palavras - 2 Tokens</option>
     </select>
     <button class="button">Aplicar filtros</button>
-    <button type="reset" value="Clear" class="simple-link">Limpar</button>
   </div>
 </form>
