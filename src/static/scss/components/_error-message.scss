@@ -28,6 +28,10 @@
   &.-server {
     transform: translateY(-4rem);
 
+    &.-hide {
+      display: none;
+    }
+
     & > .icon {
       width: 100%;
     }
