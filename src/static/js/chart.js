@@ -318,7 +318,7 @@ function tokensChart(tokenId) {
       $('.ball-animation').one('animationend', function(){
         $('body').removeClass('-invertedbg');
         $('.nav-bar').removeClass('-negative');
-        setNavigationTitle(data.token);
+        setNavigationName(data.token);
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
@@ -346,12 +346,8 @@ function tokensChart(tokenId) {
 function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
-<<<<<<< HEAD
-    speechesPage.addClass('speeches js-page');
-=======
     speechesPage.addClass('speeches js-page js-page-speeches');
-    addPage(speechesPage);
->>>>>>> Load chart when sent back through word chart back button  
+    $('.js-inactive-slider').removeClass('-negative');
 
     var hexGrid = $("<div class='speeches-list page-content'>");
 
@@ -384,26 +380,11 @@ function authorsChart(tokenId, authorId) {
 
       $('.manifestation-page').remove();
       var manifestationPageElement = $(document.createElement('div'))
-      manifestationPageElement.addClass('manifestation-page js-page');
-
+      manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
       $('main').append(manifestationPageElement);
-      $('.js-inactive-slider').removeClass('-negative');
       visiblePage = 'manifestations';
     });
 
-<<<<<<< HEAD
-=======
-    speechesPage.append(hexGrid);
-    $('.js-manifestation').on('click', function(e) {
-      manifestationPage($(this).data('manifestationId'), tokenId);
-    })
-
-    var manifestationPageElement = $(document.createElement('div'))
-    manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
-    $('main').append(manifestationPageElement);
-    $('.js-inactive-slider').removeClass('-negative');
-    visiblePage = 'manifestations';
->>>>>>> Load chart when sent back through word chart back button  
   })
 }
 
