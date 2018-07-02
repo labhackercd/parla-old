@@ -21,7 +21,7 @@ def url_parameters(resource_id, page):
 
 
 def get_json_data(resource_name, resource_id, page=1):
-    url = '{}{}/?{}'.format(
+    url = '{}{}?{}'.format(
         settings.BABEL_API_URL,
         resource_name,
         url_parameters(resource_id, page)
@@ -41,14 +41,15 @@ def get_json_data(resource_name, resource_id, page=1):
 
 
 @transaction.atomic
-def create_author(author_data):
+def create_author(profile_url):
+    response = requests.get(profile_url)
+    author_data = response.json()
     try:
         author = models.Author.objects.get(id=author_data['id'])
     except models.Author.DoesNotExist:
         author = models.Author()
         author.id = author_data['id']
-    author.name = author_data['name']
-    author.author_type = author_data['author_type']
+    author.name = author_data['id_in_channel']
     author.save()
     return author
 
@@ -63,7 +64,7 @@ def create_speeches(data_list):
             speech = models.Speech()
             speech.id = data['id']
         speech.id_in_channel = data['id_in_channel']
-        speech.author = create_author(data['profile']['author'])
+        speech.author = create_author(data['profile'])
         timestamp = datetime.strptime(data['timestamp'][:-6],
                                       '%Y-%m-%dT%H:%M:%S')
         speech.date = timestamp.date()
