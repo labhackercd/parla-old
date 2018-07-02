@@ -260,9 +260,19 @@ function setTransformOrigin(canvas) {
 
 function wordChart() {
   $('.js-page').remove();
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('initialDate') !== null) {
+    initialDate = params.get('initialDate').split('-');
+    initialDate = new Date(initialDate[0], initialDate[1]-1);
+    endDate = params.get('endDate').split('-');
+    endDate = new Date(endDate[0], endDate[1]-1);
+    $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
+  };
+
   var tokensScroll = 0;
   var authorsScroll = 0;
   var scrollPosition = 0;
+
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -431,6 +441,9 @@ $(".js-slider").bind("valuesChanged", function(e, data){
   params.set('endDate', parsedMaxValue);
   window.history.replaceState({}, '', `${location.pathname}?${params}`);
 
-  hammertime.destroy();
+  if (!hammertime === undefined){
+    hammertime.destroy();
+  };
+
   wordChart();
 });
