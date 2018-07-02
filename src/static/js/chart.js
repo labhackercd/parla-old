@@ -39,6 +39,7 @@ function loadData(url, callback) {
       $('.hex-loading').removeClass('-visible');
 
       if (data.length === 0) {
+        $('.js-active-slider').removeClass('-hide');
         $('.js-error-data').removeClass('-hide');
       } else {
         $('.js-error-data').addClass('-hide');
