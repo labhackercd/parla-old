@@ -101,6 +101,7 @@ function drawCanvas(selector, chartName) {
   return d3.select(selector)
     .append("div")
     .classed('js-page', true)
+    .classed('js-page-'+chartName, true)
     .classed('-active', true)
     .classed("page-content", true)
       .append("svg")
@@ -334,7 +335,12 @@ function tokensChart(tokenId) {
 function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
+<<<<<<< HEAD
     speechesPage.addClass('speeches js-page');
+=======
+    speechesPage.addClass('speeches js-page js-page-speeches');
+    addPage(speechesPage);
+>>>>>>> Load chart when sent back through word chart back button  
 
     var hexGrid = $("<div class='speeches-list page-content'>");
 
@@ -374,6 +380,19 @@ function authorsChart(tokenId, authorId) {
       visiblePage = 'manifestations';
     });
 
+<<<<<<< HEAD
+=======
+    speechesPage.append(hexGrid);
+    $('.js-manifestation').on('click', function(e) {
+      manifestationPage($(this).data('manifestationId'), tokenId);
+    })
+
+    var manifestationPageElement = $(document.createElement('div'))
+    manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
+    $('main').append(manifestationPageElement);
+    $('.js-inactive-slider').removeClass('-negative');
+    visiblePage = 'manifestations';
+>>>>>>> Load chart when sent back through word chart back button  
   })
 }
 
