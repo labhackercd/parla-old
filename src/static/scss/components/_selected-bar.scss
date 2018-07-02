@@ -55,8 +55,20 @@
    > .back {
     font-size: 12px;
 
+    position: relative;
+
     margin-top: 15px;
 
     text-decoration: underline;
+
+    &::before {
+      font-weight: bolder;
+
+      position: absolute;
+      left: -3px;
+
+      content: '🠄';
+      transform: translateX(-100%);
+    }
   }
 }
