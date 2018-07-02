@@ -39,6 +39,7 @@ function loadData(url, callback) {
       $('.hex-loading').removeClass('-visible');
 
       if (data.length === 0) {
+        $('.js-active-slider').removeClass('-hide');
         $('.js-error-data').removeClass('-hide');
       } else {
         $('.js-error-data').addClass('-hide');
@@ -101,6 +102,7 @@ function drawCanvas(selector, chartName) {
   return d3.select(selector)
     .append("div")
     .classed('js-page', true)
+    .classed('js-page-'+chartName, true)
     .classed('-active', true)
     .classed("page-content", true)
       .append("svg")
@@ -258,9 +260,19 @@ function setTransformOrigin(canvas) {
 
 function wordChart() {
   $('.js-page').remove();
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('initialDate') !== null) {
+    initialDate = params.get('initialDate').split('-');
+    initialDate = new Date(initialDate[0], initialDate[1]-1);
+    endDate = params.get('endDate').split('-');
+    endDate = new Date(endDate[0], endDate[1]-1);
+    $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
+  };
+
   var tokensScroll = 0;
   var authorsScroll = 0;
   var scrollPosition = 0;
+
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -283,7 +295,7 @@ function wordChart() {
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
-    $('.range-slider').removeClass('-hide');
+    $('.js-active-slider').removeClass('-hide');
     visiblePage = 'tokens';
   });
 };
@@ -306,14 +318,24 @@ function tokensChart(tokenId) {
       $('.ball-animation').one('animationend', function(){
         $('body').removeClass('-invertedbg');
         $('.nav-bar').removeClass('-negative');
-        setNavigationTitle(data.token);
+        setNavigationName(data.token);
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
       hammertime.destroy();
     })
+
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
+    var minValue = $(".js-slider").dateRangeSlider("values").min;
+    var maxValue = $(".js-slider").dateRangeSlider("values").max;
+    var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
+    var parsedMaxValue = monthShortNames[maxValue.getMonth()]+"/"+maxValue.getFullYear()
+    $('.js-slider-min').text(parsedMinValue);
+    $('.js-slider-max').text(parsedMaxValue);
+    $('.js-inactive-slider').removeClass('-hide');
+    $('.js-inactive-slider').addClass('-negative');
+    $('.js-active-slider').addClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
@@ -324,7 +346,8 @@ function tokensChart(tokenId) {
 function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
-    speechesPage.addClass('speeches js-page');
+    speechesPage.addClass('speeches js-page js-page-speeches');
+    $('.js-inactive-slider').removeClass('-negative');
 
     var hexGrid = $("<div class='speeches-list page-content'>");
 
@@ -357,8 +380,7 @@ function authorsChart(tokenId, authorId) {
 
       $('.manifestation-page').remove();
       var manifestationPageElement = $(document.createElement('div'))
-      manifestationPageElement.addClass('manifestation-page js-page');
-
+      manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
       $('main').append(manifestationPageElement);
       visiblePage = 'manifestations';
     });
@@ -400,6 +422,9 @@ $(".js-slider").bind("valuesChanged", function(e, data){
   params.set('endDate', parsedMaxValue);
   window.history.replaceState({}, '', `${location.pathname}?${params}`);
 
-  hammertime.destroy();
+  if (!hammertime === undefined){
+    hammertime.destroy();
+  };
+
   wordChart();
 });

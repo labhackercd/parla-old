@@ -13,12 +13,39 @@ var previousPageRelation = {
   'manifestation': 'authors',
 }
 
-$('.back').on('click', function() {
+$('.js-back-word-chart').on('click', function() {
+  $('body').removeClass('-invertedbg');
+  $('.nav-bar').removeClass('-negative');
+  $('.js-inactive-slider').addClass('-hide');
+  $('.js-active-slider').removeClass('-hide');
+  $('.js-page-token').removeClass('_hidden');
+  $('.js-page-token').addClass('-active');
+  $('.js-page:not(.js-page-token)').remove();
+  $('.js-back').addClass('_hidden');
+  if (visiblePage === 'manifestations' || visiblePage === 'manifestation') {
+    $('.ball-animation').removeClass('-invertedbg');
+  };
+  setNavigationTitle('Parla');
+  setNavigationName('');
+  visiblePage = 'tokens';
+
+
+  $('.ball-animation').addClass('-active -reverse').one('animationend', function() {
+    enableScroll(tokensScroll);
+    $(this).removeClass('-active -reverse');
+  });
+});
+
+$('.js-back').on('click', function() {
   if (previousPageRelation[visiblePage]) {
     if (visiblePage === 'manifestation') {
       var manifestationPage = $('.manifestation-page');
       manifestationPage.removeClass('-open');
-    }
+    };
+    if (visiblePage === 'authors') {
+      $('.js-inactive-slider').addClass('-hide');
+      $('.js-active-slider').removeClass('-hide');
+    };
     var current = $('.js-page.-active');
     var prev = current.prev('.js-page');
 
@@ -30,7 +57,11 @@ $('.back').on('click', function() {
     if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
       $('body').addClass('-invertedbg');
       $('.nav-bar').addClass('-negative');
+      $('.js-inactive-slider').addClass('-negative');
+      setNavigationName('');
     } else if (visiblePage === 'authors') {
+      setNavigationTitle('Parla');
+      $('.js-back').addClass('_hidden');
       $('body').removeClass('-invertedbg');
       $('.nav-bar').removeClass('-negative');
     }
@@ -38,11 +69,8 @@ $('.back').on('click', function() {
     $('.ball-animation').addClass('-active -reverse').one('animationend', function() {
       $(this).removeClass('-active -reverse -invertedbg');
       if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
-        setNavigationName('');
         enableScroll(authorsScroll);
       } else if (visiblePage === 'authors') {
-        setNavigationTitle('Parla');
-        $('.js-back').addClass('_hidden');
         enableScroll(tokensScroll);
       }
       visiblePage = previousPageRelation[visiblePage];
