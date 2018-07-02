@@ -1,15 +1,16 @@
 const monthShortNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const today = new Date();
 
 $('.js-slider').dateRangeSlider({
   arrows: false,
   bounds: {
     min: new Date(2015, 0),
-    max: new Date(2018, 5)
+    max: new Date(today.getFullYear(), today.getMonth())
   },
 
   defaultValues:{
     min: new Date(2015, 0),
-    max: new Date(2018, 5)
+    max: new Date(today.getFullYear(), today.getMonth())
   },
 
   range:{
