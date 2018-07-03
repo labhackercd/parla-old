@@ -20,6 +20,8 @@ body {
 
   background: linear-gradient(180deg, $color-purple 0%, $color-purple-dark 100%);
 
+  ovewrflow: hidden;
+
   &.-invertedbg {
     background: #FFF;
   }
