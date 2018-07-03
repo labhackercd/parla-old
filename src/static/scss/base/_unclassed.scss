@@ -74,9 +74,11 @@ input {
 }
 
 .speeches {
+  display: flex;
   overflow: auto;
-
-  min-height: 80vh;
+  align-items: center;
+  flex-direction: column;
+  
 }
 
 .back._hidden {
