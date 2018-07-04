@@ -22,7 +22,6 @@ class Speech(models.Model):
 
 class Author(models.Model):
     name = models.CharField(max_length=250)
-    author_type = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         verbose_name = "Author"
