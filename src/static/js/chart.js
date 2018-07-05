@@ -149,17 +149,17 @@ function addHexagons(hexagonGroup, radius) {
   })
   .attr("x", 0)
   .attr("y", 0)
-  .attr("width", "300%")
-  .attr("height", "300%");
+  .attr("width", "120%")
+  .attr("height", "120%");
 
   filter.append("feOffset")
   .attr("result", "offOut")
   .attr("in", "SourceGraphic")
   .attr("dx", function(d) {
-    return 8*d.size;
+    return 4*d.size;
   })
   .attr("dy", function(d) {
-    return 8*d.size;
+    return 7*d.size;
   });
 
   filter.append("feColorMatrix")
@@ -172,7 +172,7 @@ function addHexagons(hexagonGroup, radius) {
   .attr("result", "blurOut")
   .attr("in", "matrixOut")
   .attr("stdDeviation", function(d){
-    return 6*d.size;
+    return 3*d.size;
   })
 
   filter.append("feBlend")
