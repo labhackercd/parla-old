@@ -109,8 +109,11 @@ function drawCanvas(selector, chartName) {
       .classed("js-svg-root", true)
       .attr("data-chart-name", chartName)
       .append('g')
-        .classed("js-chart", true)
-        .attr("transform-origin", "center top");
+        .classed("js-chart-wrapper", true)
+        .attr("transform-origin", "center top")
+        .append('g')
+          .classed("js-chart", true)
+          .attr("transform-origin", "center top");
 }
 
 function createHexagonGroup(canvas, data) {
@@ -245,17 +248,27 @@ function updateCanvasSize(canvas) {
   var bbox = chart.getBBox();
 
   var svg = $(chart).closest('.js-svg-root');
-  svg.width(Math.floor(bbox.width));
+  svg.width("100%");
   svg.height(Math.ceil(bbox.height));
 }
 
 function setTransformOrigin(canvas) {
   var chart = canvas[0][0];
+  var chartChildren = $(chart).children();
   var svgRoot = $(chart).closest('.js-svg-root');
   var svgBBox = svgRoot[0].getBBox();
   var lastHexagon = $(chart).find('.js-hexagon-group').last()[0];
   var bbox = lastHexagon.getBBox();
-  svgRoot.css('transform-origin', `${Math.ceil(bbox.x / svgBBox.width * 100)}% 99.95%`);
+  var chartCenterPos = ($('main .wrapper').width() / 2) - (svgBBox.width / 2);
+  var bboxYPos = bbox.y + bbox.height * 3;
+
+  $(chart).parent().attr('transform', `translate(${chartCenterPos}, 0)`);
+
+  if (chartChildren.length % 2 == 0) {
+    $(chart).css('transform-origin', `${bbox.x}px ${bboxYPos}px `);
+  } else {
+    $(chart).css('transform-origin', `${(bbox.x + bbox.width)}px ${bboxYPos}px `);
+  }
 }
 
 function wordChart() {
