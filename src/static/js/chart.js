@@ -110,10 +110,8 @@ function drawCanvas(selector, chartName) {
       .attr("data-chart-name", chartName)
       .append('g')
         .classed("js-chart-wrapper", true)
-        .attr("transform-origin", "center top")
         .append('g')
           .classed("js-chart", true)
-          .attr("transform-origin", "center top");
 }
 
 function createHexagonGroup(canvas, data) {
@@ -126,7 +124,6 @@ function createHexagonGroup(canvas, data) {
         .attr('data-id', function(d, i) {
           return d.id;
         })
-        .attr("transform-origin", "center")
         .append('g')
           .attr('id', function(d, i) {
             var chartName = $(this).closest('.js-svg-root').data('chartName');
@@ -134,7 +131,6 @@ function createHexagonGroup(canvas, data) {
           })
           .classed('_hidden', true)
           .classed('-small', true)
-          .attr("transform-origin", "center top");
 }
 
 function hexagonOnClick(hexagonGroup, callback) {
