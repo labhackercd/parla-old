@@ -244,8 +244,13 @@ function updateCanvasSize(canvas) {
   var bbox = chart.getBBox();
 
   var svg = $(chart).closest('.js-svg-root');
-  svg.width("100%");
-  svg.height(Math.ceil(bbox.height));
+  svg.attr('width', '100%');
+  svg.attr('viewBox', `0 0 ${bbox.width} ${bbox.height}`)
+}
+
+function setCanvasViewbox(canvas) {
+  $(canvas).attr('viewbox', )
+
 }
 
 function setTransformOrigin(canvas) {
@@ -255,10 +260,7 @@ function setTransformOrigin(canvas) {
   var svgBBox = svgRoot[0].getBBox();
   var lastHexagon = $(chart).find('.js-hexagon-group').last()[0];
   var bbox = lastHexagon.getBBox();
-  var chartCenterPos = ($('main .wrapper').width() / 2) - (svgBBox.width / 2);
   var bboxYPos = bbox.y + bbox.height * 3;
-
-  $(chart).parent().attr('transform', `translate(${chartCenterPos}, 0)`);
 
   if (chartChildren.length % 2 == 0) {
     $(chart).css('transform-origin', `${bbox.x}px ${bboxYPos}px `);
@@ -293,10 +295,10 @@ function wordChart() {
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
-      });
       tokensChart(data.stem);
       tokensScroll = scrollPosition;
       hammertime.destroy();
+      });
     });
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
@@ -319,9 +321,7 @@ function tokensChart(tokenId) {
     var canvas = drawCanvas('.wrapper','authors');
     var hexagonGroup = createHexagonGroup(canvas, data);
     addHexagons(hexagonGroup, 90);
-    $('.ball-animation').on('animationend', function() {
-      showHexagonGroup(hexagonGroup);
-    })
+    showHexagonGroup(hexagonGroup);
     hexagonOnClick(hexagonGroup, function(data) {
       $('.ball-animation').addClass('-invertedbg');
       $('.ball-animation').one('animationend', function(){
