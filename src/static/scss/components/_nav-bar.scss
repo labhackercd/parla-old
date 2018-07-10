@@ -4,7 +4,7 @@
   flex: 0 0 auto;
   justify-content: space-between;
 
-  height: 80px;
+  height: 55px;
   padding-right: 8vw;
   padding-left: 8vw;
 
@@ -70,7 +70,7 @@
 
   &.-negative {
     transition: all .4s linear;
-    
+
     color: #000;
 
     & > .filter {
