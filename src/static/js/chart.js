@@ -275,9 +275,9 @@ function wordChart() {
     $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
   };
 
-  var tokensScroll = 0;
-  var authorsScroll = 0;
-  var scrollPosition = 0;
+  // var tokensScroll = 0;
+  // var authorsScroll = 0;
+  // var scrollPosition = 0;
 
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
@@ -293,6 +293,7 @@ function wordChart() {
       tokensChart(data.stem);
       tokensScroll = scrollPosition;
       hammertime.destroy();
+
       });
     });
     positionHexagon(hexagonGroup);
@@ -309,9 +310,9 @@ function wordChart() {
 wordChart();
 
 function tokensChart(tokenId) {
-  var tokensScroll = 0;
-  var authorsScroll = 0;
-  var scrollPosition = 0;
+  // var tokensScroll = 0;
+  // var authorsScroll = 0;
+  // var scrollPosition = 0;
   loadData(`/visualizations/authors/${tokenId}`, function(data) {
     var canvas = drawCanvas('.wrapper','authors');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -327,6 +328,7 @@ function tokensChart(tokenId) {
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
       hammertime.destroy();
+
     })
 
     positionHexagon(hexagonGroup);

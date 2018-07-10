@@ -1,12 +1,9 @@
 var hammertime;
-var tokensScroll = 0;
-var authorsScroll = 0;
-var scrollPosition = 0;
+
 function enableScroll(initialPosition = 0) {
   scrollPosition = initialPosition;
   var idealHexagonNumber = 20;
   var hexagonsNumber = $('.js-page.-active .js-hexagon-group').length;
-
   var maxScroll = 30000 * (hexagonsNumber / idealHexagonNumber);
   var maxScale = 600 ** (hexagonsNumber / idealHexagonNumber);
 

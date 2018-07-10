@@ -28,6 +28,7 @@ $('.js-back-word-chart').on('click', function() {
   setNavigationTitle('Parla');
   setNavigationName('');
   visiblePage = 'tokens';
+  hammertime.destroy();
 
 
   $('.ball-animation').addClass('-active -reverse').one('animationend', function() {
@@ -53,6 +54,7 @@ $('.js-back').on('click', function() {
     $('body').removeClass('-invertedbg');
     current.remove();
     prev.removeClass('_hidden').addClass('-active');
+    hammertime.destroy();
 
     if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
       $('body').addClass('-invertedbg');
