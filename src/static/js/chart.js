@@ -245,12 +245,7 @@ function updateCanvasSize(canvas) {
 
   var svg = $(chart).closest('.js-svg-root');
   svg.attr('width', '100%');
-  svg.attr('viewBox', `0 0 ${bbox.width} ${bbox.height}`)
-}
-
-function setCanvasViewbox(canvas) {
-  $(canvas).attr('viewbox', )
-
+  svg.attr('viewBox', `0 0 ${bbox.width} 565`)
 }
 
 function setTransformOrigin(canvas) {
