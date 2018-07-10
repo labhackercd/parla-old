@@ -222,15 +222,13 @@ function addText(hexagonGroup) {
     .attr('y', 0)
     .attr('width', 1)
     .attr('height', 1)
+    .attr('transform', function(d, i) { return `scale(${d.size})`})
     .attr('overflow', 'visible')
     .append('xhtml:div')
-      .attr("class", 'text-box-wrapper')
-      .append('xhtml:div')
-        .attr("class", 'text-box')
-        .attr('style', function(d, i) { return `transform: scale(${d.size})`})
-        .append('xhtml:p')
-          .attr('class', 'text')
-          .text((d) => {return d.token;})
+      .attr("class", 'text-box')
+      .append('xhtml:p')
+        .attr('class', 'text')
+        .text((d) => {return d.token;})
 }
 
 function showHexagonGroup(hexagonGroup) {
