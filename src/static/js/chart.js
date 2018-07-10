@@ -255,7 +255,7 @@ function setTransformOrigin(canvas) {
   var svgBBox = svgRoot[0].getBBox();
   var lastHexagon = $(chart).find('.js-hexagon-group').last()[0];
   var bbox = lastHexagon.getBBox();
-  var bboxYPos = bbox.y + bbox.height * 3;
+  var bboxYPos = bbox.y + bbox.height * 2;
 
   if (chartChildren.length % 2 == 0) {
     $(chart).css('transform-origin', `${bbox.x}px ${bboxYPos}px `);
