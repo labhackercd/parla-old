@@ -141,59 +141,41 @@ function hexagonOnClick(hexagonGroup, callback) {
 }
 
 function addHexagons(hexagonGroup, radius) {
-  var filter = hexagonGroup.append("defs")
-  .append("filter")
-  .attr("id", function(d){
-    return "hexagon-filter-"+d.id;
-  })
-  .attr("x", 0)
-  .attr("y", 0)
-  .attr("width", "120%")
-  .attr("height", "120%");
-
-  filter.append("feOffset")
-  .attr("result", "offOut")
-  .attr("in", "SourceGraphic")
-  .attr("dx", function(d) {
-    return 4*d.size;
-  })
-  .attr("dy", function(d) {
-    return 7*d.size;
-  });
-
-  filter.append("feColorMatrix")
-  .attr("in", "offOut")
-  .attr("result", "matrixOut")
-  .attr("type", "matrix")
-  .attr("values", `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0`);
-
-  filter.append("feGaussianBlur")
-  .attr("result", "blurOut")
-  .attr("in", "matrixOut")
-  .attr("stdDeviation", function(d){
-    return 3*d.size;
-  })
-
-  filter.append("feBlend")
-  .attr("in", "SourceGraphic")
-  .attr("in2", "blurOut")
-  .attr("mode", "normal");
-
-  hexagonGroup.append("path")
+  var path = hexagonGroup.append("path")
   .classed('js-hexagon', true)
   .attr("fill", "white")
   .attr("d", function(d, i) {
     return drawHexagon(d.size, radius);
+  });
+
+  hexagonGroup.attr("width", function(d, i) {
+    return $(this).find('.js-hexagon')[0].getBBox().width;
+  });
+
+  hexagonGroup.attr("height", function(d, i) {
+    return $(this).find('.js-hexagon')[0].getBBox().height;
+  });
+
+  hexagonGroup.insert("image", ".js-hexagon")
+  .attr('x', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().width / -2;
   })
-  .attr("filter", function(d){
-    return `url(#hexagon-filter-${d.id})`;
+  .attr('y', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().height / -2;
   })
+  .attr('width', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().width * 1.065;
+  })
+  .attr('height', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().height * 1.065;
+  })
+  .attr('xlink:href', '/static/img/shadow.png');
 }
 
 function positionHexagon(hexagonGroup) {
   hexagonGroup.attr('transform', function(d, i) {
     d['element'] = this;
-    bbox = this.getBoundingClientRect();
+    bbox = $(this).find('.js-hexagon')[0].getBoundingClientRect();
 
     var translateX = bbox.width / 2;
     var translateY = bbox.height / 2;
