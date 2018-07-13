@@ -4,7 +4,7 @@
   overflow: none;
 
   box-sizing: border-box;
-  height: calc(100% - 80px);
+  height: calc(100% - 55px);
 
   transition: all .35s cubic-bezier(.55, 0, .1, 1);
   transform: translateY(100%);
@@ -17,7 +17,7 @@
   }
 
   & > .header {
-    padding: 20px 8vw 20px 8vw;
+    padding: 17px 8vw 17px 8vw;
   }
 
   & > .header > strong {
@@ -46,12 +46,13 @@
   & > .content {
     overflow-y: scroll;
 
-    height: calc(100% - 104px);
-    padding: 0 8vw 30px 8vw;
+    height: calc(100% - 55px);
+    padding: 0 8vw 0 8vw;
   }
 
   & > .content > p {
     font-size: 14px;
     line-height: 1.5;
+    padding-bottom: 30px;
   }
 }
