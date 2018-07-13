@@ -83,19 +83,40 @@ function addPage(element) {
 }
 
 function zoomInAnimation(element) {
-  var bbox = element.getBoundingClientRect();
+  var bbox = $(element).find('.js-hexagon')[0].getBoundingClientRect();
   var hexPositionTop = bbox.top + bbox.height / 2;
-  var hexPositionLeft = bbox.left + bbox.width / 2;
+  var hexPositionLeft = bbox.left + bbox.width  / 2;
+  var offsetX = Math.abs( ($(window).width() / 2) - hexPositionLeft );
+  var offsetY = Math.abs( ($(window).height() / 2) - hexPositionTop );
+  var deltaX = ($(window).width() / 2) + offsetX
+  var deltaY = ($(window).height() / 2) + offsetY;
+  window.scaleRatio = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
   $(element).parent().addClass('-active');
-  var ball = $('.ball-animation');
-  ball.addClass('-active')
-    .css('top', hexPositionTop + 'px')
-    .css('left', hexPositionLeft + 'px');
-  ball.one('animationend', function(){
-    $('.ball-animation').removeClass('-active');
-    $('body').addClass('-invertedbg');
-    $('.nav-bar').addClass('-negative');
-  });
+  var circleWrapper = $('.js-circle-wrapper');
+  var circle = $('.js-circle');
+
+  circleWrapper.css('transform', `translate(${hexPositionLeft}px, ${hexPositionTop}px)`);
+  circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
+
+  setTimeout(function(){
+    circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
+    circle.css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
+
+    circle.one('transitionend', function(){
+      circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
+
+      if ($('body').hasClass('-invertedbg')) {
+        circle.removeClass('-invertedbg');
+        $('body').removeClass('-invertedbg');
+        $('.nav-bar').removeClass('-negative');
+
+      } else {
+        circle.addClass('-invertedbg');
+        $('body').addClass('-invertedbg');
+        $('.nav-bar').addClass('-negative');
+      }
+    });
+  }, 1);
 }
 
 function drawCanvas(selector, chartName) {
@@ -268,7 +289,8 @@ function wordChart() {
     hexagonOnClick(hexagonGroup, function(data) {
       var currentPage = $(data.element).closest('.js-page');
       currentPage.removeClass('-active');
-      $('.ball-animation').one('animationend', function(){
+      $('.js-active-slider').addClass('-hide');
+      $('.js-circle').one('transitionend', function(){
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
@@ -301,10 +323,10 @@ function tokensChart(tokenId) {
     addHexagons(hexagonGroup, 90);
     showHexagonGroup(hexagonGroup);
     hexagonOnClick(hexagonGroup, function(data) {
-      $('.ball-animation').addClass('-invertedbg');
-      $('.ball-animation').one('animationend', function(){
-        $('body').removeClass('-invertedbg');
-        $('.nav-bar').removeClass('-negative');
+      // $('.js-circle').addClass('-invertedbg');
+      $('.js-circle').one('transitionend', function(){
+        // $('body').removeClass('-invertedbg');
+        // $('.nav-bar').removeClass('-negative');
         setNavigationName(data.token);
       });
       authorsChart(tokenId, data.id);
@@ -323,7 +345,6 @@ function tokensChart(tokenId) {
     $('.js-slider-max').text(parsedMaxValue);
     $('.js-inactive-slider').removeClass('-hide');
     $('.js-inactive-slider').addClass('-negative');
-    $('.js-active-slider').addClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
@@ -359,7 +380,7 @@ function authorsChart(tokenId, authorId) {
       item.append(hex);
       item.append(content);
     })
-    $('.ball-animation').one('animationend', function(){
+    $('.js-circle').one('transitionend', function(){
       addPage(speechesPage);
       speechesPage.append(hexGrid);
       $('.js-manifestation').on('click', function(e) {

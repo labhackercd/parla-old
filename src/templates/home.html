@@ -3,14 +3,26 @@
 
 {% block content %}
   <main>
+    <svg class="_hidden">
+      <symbol id="svg-circle" viewBox="0 0 100 100">
+        <circle cx="1" cy="1" r="1"></circle>
+      </symbol>
+    </svg>
+
+    <svg class="reveal-circle">
+      <g class="js-circle-wrapper">
+        <use class="circle js-circle" xlink:href="#svg-circle" width="100" height="100"></use>
+      </g>
+    </svg>
+
+    <div class="hex-bg">
+      <div class="element"></div>
+      <div class="element"></div>
+      <div class="element"></div>
+      <div class="element"></div>
+      <div class="element"></div>
+    </div>
     <div class="wrapper">
-      <div class="hex-bg">
-        <div class="element"></div>
-        <div class="element"></div>
-        <div class="element"></div>
-        <div class="element"></div>
-        <div class="element"></div>
-      </div>
       {% include "error-500.html" %}
       {% include "error-data.html" %}
     </div>

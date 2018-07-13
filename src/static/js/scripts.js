@@ -14,6 +14,7 @@ var previousPageRelation = {
 }
 
 $('.js-back-word-chart').on('click', function() {
+  zoomOutAnimation();
   $('body').removeClass('-invertedbg');
   $('.nav-bar').removeClass('-negative');
   $('.js-inactive-slider').addClass('-hide');
@@ -23,7 +24,7 @@ $('.js-back-word-chart').on('click', function() {
   $('.js-page:not(.js-page-token)').remove();
   $('.js-back').addClass('_hidden');
   if (visiblePage === 'manifestations' || visiblePage === 'manifestation') {
-    $('.ball-animation').removeClass('-invertedbg');
+    $('.js-circle').removeClass('-invertedbg');
   };
   setNavigationTitle('Parla');
   setNavigationName('');
@@ -31,7 +32,7 @@ $('.js-back-word-chart').on('click', function() {
   hammertime.destroy();
 
 
-  $('.ball-animation').addClass('-active -reverse').one('animationend', function() {
+  $('.js-circle').addClass('-active -reverse').one('transitionend', function() {
     enableScroll(tokensScroll);
     $(this).removeClass('-active -reverse');
   });
@@ -51,25 +52,22 @@ $('.js-back').on('click', function() {
     var prev = current.prev('.js-page');
 
     current.removeClass('-active');
-    $('body').removeClass('-invertedbg');
     current.remove();
     prev.removeClass('_hidden').addClass('-active');
     hammertime.destroy();
 
     if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
-      $('body').addClass('-invertedbg');
-      $('.nav-bar').addClass('-negative');
       $('.js-inactive-slider').addClass('-negative');
       setNavigationName('');
     } else if (visiblePage === 'authors') {
       setNavigationTitle('Parla');
       $('.js-back').addClass('_hidden');
-      $('body').removeClass('-invertedbg');
-      $('.nav-bar').removeClass('-negative');
     }
 
-    $('.ball-animation').addClass('-active -reverse').one('animationend', function() {
-      $(this).removeClass('-active -reverse -invertedbg');
+    zoomOutAnimation();
+
+    $('.js-circle').one('transitionend', function() {
+
       if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
         enableScroll(authorsScroll);
       } else if (visiblePage === 'authors') {
@@ -87,6 +85,35 @@ function setNavigationTitle(title){
 
 function setNavigationName(name){
   $('.js-name').text(name);
+}
+
+function zoomOutAnimation() {
+  var circleWrapper = $('.js-circle-wrapper');
+  var circle = $('.js-circle');
+
+  circle.removeClass('-animating').css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
+
+  if ($('body').hasClass('-invertedbg')) {
+    circle.removeClass('-invertedbg');
+    $('body').removeClass('-invertedbg');
+    $('.nav-bar').removeClass('-negative');
+    console.log('tem classe')
+
+  } else {
+    circle.addClass('-invertedbg');
+    $('body').addClass('-invertedbg');
+    $('.nav-bar').addClass('-negative');
+    console.log('nao tem')
+  }
+  setTimeout(function(){
+    circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
+    circle.css('transform', `scale(0) translateZ(0)`);
+
+
+    circle.one('transitionend', function(){
+      circle.removeClass('-animating');
+    });
+  }, 1);
 }
 
 document.addEventListener('touchmove', function(e) {
