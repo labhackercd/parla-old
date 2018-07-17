@@ -97,13 +97,11 @@ function zoomOutAnimation() {
     circle.removeClass('-invertedbg');
     $('body').removeClass('-invertedbg');
     $('.nav-bar').removeClass('-negative');
-    console.log('tem classe')
 
   } else {
     circle.addClass('-invertedbg');
     $('body').addClass('-invertedbg');
     $('.nav-bar').addClass('-negative');
-    console.log('nao tem')
   }
   setTimeout(function(){
     circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);

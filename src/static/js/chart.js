@@ -278,10 +278,6 @@ function wordChart() {
     $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
   };
 
-  // var tokensScroll = 0;
-  // var authorsScroll = 0;
-  // var scrollPosition = 0;
-
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -314,19 +310,13 @@ function wordChart() {
 wordChart();
 
 function tokensChart(tokenId) {
-  // var tokensScroll = 0;
-  // var authorsScroll = 0;
-  // var scrollPosition = 0;
   loadData(`/visualizations/authors/${tokenId}`, function(data) {
     var canvas = drawCanvas('.wrapper','authors');
     var hexagonGroup = createHexagonGroup(canvas, data);
     addHexagons(hexagonGroup, 90);
     showHexagonGroup(hexagonGroup);
     hexagonOnClick(hexagonGroup, function(data) {
-      // $('.js-circle').addClass('-invertedbg');
       $('.js-circle').one('transitionend', function(){
-        // $('body').removeClass('-invertedbg');
-        // $('.nav-bar').removeClass('-negative');
         setNavigationName(data.token);
       });
       authorsChart(tokenId, data.id);
