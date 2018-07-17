@@ -92,6 +92,8 @@ function zoomOutAnimation() {
   var circle = $('.js-circle');
 
   circle.removeClass('-animating').css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
+  $('body').removeClass('-animating');
+  window.circleAnimating = true;
 
   if ($('body').hasClass('-invertedbg')) {
     circle.removeClass('-invertedbg');
@@ -106,11 +108,14 @@ function zoomOutAnimation() {
   setTimeout(function(){
     circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
     circle.css('transform', `scale(0) translateZ(0)`);
-
+    $('body').addClass('-animating');
 
     circle.one('transitionend', function(){
       circle.removeClass('-animating');
+      $('body').removeClass('-animating');
     });
+
+    window.circleAnimating = false;
   }, 1);
 }
 

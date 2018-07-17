@@ -35,6 +35,10 @@ body {
   &.-invertedbg .text-box .text {
     color: #FFF;
   }
+
+  &.-animating, &.-processing {
+    pointer-events: none;
+  }
 }
 
 main {

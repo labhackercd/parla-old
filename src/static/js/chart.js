@@ -1,4 +1,5 @@
 var visiblePage = undefined;
+window.circleAnimating = undefined;
 
 function getUrlParameters() {
   searchParams = new URLSearchParams(window.location.search);
@@ -32,23 +33,60 @@ function loadData(url, callback) {
     type: "GET",
     url: url + '?' + getUrlParameters(),
     beforeSend: function() {
-      $('.hex-loading').addClass('-visible');
+      $('body').addClass('-processing');
+
+      if (window.circleAnimating === true) {
+        $('.js-circle').one('transitionend', function(){
+          if ($('body').hasClass('-processing')) {
+            $('.js-loading').addClass('-visible');
+            $('.js-loading-svg').show();
+          }
+        });
+      } else {
+        if ($('body').hasClass('-processing')) {
+          $('.js-loading').addClass('-visible');
+          $('.js-loading-svg').show();
+        }
+      }
+
     },
     success: function(data){
-      $('.hex-bg').addClass('-visible');
-      $('.hex-loading').removeClass('-visible');
+      $('body').removeClass('-processing');
 
-      if (data.length === 0) {
-        $('.js-active-slider').removeClass('-hide');
-        $('.js-error-data').removeClass('-hide');
+      $('.hex-bg').addClass('-visible');
+      $('.js-loading').removeClass('-visible').one('transitionend', function(){
+        $('.js-loading-svg').hide();
+      });
+      if ((window.circleAnimating === true) ) {
+        $('.js-circle').one('transitionend', function(){
+          $('.js-loading').removeClass('-visible').one('transitionend', function(){
+            $('.js-loading-svg').hide();
+          });
+
+          if (data.length === 0) {
+            $('.js-active-slider').removeClass('-hide');
+            $('.js-error-data').removeClass('-hide');
+          } else {
+            $('.js-error-data').addClass('-hide');
+            callback(data);
+          }
+        })
+
       } else {
-        $('.js-error-data').addClass('-hide');
-        callback(data);
+        if (data.length === 0) {
+          $('.js-active-slider').removeClass('-hide');
+          $('.js-error-data').removeClass('-hide');
+        } else {
+          $('.js-error-data').addClass('-hide');
+          callback(data);
+        }
       }
+
     },
     error: function(data) {
+      $('body').removeClass('-processing');
       $('.js-error-server').removeClass('-hide');
-      $('.hex-loading').removeClass('-visible');
+      $('.js-loading').removeClass('-visible');
     }
   });
 
@@ -78,7 +116,6 @@ function drawHexagon(scale, radius = 90) {
 
 function addPage(element) {
   $('.wrapper').append(element);
-  $('.js-page').removeClass('-active').addClass('_hidden');
   element.removeClass('_hidden').addClass('-active');
 }
 
@@ -97,13 +134,19 @@ function zoomInAnimation(element) {
 
   circleWrapper.css('transform', `translate(${hexPositionLeft}px, ${hexPositionTop}px)`);
   circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
+  $('body').removeClass('-animating');
+  window.circleAnimating = true;
+
 
   setTimeout(function(){
+    $('body').addClass('-animating');
     circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
     circle.css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
 
     circle.one('transitionend', function(){
       circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
+      $('body').removeClass('-animating');
+
 
       if ($('body').hasClass('-invertedbg')) {
         circle.removeClass('-invertedbg');
@@ -115,6 +158,8 @@ function zoomInAnimation(element) {
         $('body').addClass('-invertedbg');
         $('.nav-bar').addClass('-negative');
       }
+
+      window.circleAnimating = false;
     });
   }, 1);
 }
@@ -290,11 +335,11 @@ function wordChart() {
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
+
+      });
       tokensChart(data.stem);
       tokensScroll = scrollPosition;
       hammertime.destroy();
-
-      });
     });
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
@@ -316,8 +361,12 @@ function tokensChart(tokenId) {
     addHexagons(hexagonGroup, 90);
     showHexagonGroup(hexagonGroup);
     hexagonOnClick(hexagonGroup, function(data) {
+      var currentPage = $(data.element).closest('.js-page');
       $('.js-circle').one('transitionend', function(){
+        currentPage.addClass('_hidden');
+        currentPage.removeClass('-active');
         setNavigationName(data.token);
+        $('.js-inactive-slider').removeClass('-negative');
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
@@ -346,7 +395,6 @@ function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
     speechesPage.addClass('speeches js-page js-page-speeches');
-    $('.js-inactive-slider').removeClass('-negative');
 
     var hexGrid = $("<div class='speeches-list page-content'>");
 
@@ -369,21 +417,20 @@ function authorsChart(tokenId, authorId) {
       hexGrid.append(item);
       item.append(hex);
       item.append(content);
-    })
-    $('.js-circle').one('transitionend', function(){
+
+
       addPage(speechesPage);
       speechesPage.append(hexGrid);
-      $('.js-manifestation').on('click', function(e) {
-        manifestationPage($(this).data('manifestationId'), tokenId);
-      })
-
-      $('.manifestation-page').remove();
-      var manifestationPageElement = $(document.createElement('div'))
-      manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
-      $('main').append(manifestationPageElement);
       visiblePage = 'manifestations';
     });
 
+    $('.manifestation-page').remove();
+    $('.js-manifestation').on('click', function(e) {
+      manifestationPage($(this).data('manifestationId'), tokenId);
+    })
+    var manifestationPageElement = $(document.createElement('div'))
+    manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
+    $('main').append(manifestationPageElement);
   })
 }
 
