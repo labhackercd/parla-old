@@ -18,8 +18,6 @@
     width: 100%;
     height: 5px;
 
-    transition: background-color .3s $swift-out;
-
     background-color: currentColor;
 
     &::before,
@@ -31,7 +29,6 @@
       height: 13px;
 
       content: '';
-      transition: background-color .3s $swift-out;
 
       background-color: currentColor;
     }
@@ -61,13 +58,19 @@
 
     text-decoration: underline;
 
+    display: flex;
+    align-items: center;
+
     &::before {
+      font-family: Arial, Helvetica, sans-serif;
       font-weight: bolder;
 
       position: absolute;
       left: -3px;
 
-      content: '🠄';
+      display: flex;
+
+      content: '←';
       transform: translateX(-100%);
     }
   }

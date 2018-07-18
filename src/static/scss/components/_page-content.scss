@@ -1,5 +1,15 @@
 .page-content {
   display: flex;
-  justify-content: center;
   flex: 1 0 auto;
+  justify-content: center;
+
+   > svg {
+    padding-top: 45px;
+
+    g {
+      transition: opacity .35s linear;
+
+      opacity: 1;
+    }
+  }
 }

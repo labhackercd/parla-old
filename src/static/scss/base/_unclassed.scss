@@ -1,6 +1,8 @@
 html {
   font-family: 'Roboto', sans-serif;
 
+  overflow: hidden;
+
   width: 100%;
   height: 100%;
 
@@ -18,20 +20,22 @@ body {
   height: 100%;
   max-height: 100%;
 
-  background: linear-gradient(180deg, $color-purple 0%, $color-purple-dark 100%);
-
-  ovewrflow: hidden;
+  background: $color-purple-dark;
 
   &.-invertedbg {
     background: #FFF;
   }
 
   &.-invertedbg .page-content.-active svg path {
-    fill: $color-purple;
+    fill: $color-purple-dark;
   }
 
   &.-invertedbg .text-box .text {
     color: #FFF;
+  }
+
+  &.-animating, &.-processing {
+    pointer-events: none;
   }
 }
 
@@ -49,12 +53,6 @@ main {
   transition: mask-image .35s cubic-bezier(.55, 0, .1, 1);
 
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 45px, black calc(100% - 45px), rgba(0, 0, 0, 0) 100%);
-}
-
-svg g {
-  transition: opacity .35s linear;
-
-  opacity: 1;
 }
 
 input {
@@ -78,7 +76,6 @@ input {
   overflow: auto;
   align-items: center;
   flex-direction: column;
-  
 }
 
 .back._hidden {

@@ -1,4 +1,5 @@
 var visiblePage = undefined;
+window.circleAnimating = undefined;
 
 function getUrlParameters() {
   searchParams = new URLSearchParams(window.location.search);
@@ -32,23 +33,60 @@ function loadData(url, callback) {
     type: "GET",
     url: url + '?' + getUrlParameters(),
     beforeSend: function() {
-      $('.hex-loading').addClass('-visible');
+      $('body').addClass('-processing');
+
+      if (window.circleAnimating === true) {
+        $('.js-circle').one('transitionend', function(){
+          if ($('body').hasClass('-processing')) {
+            $('.js-loading').addClass('-visible');
+            $('.js-loading-svg').show();
+          }
+        });
+      } else {
+        if ($('body').hasClass('-processing')) {
+          $('.js-loading').addClass('-visible');
+          $('.js-loading-svg').show();
+        }
+      }
+
     },
     success: function(data){
-      $('.hex-bg').addClass('-visible');
-      $('.hex-loading').removeClass('-visible');
+      $('body').removeClass('-processing');
 
-      if (data.length === 0) {
-        $('.js-active-slider').removeClass('-hide');
-        $('.js-error-data').removeClass('-hide');
+      $('.hex-bg').addClass('-visible');
+      $('.js-loading').removeClass('-visible').one('transitionend', function(){
+        $('.js-loading-svg').hide();
+      });
+      if ((window.circleAnimating === true) ) {
+        $('.js-circle').one('transitionend', function(){
+          $('.js-loading').removeClass('-visible').one('transitionend', function(){
+            $('.js-loading-svg').hide();
+          });
+
+          if (data.length === 0) {
+            $('.js-active-slider').removeClass('-hide');
+            $('.js-error-data').removeClass('-hide');
+          } else {
+            $('.js-error-data').addClass('-hide');
+            callback(data);
+          }
+        })
+
       } else {
-        $('.js-error-data').addClass('-hide');
-        callback(data);
+        if (data.length === 0) {
+          $('.js-active-slider').removeClass('-hide');
+          $('.js-error-data').removeClass('-hide');
+        } else {
+          $('.js-error-data').addClass('-hide');
+          callback(data);
+        }
       }
+
     },
     error: function(data) {
+      $('body').removeClass('-processing');
       $('.js-error-server').removeClass('-hide');
-      $('.hex-loading').removeClass('-visible');
+      $('.js-loading').removeClass('-visible');
     }
   });
 
@@ -78,24 +116,58 @@ function drawHexagon(scale, radius = 90) {
 
 function addPage(element) {
   $('.wrapper').append(element);
-  $('.js-page').removeClass('-active').addClass('_hidden');
   element.removeClass('_hidden').addClass('-active');
 }
 
 function zoomInAnimation(element) {
-  var bbox = element.getBoundingClientRect();
-  var hexPositionTop = bbox.top + bbox.height / 2;
-  var hexPositionLeft = bbox.left + bbox.width / 2;
+  var bbox = $(element).find('.js-hexagon')[0].getBoundingClientRect();
+  var hexPositionTop = bbox.top -1 + bbox.height / 2;
+  var hexPositionLeft = bbox.left -1 + bbox.width  / 2;
+  var offsetX = Math.abs( ($(window).width() / 2) - hexPositionLeft );
+  var offsetY = Math.abs( ($(window).height() / 2) - hexPositionTop );
+  var deltaX = ($(window).width() / 2) + offsetX
+  var deltaY = ($(window).height() / 2) + offsetY;
+  window.scaleRatio = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
   $(element).parent().addClass('-active');
-  var ball = $('.ball-animation');
-  ball.addClass('-active')
-    .css('top', hexPositionTop + 'px')
-    .css('left', hexPositionLeft + 'px');
-  ball.one('animationend', function(){
-    $('.ball-animation').removeClass('-active');
-    $('body').addClass('-invertedbg');
-    $('.nav-bar').addClass('-negative');
-  });
+  var circleWrapper = $('.js-circle-wrapper');
+  var circle = $('.js-circle');
+
+  circleWrapper.css('transform', `translate(${hexPositionLeft}px, ${hexPositionTop}px)`);
+  circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`).hide();
+  $('body').removeClass('-animating');
+  window.circleAnimating = true;
+
+
+  setTimeout(function(){
+    $('body').addClass('-animating');
+    circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
+    circle.show().css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
+
+    circle.one('transitionend', function(){
+      if ($('body').hasClass('-invertedbg')) {
+        $('body').removeClass('-invertedbg');
+        $('.nav-bar').removeClass('-negative');
+
+      } else {
+        $('body').addClass('-invertedbg');
+        $('.nav-bar').addClass('-negative');
+      }
+
+      circle.addClass('-fadeout').one('transitionend', function(){
+
+        circle.hide().removeClass('-fadeout');
+        $('body').removeClass('-animating');
+
+        if (circle.hasClass('-invertedbg')) {
+          circle.removeClass('-invertedbg');
+        } else {
+          circle.addClass('-invertedbg');
+        }
+      });
+
+      window.circleAnimating = false;
+    });
+  }, 1);
 }
 
 function drawCanvas(selector, chartName) {
@@ -109,8 +181,9 @@ function drawCanvas(selector, chartName) {
       .classed("js-svg-root", true)
       .attr("data-chart-name", chartName)
       .append('g')
-        .classed("js-chart", true)
-        .attr("transform-origin", "center top");
+        .classed("js-chart-wrapper", true)
+        .append('g')
+          .classed("js-chart", true)
 }
 
 function createHexagonGroup(canvas, data) {
@@ -123,7 +196,6 @@ function createHexagonGroup(canvas, data) {
         .attr('data-id', function(d, i) {
           return d.id;
         })
-        .attr("transform-origin", "center")
         .append('g')
           .attr('id', function(d, i) {
             var chartName = $(this).closest('.js-svg-root').data('chartName');
@@ -131,7 +203,6 @@ function createHexagonGroup(canvas, data) {
           })
           .classed('_hidden', true)
           .classed('-small', true)
-          .attr("transform-origin", "center top");
 }
 
 function hexagonOnClick(hexagonGroup, callback) {
@@ -142,59 +213,41 @@ function hexagonOnClick(hexagonGroup, callback) {
 }
 
 function addHexagons(hexagonGroup, radius) {
-  var filter = hexagonGroup.append("defs")
-  .append("filter")
-  .attr("id", function(d){
-    return "hexagon-filter-"+d.id;
-  })
-  .attr("x", 0)
-  .attr("y", 0)
-  .attr("width", "300%")
-  .attr("height", "300%");
-
-  filter.append("feOffset")
-  .attr("result", "offOut")
-  .attr("in", "SourceGraphic")
-  .attr("dx", function(d) {
-    return 8*d.size;
-  })
-  .attr("dy", function(d) {
-    return 8*d.size;
-  });
-
-  filter.append("feColorMatrix")
-  .attr("in", "offOut")
-  .attr("result", "matrixOut")
-  .attr("type", "matrix")
-  .attr("values", `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0`);
-
-  filter.append("feGaussianBlur")
-  .attr("result", "blurOut")
-  .attr("in", "matrixOut")
-  .attr("stdDeviation", function(d){
-    return 6*d.size;
-  })
-
-  filter.append("feBlend")
-  .attr("in", "SourceGraphic")
-  .attr("in2", "blurOut")
-  .attr("mode", "normal");
-
-  hexagonGroup.append("path")
+  var path = hexagonGroup.append("path")
   .classed('js-hexagon', true)
   .attr("fill", "white")
   .attr("d", function(d, i) {
     return drawHexagon(d.size, radius);
+  });
+
+  hexagonGroup.attr("width", function(d, i) {
+    return $(this).find('.js-hexagon')[0].getBBox().width;
+  });
+
+  hexagonGroup.attr("height", function(d, i) {
+    return $(this).find('.js-hexagon')[0].getBBox().height;
+  });
+
+  hexagonGroup.insert("image", ".js-hexagon")
+  .attr('x', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().width / -2;
   })
-  .attr("filter", function(d){
-    return `url(#hexagon-filter-${d.id})`;
+  .attr('y', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().height / -2;
   })
+  .attr('width', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().width * 1.065;
+  })
+  .attr('height', function(d, i) {
+    return $(this).siblings('.js-hexagon')[0].getBBox().height * 1.065;
+  })
+  .attr('xlink:href', '/static/img/shadow.png');
 }
 
 function positionHexagon(hexagonGroup) {
   hexagonGroup.attr('transform', function(d, i) {
     d['element'] = this;
-    bbox = this.getBoundingClientRect();
+    bbox = $(this).find('.js-hexagon')[0].getBoundingClientRect();
 
     var translateX = bbox.width / 2;
     var translateY = bbox.height / 2;
@@ -219,10 +272,10 @@ function positionHexagon(hexagonGroup) {
 
 function addText(hexagonGroup) {
   hexagonGroup.append("foreignObject")
-    .attr('x', function(d, i) { return d.element.getBBox().x; })
-    .attr('y', function(d, i) { return d.element.getBBox().y; })
-    .attr('width', function(d, i) { return d.element.getBBox().width; })
-    .attr('height', function(d, i) { return d.element.getBBox().height; })
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('width', 1)
+    .attr('height', 1)
     .attr('transform', function(d, i) { return `scale(${d.size})`})
     .attr('overflow', 'visible')
     .append('xhtml:div')
@@ -245,17 +298,24 @@ function updateCanvasSize(canvas) {
   var bbox = chart.getBBox();
 
   var svg = $(chart).closest('.js-svg-root');
-  svg.width(Math.floor(bbox.width));
-  svg.height(Math.ceil(bbox.height));
+  svg.attr('width', '100%');
+  svg.attr('viewBox', `0 0 ${bbox.width} 565`)
 }
 
 function setTransformOrigin(canvas) {
   var chart = canvas[0][0];
+  var chartChildren = $(chart).children();
   var svgRoot = $(chart).closest('.js-svg-root');
   var svgBBox = svgRoot[0].getBBox();
   var lastHexagon = $(chart).find('.js-hexagon-group').last()[0];
   var bbox = lastHexagon.getBBox();
-  svgRoot.css('transform-origin', `${Math.ceil(bbox.x / svgBBox.width * 100)}% 99.95%`);
+  var bboxYPos = bbox.y + bbox.height * 2;
+
+  if (chartChildren.length % 2 == 0) {
+    $(chart).css('transform-origin', `${bbox.x}px ${bboxYPos}px `);
+  } else {
+    $(chart).css('transform-origin', `${(bbox.x + bbox.width)}px ${bboxYPos}px `);
+  }
 }
 
 function wordChart() {
@@ -269,10 +329,6 @@ function wordChart() {
     $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
   };
 
-  var tokensScroll = 0;
-  var authorsScroll = 0;
-  var scrollPosition = 0;
-
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
     var hexagonGroup = createHexagonGroup(canvas, data);
@@ -280,10 +336,12 @@ function wordChart() {
     hexagonOnClick(hexagonGroup, function(data) {
       var currentPage = $(data.element).closest('.js-page');
       currentPage.removeClass('-active');
-      $('.ball-animation').one('animationend', function(){
+      $('.js-active-slider').addClass('-hide');
+      $('.js-circle').one('transitionend', function(){
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
+
       });
       tokensChart(data.stem);
       tokensScroll = scrollPosition;
@@ -303,26 +361,23 @@ function wordChart() {
 wordChart();
 
 function tokensChart(tokenId) {
-  var tokensScroll = 0;
-  var authorsScroll = 0;
-  var scrollPosition = 0;
   loadData(`/visualizations/authors/${tokenId}`, function(data) {
     var canvas = drawCanvas('.wrapper','authors');
     var hexagonGroup = createHexagonGroup(canvas, data);
     addHexagons(hexagonGroup, 90);
-    $('.ball-animation').on('animationend', function() {
-      showHexagonGroup(hexagonGroup);
-    })
+    showHexagonGroup(hexagonGroup);
     hexagonOnClick(hexagonGroup, function(data) {
-      $('.ball-animation').addClass('-invertedbg');
-      $('.ball-animation').one('animationend', function(){
-        $('body').removeClass('-invertedbg');
-        $('.nav-bar').removeClass('-negative');
+      var currentPage = $(data.element).closest('.js-page');
+      $('.js-circle').one('transitionend', function(){
+        currentPage.addClass('_hidden');
+        currentPage.removeClass('-active');
         setNavigationName(data.token);
+        $('.js-inactive-slider').removeClass('-negative');
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
       hammertime.destroy();
+
     })
 
     positionHexagon(hexagonGroup);
@@ -335,7 +390,6 @@ function tokensChart(tokenId) {
     $('.js-slider-max').text(parsedMaxValue);
     $('.js-inactive-slider').removeClass('-hide');
     $('.js-inactive-slider').addClass('-negative');
-    $('.js-active-slider').addClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
@@ -347,7 +401,6 @@ function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
     speechesPage.addClass('speeches js-page js-page-speeches');
-    $('.js-inactive-slider').removeClass('-negative');
 
     var hexGrid = $("<div class='speeches-list page-content'>");
 
@@ -370,21 +423,20 @@ function authorsChart(tokenId, authorId) {
       hexGrid.append(item);
       item.append(hex);
       item.append(content);
-    })
-    $('.ball-animation').one('animationend', function(){
+
+
       addPage(speechesPage);
       speechesPage.append(hexGrid);
-      $('.js-manifestation').on('click', function(e) {
-        manifestationPage($(this).data('manifestationId'), tokenId);
-      })
-
-      $('.manifestation-page').remove();
-      var manifestationPageElement = $(document.createElement('div'))
-      manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
-      $('main').append(manifestationPageElement);
       visiblePage = 'manifestations';
     });
 
+    $('.manifestation-page').remove();
+    $('.js-manifestation').on('click', function(e) {
+      manifestationPage($(this).data('manifestationId'), tokenId);
+    })
+    var manifestationPageElement = $(document.createElement('div'))
+    manifestationPageElement.addClass('manifestation-page js-page js-page-manifestation');
+    $('main').append(manifestationPageElement);
   })
 }
 

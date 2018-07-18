@@ -1,12 +1,9 @@
 var hammertime;
-var tokensScroll = 0;
-var authorsScroll = 0;
-var scrollPosition = 0;
+
 function enableScroll(initialPosition = 0) {
   scrollPosition = initialPosition;
   var idealHexagonNumber = 20;
   var hexagonsNumber = $('.js-page.-active .js-hexagon-group').length;
-
   var maxScroll = 30000 * (hexagonsNumber / idealHexagonNumber);
   var maxScale = 600 ** (hexagonsNumber / idealHexagonNumber);
 
@@ -24,7 +21,7 @@ function enableScroll(initialPosition = 0) {
 
     var scrollRatio = scrollPosition / maxScroll;
 
-    var svg = $('.js-page.-active > .js-svg-root')[0];
+    var svg = $('.js-page.-active > .js-svg-root .js-chart')[0];
     var scale = svg.style.getPropertyValue('transform').indexOf('scale');
     if (scale === -1) {
       scale = 1;
@@ -32,6 +29,6 @@ function enableScroll(initialPosition = 0) {
       scale = maxScale ** scrollRatio;
     }
 
-    $(svg).css('transform', `scale(${scale})`);
+    $(svg).css('transform', `scale(${scale}) translateZ(0)`);
   });
 }
