@@ -121,8 +121,8 @@ function addPage(element) {
 
 function zoomInAnimation(element) {
   var bbox = $(element).find('.js-hexagon')[0].getBoundingClientRect();
-  var hexPositionTop = bbox.top + bbox.height / 2;
-  var hexPositionLeft = bbox.left + bbox.width  / 2;
+  var hexPositionTop = bbox.top -1 + bbox.height / 2;
+  var hexPositionLeft = bbox.left -1 + bbox.width  / 2;
   var offsetX = Math.abs( ($(window).width() / 2) - hexPositionLeft );
   var offsetY = Math.abs( ($(window).height() / 2) - hexPositionTop );
   var deltaX = ($(window).width() / 2) + offsetX
