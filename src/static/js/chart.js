@@ -133,7 +133,7 @@ function zoomInAnimation(element) {
   var circle = $('.js-circle');
 
   circleWrapper.css('transform', `translate(${hexPositionLeft}px, ${hexPositionTop}px)`);
-  circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
+  circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`).hide();
   $('body').removeClass('-animating');
   window.circleAnimating = true;
 
@@ -141,23 +141,29 @@ function zoomInAnimation(element) {
   setTimeout(function(){
     $('body').addClass('-animating');
     circle.addClass('-animating').css('transform', `scale(0) translateZ(0)`);
-    circle.css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
+    circle.show().css('transform', `scale(${window.scaleRatio}) translateZ(0)`);
 
     circle.one('transitionend', function(){
-      circle.removeClass('-animating').css('transform', `scale(0) translateZ(0)`);
-      $('body').removeClass('-animating');
-
-
       if ($('body').hasClass('-invertedbg')) {
-        circle.removeClass('-invertedbg');
         $('body').removeClass('-invertedbg');
         $('.nav-bar').removeClass('-negative');
 
       } else {
-        circle.addClass('-invertedbg');
         $('body').addClass('-invertedbg');
         $('.nav-bar').addClass('-negative');
       }
+
+      circle.addClass('-fadeout').one('transitionend', function(){
+
+        circle.hide().removeClass('-fadeout');
+        $('body').removeClass('-animating');
+
+        if (circle.hasClass('-invertedbg')) {
+          circle.removeClass('-invertedbg');
+        } else {
+          circle.addClass('-invertedbg');
+        }
+      });
 
       window.circleAnimating = false;
     });
