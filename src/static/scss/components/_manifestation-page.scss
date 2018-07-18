@@ -45,6 +45,7 @@
 
   & > .content {
     overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 
     height: calc(100% - 55px);
     padding: 0 8vw 0 8vw;
