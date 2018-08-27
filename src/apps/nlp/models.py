@@ -97,9 +97,9 @@ class Analysis(models.Model):
     @property
     def data(self):
         if self._data:
-            return Counter(json.loads(self._data))
+            return json.loads(self._data)
         else:
-            return []
+            return {}
 
     @data.setter
     def data(self, value):

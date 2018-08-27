@@ -39,12 +39,12 @@ def tokens(request):
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request) &
-        Q(analysis_type=models.Analysis.TOKEN)
+        get_algorithm_filter(request)
     )
     bow = Counter()
     for analysis in analyses:
-        bow.update(analysis.data)
+        for stem, token_data in analysis.data.items():
+            bow.update({stem: token_data['authors_count']})
 
     tokens = models.Token.objects.all()
     final_dict = []
@@ -70,12 +70,13 @@ def token_authors(request, token):
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request) &
-        Q(analysis_type=models.Analysis.AUTHOR, stem=token)
+        get_algorithm_filter(request)
     )
     bow = Counter()
     for analysis in analyses:
-        bow.update(analysis.data)
+        token_data = analysis.data[token]
+        for author, author_data in token_data['authors'].items():
+            bow.update({author: author_data['texts_count']})
 
     authors = data_models.Author.objects.all()
     final_dict = []

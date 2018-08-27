@@ -31,9 +31,6 @@ def process_speech(speech, ngrams=1):
             st.save()
             print(st)
 
-        speech.pre_processed = True
-        speech.save()
-
 
 def process_speeches(algorithm, ngrams=1):
     last = nlp.PreProcessing.objects.filter(algorithm=algorithm).last()

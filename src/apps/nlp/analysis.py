@@ -1,7 +1,6 @@
 from django.db.models import Q
 from django.db import transaction
 from dateutil.rrule import rrule, MONTHLY
-from collections import Counter
 from calendar import monthrange
 from click import progressbar, secho
 import datetime
@@ -15,130 +14,55 @@ def date_filter(start_date, end_date):
 
 
 def months(queryset):
-    start_date = queryset.first().speech.date
-    end_date = queryset.last().speech.date
+    start_date = queryset.first().date
+    end_date = queryset.last().date
     return rrule(MONTHLY, dtstart=start_date, until=end_date)
 
 
-@transaction.atomic()
-def ngrams_token_analysis(ngrams=1):
-    speech_tokens = nlp.SpeechToken.objects.filter(
-        token__ngrams=ngrams
-    ).order_by('speech__date')
-
+def ngrams_analysis(ngrams=1):
+    speech_list = data.Speech.objects.all().order_by('date')
     if ngrams == 1:
         algorithm = nlp.Analysis.UNIGRAM_BOW
     else:
         algorithm = nlp.Analysis.BIGRAM_BOW
 
-    for date in months(speech_tokens):
+    for date in months(speech_list):
         days = monthrange(date.year, date.month)[1]
         start_date = datetime.datetime(date.year, date.month, 1)
         end_date = datetime.datetime(date.year, date.month, days)
-
         secho('Fetching data from {} to {}'.format(start_date, end_date))
-        queryset = speech_tokens.filter(date_filter(start_date, end_date))
 
-        bow = Counter()
-        secho('Processing speeches')
+        queryset = nlp.SpeechToken.objects.filter(
+            token__ngrams=ngrams,
+            speech__date__gte=start_date,
+            speech__date__lte=end_date
+        )
+        final_dict = {}
+
         with progressbar(queryset) as bar:
             for speech_token in bar:
-                bow.update({speech_token.token.stem: speech_token.occurrences})
+                token_data = final_dict.get(speech_token.token.stem, {})
+                authors = token_data.get('authors', {})
+                author_data = authors.get(speech_token.speech.author.id, {})
+                texts = author_data.get('texts', [])
 
-        if len(bow) > 0:
-            secho('\nSaving analysis')
-            analysis = nlp.Analysis.objects.get_or_create(
-                start_date=start_date,
-                end_date=end_date,
-                algorithm=algorithm,
-                analysis_type=nlp.Analysis.TOKEN
-            )[0]
-            analysis.data = bow
-            analysis.save()
-        secho('Done!')
-
-
-@transaction.atomic()
-def ngrams_author_analysis(ngrams=1):
-    tokens = nlp.Token.objects.filter(ngrams=ngrams)
-    speech_tokens = nlp.SpeechToken.objects.filter(
-        token__ngrams=ngrams
-    ).order_by('speech__date')
-
-    if ngrams == 1:
-        algorithm = nlp.Analysis.UNIGRAM_BOW
-    else:
-        algorithm = nlp.Analysis.BIGRAM_BOW
-
-    for date in months(speech_tokens):
-        days = monthrange(date.year, date.month)[1]
-        start_date = datetime.datetime(date.year, date.month, 1)
-        end_date = datetime.datetime(date.year, date.month, days)
-        secho('Fetching data from {} to {}'.format(start_date, end_date))
-
-        with progressbar(tokens) as bar:
-            for token in bar:
-                queryset = speech_tokens.filter(
-                    date_filter(start_date, end_date) &
-                    Q(token__stem=token.stem)
+                texts.append(
+                    {speech_token.speech.id: speech_token.occurrences}
                 )
 
-                bow = Counter()
-                for st in queryset:
-                    bow.update(
-                        {st.speech.author.id: st.occurrences}
-                    )
+                author_data['texts_count'] = len(texts)
+                author_data['texts'] = texts
+                authors[speech_token.speech.author.id] = author_data
+                token_data['authors'] = authors
+                token_data['authors_count'] = len(authors)
+                final_dict[speech_token.token.stem] = token_data
 
-                if len(bow):
-                    analysis = nlp.Analysis.objects.get_or_create(
-                        start_date=start_date,
-                        end_date=end_date,
-                        algorithm=algorithm,
-                        stem=token.stem,
-                        analysis_type=nlp.Analysis.AUTHOR
-                    )[0]
-                    analysis.data = bow
-                    analysis.save()
+            if len(final_dict) > 0:
+                analysis = nlp.Analysis.objects.get_or_create(
+                    start_date=start_date,
+                    end_date=end_date,
+                    algorithm=algorithm
+                )[0]
 
-
-@transaction.atomic()
-def ngrams_speech_analysis(ngrams=1):
-    authors = data.Author.objects.all()
-    tokens = nlp.Token.objects.filter(ngrams=ngrams)
-    speech_tokens = nlp.SpeechToken.objects.filter(
-        token__ngrams=ngrams
-    ).order_by('speech__date')
-
-    if ngrams == 1:
-        algorithm = nlp.Analysis.UNIGRAM_BOW
-    else:
-        algorithm = nlp.Analysis.BIGRAM_BOW
-
-    for date in months(speech_tokens):
-        days = monthrange(date.year, date.month)[1]
-        start_date = datetime.datetime(date.year, date.month, 1)
-        end_date = datetime.datetime(date.year, date.month, days)
-        secho('Fetching data from {} to {}'.format(start_date, end_date))
-
-        with progressbar(authors) as bar:
-            for author in bar:
-                for token in tokens:
-                    queryset = speech_tokens.filter(
-                        date_filter(start_date, end_date) &
-                        Q(token__stem=token.stem)
-                    )
-                    bow = Counter()
-                    for st in queryset:
-                        bow.update({st.speech.id: st.occurrences})
-
-                    if len(bow) > 0:
-                        analysis = nlp.Analysis.objects.get_or_create(
-                            start_date=start_date,
-                            end_date=end_date,
-                            algorithm=algorithm,
-                            stem=token.stem,
-                            author_id=author.id,
-                            analysis_type=nlp.Analysis.MANIFESTATION
-                        )[0]
-                        analysis.data = bow
-                        analysis.save()
+                analysis.data = final_dict
+                analysis.save()
