@@ -4,6 +4,7 @@ from django.db import models
 class Speech(models.Model):
     id_in_channel = models.CharField(max_length=50)
     content = models.TextField()
+    indexes = models.TextField(null=True, blank=True)
     original = models.TextField()
     date = models.DateField()
     time = models.TimeField()

@@ -72,8 +72,11 @@ def create_speeches(data_list):
         for attr in data['attrs']:
             if hasattr(speech, attr['field']):
                 setattr(speech, attr['field'], attr['value'])
+            if attr['field'] == 'indexacao':
+                speech.indexes = attr['value']
 
         speech.content = pre_processing.clear_speech(speech.original)
         speech.save()
+        print(speech)
         speech_list.append(speech)
     return speech_list
