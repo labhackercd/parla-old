@@ -35,6 +35,7 @@ class SpeechToken(models.Model):
                                on_delete=models.CASCADE)
     token = models.ForeignKey('nlp.Token', related_name='speeches',
                               on_delete=models.CASCADE)
+    use_indexes = models.BooleanField(default=False)
     occurrences = models.IntegerField(default=0)
     frequency = models.FloatField(default=0)
 
