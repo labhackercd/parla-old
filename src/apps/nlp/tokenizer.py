@@ -33,31 +33,32 @@ def process_speech(speech, ngrams=1):
             print(st)
 
     print('Processing indexes')
-    bow, reference = pre_processing.bow(speech.indexes, ngrams=ngrams)
-    if len(bow) > 0:
-        max_occurrences = max(bow.values())
-        for stem, occurrences in bow.items():
-            token = nlp.Token.objects.get_or_create(stem=stem)[0]
-            token.ngrams = ngrams
-            if ngrams == 1:
-                for word, times in reference[stem].items():
-                    token.add_original_word(word, times=times)
-            else:
-                words = [
-                    reference[word].most_common(1)[0][0]
-                    for word in stem.split(' ')
-                ]
-                token.add_original_word(' '.join(words))
-            token.save()
+    if speech.indexes:
+        bow, reference = pre_processing.bow(speech.indexes, ngrams=ngrams)
+        if len(bow) > 0:
+            max_occurrences = max(bow.values())
+            for stem, occurrences in bow.items():
+                token = nlp.Token.objects.get_or_create(stem=stem)[0]
+                token.ngrams = ngrams
+                if ngrams == 1:
+                    for word, times in reference[stem].items():
+                        token.add_original_word(word, times=times)
+                else:
+                    words = [
+                        reference[word].most_common(1)[0][0]
+                        for word in stem.split(' ')
+                    ]
+                    token.add_original_word(' '.join(words))
+                token.save()
 
-            st = nlp.SpeechToken()
-            st.speech = speech
-            st.token = token
-            st.use_indexes = True
-            st.occurrences = occurrences
-            st.frequency = occurrences / max_occurrences
-            st.save()
-            print(st)
+                st = nlp.SpeechToken()
+                st.speech = speech
+                st.token = token
+                st.use_indexes = True
+                st.occurrences = occurrences
+                st.frequency = occurrences / max_occurrences
+                st.save()
+                print(st)
 
 
 def process_speeches(algorithm, ngrams=1):
