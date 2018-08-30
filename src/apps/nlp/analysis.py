@@ -19,7 +19,7 @@ def months(queryset):
     return rrule(MONTHLY, dtstart=start_date, until=end_date)
 
 
-def ngrams_analysis(ngrams=1):
+def ngrams_analysis(ngrams=1, use_indexes=False):
     speech_list = data.Speech.objects.all().order_by('date')
     if ngrams == 1:
         algorithm = nlp.Analysis.UNIGRAM_BOW
@@ -34,6 +34,7 @@ def ngrams_analysis(ngrams=1):
 
         queryset = nlp.SpeechToken.objects.filter(
             token__ngrams=ngrams,
+            use_indexes=use_indexes,
             speech__date__gte=start_date,
             speech__date__lte=end_date
         )
@@ -61,6 +62,7 @@ def ngrams_analysis(ngrams=1):
                 analysis = nlp.Analysis.objects.get_or_create(
                     start_date=start_date,
                     end_date=end_date,
+                    use_indexes=use_indexes,
                     algorithm=algorithm
                 )[0]
 

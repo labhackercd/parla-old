@@ -6,6 +6,7 @@ function getUrlParameters() {
   var initialDate = searchParams.get('initialDate');
   var endDate = searchParams.get('endDate');
   var algorithm = searchParams.get('algorithm');
+  var use_indexes = searchParams.get('use_indexes');
   var urlParameters = {};
 
   if (initialDate) {
@@ -22,6 +23,10 @@ function getUrlParameters() {
 
   if (algorithm) {
     urlParameters['algorithm'] = algorithm;
+  }
+
+  if (use_indexes) {
+    urlParameters['use_indexes'] = 'True';
   }
   return $.param(urlParameters);
 }

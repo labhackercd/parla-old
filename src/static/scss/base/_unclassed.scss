@@ -57,6 +57,9 @@ main {
 
 input {
   font-family: 'Roboto', sans-serif;
+  &[type="checkbox"] {
+    appearance: checkbox;
+  }
 }
 
 .-highlight {

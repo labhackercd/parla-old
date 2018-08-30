@@ -9,6 +9,10 @@
       <option value="unigram_bow" {% if request.GET.algorithm == 'unigram_bow' %}selected{% endif %}>Saco de Palavras - 1 Token</option>
       <option value="bigram_bow" {% if request.GET.algorithm == 'bigram_bow' %}selected{% endif %}>Saco de Palavras - 2 Tokens</option>
     </select>
+    <label>
+      <input type="checkbox" name="use_indexes" {% if request.GET.use_indexes %}checked{% endif %}>
+      Utilizar Indexação
+    </label>
     <button class="button">Aplicar filtros</button>
   </div>
 </form>

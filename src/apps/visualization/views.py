@@ -35,11 +35,17 @@ def get_algorithm_filter(request):
         return Q(algorithm='unigram_bow')
 
 
+def get_indexes_filter(request):
+    use_indexes = bool(request.GET.get('use_indexes', False))
+    return Q(use_indexes=use_indexes)
+
+
 def tokens(request):
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request)
+        get_algorithm_filter(request) &
+        get_indexes_filter(request)
     )
     bow = Counter()
     for analysis in analyses:
@@ -70,13 +76,15 @@ def token_authors(request, token):
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request)
+        get_algorithm_filter(request) &
+        get_indexes_filter(request)
     )
     bow = Counter()
     for analysis in analyses:
-        token_data = analysis.data[token]
-        for author, author_data in token_data['authors'].items():
-            bow.update({author: author_data['texts_count']})
+        token_data = analysis.data.get(token, None)
+        if token_data:
+            for author, author_data in token_data['authors'].items():
+                bow.update({author: author_data['texts_count']})
 
     authors = data_models.Author.objects.all()
     final_dict = []
@@ -103,7 +111,8 @@ def token_author_manifestations(request, token, author_id):
     token_filter = Q(token__stem=token) & date_filter
     token_filter = token_filter & Q(speech__author__id=author_id)
     man_tokens = models.SpeechToken.objects.filter(
-        token_filter
+        token_filter &
+        get_indexes_filter(request)
     ).order_by('-occurrences')[:50]
 
     bow = Counter()

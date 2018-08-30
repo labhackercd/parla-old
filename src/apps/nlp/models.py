@@ -81,6 +81,7 @@ class Analysis(models.Model):
     analysis_type = models.CharField(max_length=20,
                                      choices=ANALYSIS_TYPE_CHOICES)
     algorithm = models.CharField(max_length=100, choices=ALGORITHM_CHOICES)
+    use_indexes = models.BooleanField(default=False)
     stem = models.CharField(max_length=255, null=True, blank=True)
     author_id = models.IntegerField(null=True, blank=True)
     start_date = models.DateField()
