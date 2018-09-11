@@ -1,7 +1,11 @@
-.controls-slider {
+.player-controls {
+  position: relative;
+  z-index: map-get($z-index, player-controls);
+
   display: flex;
   justify-content: center;
-  margin: 0 10vw 20px 10vw;
+
+  margin: 0 10vw 15px 10vw;
 
   & > * + * {
     margin-left: 20px;
@@ -9,10 +13,13 @@
 
   & > span {
     display: inline-block;
+
     width: 16px;
     height: 16px;
     padding: 10px;
+
     cursor: pointer;
+
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;

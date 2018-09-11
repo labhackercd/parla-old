@@ -1,0 +1,95 @@
+.range-player {
+  position: absolute;
+  right: 0;
+  left: 0;
+
+  display: flex;
+  justify-content: center;
+
+  width: calc(100% - 4px);
+  height: 5px;
+  margin: auto;
+
+  background-color: rgba(#FFF, .5);
+
+  transition: opacity .7s .5s $swift-out, transform .6s .25s $swift-out, color 0s $swift-out;
+
+  &.-hide {
+    transition: opacity .3s 0s $swift-out, transform .6s 0s $swift-out, color .3s 0s $swift-out;
+    transform: translateY(100%);
+
+    opacity: 0;
+  }
+
+  &::before,
+  &::after {
+    position: absolute;
+    top: -4px;
+
+    width: 2px;
+    height: 12px;
+
+    content: '';
+  }
+
+  &::before {
+    right: 100%;
+
+    background-color: #FFF;
+  }
+
+  &::after {
+    left: 100%;
+
+    background-color: rgba(#FFF, .5);
+  }
+
+   > .label {
+    font-size: 12px;
+
+    transform: translate(2px, 16px);
+    text-transform: uppercase;
+
+    &:first-of-type {
+      margin-right: auto;
+
+      transform: translate(-2px, 16px);
+    }
+  }
+
+   > .controls {
+    position: absolute;
+
+    width: calc(100% + 22px);
+
+     > .handle {
+      position: absolute;
+      top: -7px;
+
+      width: 18px;
+      height: 18px;
+
+      border-radius: 50%;
+      background-color: white;
+      box-shadow: -1px 1px 1px 0 hsla(0, 0%, 30%, .25);
+
+       > .currentdate {
+        font-size: 12px;
+
+        position: absolute;
+        top: -20px;
+        left: 50%;
+
+        transform: translateX(-50%);
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .fill {
+    height: 5px;
+    margin-left: 9px;
+
+    background-color: #FFF;
+  }
+}

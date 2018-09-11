@@ -64,7 +64,6 @@ $('.js-back').on('click', function() {
       hammertime.destroy();
 
       if (visiblePage === 'manifestation' || visiblePage === 'manifestations') {
-        $('.js-inactive-slider').addClass('-negative');
         setNavigationName('');
       } else if (visiblePage === 'authors') {
         setNavigationTitle('Parla');

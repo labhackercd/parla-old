@@ -373,7 +373,6 @@ function tokensChart(tokenId) {
         currentPage.addClass('_hidden');
         currentPage.removeClass('-active');
         setNavigationName(data.token);
-        $('.js-inactive-slider').removeClass('-negative');
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
@@ -390,7 +389,6 @@ function tokensChart(tokenId) {
     $('.js-slider-min').text(parsedMinValue);
     $('.js-slider-max').text(parsedMaxValue);
     $('.js-inactive-slider').removeClass('-hide');
-    $('.js-inactive-slider').addClass('-negative');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
