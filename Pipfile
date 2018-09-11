@@ -16,6 +16,8 @@ requests = "*"
 nltk = "*"
 python-dateutil = "*"
 click = "*"
+unidecode = "*"
+textblob = "*"
 
 [requires]
 python_version = "3.6"

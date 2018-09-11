@@ -56,4 +56,18 @@
     line-height: 1.5;
     padding-bottom: 30px;
   }
+
+  & > .indexes {
+    padding: 0 8vw 0 8vw;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+
+    span {
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 0.7rem;
+    }
+  }
 }

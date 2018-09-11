@@ -455,6 +455,10 @@ function manifestationPage(manifestationId, tokenId) {
         <strong class='date'>${data.date}  às </strong>
         <strong class='time'>${data.time}</strong>
       </div>
+      <div class="indexes">
+        <span>Indexação</span>
+        <p>${data.indexes}</p>
+      </div>
       <div class="content">
         <p>${data.content}</p>
       </div>

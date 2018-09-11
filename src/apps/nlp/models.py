@@ -73,9 +73,11 @@ class Analysis(models.Model):
 
     UNIGRAM_BOW = 'unigram_bow'
     BIGRAM_BOW = 'bigram_bow'
+    NAIVE_BAYES = 'naive_bayes'
     ALGORITHM_CHOICES = (
         (UNIGRAM_BOW, 'Unigram Bag of Words'),
         (BIGRAM_BOW, 'Bigram Bag of Words'),
+        (NAIVE_BAYES, 'Naive naive_bayes'),
     )
 
     analysis_type = models.CharField(max_length=20,
