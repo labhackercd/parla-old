@@ -82,6 +82,10 @@ def tokens(request):
             obj['id'] = stem[0]
             obj['token'] = CLASSIFIER_LABELS[stem[0]]
             obj['stem'] = stem[0]
+        elif algorithm == 'multigram_bow':
+            obj['id'] = stem[0]
+            obj['token'] = stem[0]
+            obj['stem'] = stem[0]
         else:
             token = tokens.get(stem=stem[0])
             obj['id'] = token.id
@@ -134,7 +138,31 @@ def token_authors(request, token):
 
 def token_author_manifestations(request, token, author_id):
     algorithm = request.GET.get('algorithm', None)
-    if algorithm == 'naive_bayes':
+    if algorithm == 'unigram_bow' or algorithm == 'bigram_bow':
+        date_filter = get_date_filter('speech__date', 'speech__date', request)
+        token_filter = Q(token__stem=token) & date_filter
+        token_filter = token_filter & Q(speech__author__id=author_id)
+        man_tokens = models.SpeechToken.objects.filter(
+            token_filter &
+            get_indexes_filter(request)
+        ).order_by('-occurrences')[:50]
+
+        bow = Counter()
+        for mt in man_tokens:
+            bow.update({mt.speech: mt.occurrences})
+
+        final_dict = []
+        for i, speech in enumerate(bow.most_common()):
+            speech = speech[0]
+            obj = {
+                'id': speech.id,
+                'date': speech.date.strftime('%d/%m/%Y'),
+                'time': speech.time.strftime('%H:%M'),
+                'preview': speech.content[:70] + '...',
+            }
+            final_dict.append(obj)
+        return JsonResponse(final_dict, safe=False)
+    else:
         date_filter = get_date_filter('start_date', 'end_date', request)
         analyses = models.Analysis.objects.filter(
             date_filter &
@@ -153,30 +181,6 @@ def token_author_manifestations(request, token, author_id):
         final_dict = []
         for speech_id, occurrences in bow.most_common(50):
             speech = data_models.Speech.objects.get(pk=speech_id)
-            obj = {
-                'id': speech.id,
-                'date': speech.date.strftime('%d/%m/%Y'),
-                'time': speech.time.strftime('%H:%M'),
-                'preview': speech.content[:70] + '...',
-            }
-            final_dict.append(obj)
-        return JsonResponse(final_dict, safe=False)
-    else:
-        date_filter = get_date_filter('speech__date', 'speech__date', request)
-        token_filter = Q(token__stem=token) & date_filter
-        token_filter = token_filter & Q(speech__author__id=author_id)
-        man_tokens = models.SpeechToken.objects.filter(
-            token_filter &
-            get_indexes_filter(request)
-        ).order_by('-occurrences')[:50]
-
-        bow = Counter()
-        for mt in man_tokens:
-            bow.update({mt.speech: mt.occurrences})
-
-        final_dict = []
-        for i, speech in enumerate(bow.most_common()):
-            speech = speech[0]
             obj = {
                 'id': speech.id,
                 'date': speech.date.strftime('%d/%m/%Y'),
