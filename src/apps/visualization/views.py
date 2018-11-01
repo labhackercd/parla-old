@@ -7,6 +7,7 @@ from datetime import datetime
 from collections import Counter
 from django.http import JsonResponse
 import re
+from django.utils.text import slugify
 
 
 def get_date_filter(start_field, end_field, request):
@@ -82,8 +83,9 @@ def tokens(request):
             obj['id'] = stem[0]
             obj['token'] = CLASSIFIER_LABELS[stem[0]]
             obj['stem'] = stem[0]
-        elif algorithm == 'multigram_bow':
-            obj['id'] = stem[0]
+        elif (algorithm == 'multigram_bow_with_unigram' or
+              algorithm == 'multigram_bow_without_unigram'):
+            obj['id'] = slugify(stem[0])
             obj['token'] = stem[0]
             obj['stem'] = stem[0]
         else:

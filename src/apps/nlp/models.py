@@ -73,12 +73,15 @@ class Analysis(models.Model):
 
     UNIGRAM_BOW = 'unigram_bow'
     BIGRAM_BOW = 'bigram_bow'
-    MULTIGRAM_BOW = 'multigram_bow'
+    MULTIGRAM_BOW_WITH_UNIGRAM = 'multigram_bow_with_unigram'
+    MULTIGRAM_BOW_WITHOUT_UNIGRAM = 'multigram_bow_without_unigram'
     NAIVE_BAYES = 'naive_bayes'
     ALGORITHM_CHOICES = (
         (UNIGRAM_BOW, 'Unigram Bag of Words'),
         (BIGRAM_BOW, 'Bigram Bag of Words'),
-        (MULTIGRAM_BOW, 'Multigrams Bag of Words'),
+        (MULTIGRAM_BOW_WITH_UNIGRAM, 'Multigrams Bag of Words with unigrams'),
+        (MULTIGRAM_BOW_WITHOUT_UNIGRAM,
+            'Multigrams Bag of Words without unigrams'),
         (NAIVE_BAYES, 'Naive naive_bayes'),
     )
 

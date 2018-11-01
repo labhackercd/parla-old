@@ -147,10 +147,13 @@ def clean_tokens(tokens, fivegrams=[], quadgrams=[], trigrams=[], bigrams=[],
     return new_tokens
 
 
-def multigrams_analysis():
+def multigrams_analysis(use_unigram=True):
     speech_list = data.Speech.objects.all().order_by('date')
 
-    algorithm = nlp.Analysis.MULTIGRAM_BOW
+    if use_unigram:
+        algorithm = nlp.Analysis.MULTIGRAM_BOW_WITH_UNIGRAM
+    else:
+        algorithm = nlp.Analysis.MULTIGRAM_BOW_WITHOUT_UNIGRAM
 
     for date in months(speech_list):
         days = monthrange(date.year, date.month)[1]
@@ -168,9 +171,6 @@ def multigrams_analysis():
         with progressbar(queryset) as bar:
             for speech in bar:
                 tokens = get_tokens(speech.original)
-                # limit = Counter(tokens).most_common(
-                #     int(len(tokens) * 0.2))[-1][1]
-                # if limit < 2:
                 limit = 2
                 stop_fivegrams = []
                 stop_quadgrams = []
@@ -196,6 +196,7 @@ def multigrams_analysis():
 
                 bigram_tokens = clean_tokens(tokens, stop_fivegrams,
                                              stop_quadgrams, stop_trigrams)
+
                 bigrams = ngrams_by_limit(bigram_tokens, 2, limit)
 
                 if bigrams:
@@ -206,8 +207,12 @@ def multigrams_analysis():
                                               stop_bigrams, ONEGRAM_STOPWORDS)
                 onegrams = ngrams_by_limit(onegram_tokens, 1)
 
-                result_tokens = (onegrams + bigrams + trigrams + quadgrams +
-                                 fivegrams)
+                if use_unigram:
+                    result_tokens = (onegrams + bigrams + trigrams + quadgrams +
+                                     fivegrams)
+                else:
+                    result_tokens = (bigrams + trigrams + quadgrams +
+                                     fivegrams)
 
                 for token in result_tokens:
                     token_data = final_dict.get(' '.join(token[0]), {})
