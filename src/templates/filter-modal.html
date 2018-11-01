@@ -6,14 +6,10 @@
   <div class="content">
     <label for="data">Algoritimos</label>
     <select name="algorithm" class="algorithm">
-      <option value="unigram_bow" {% if request.GET.algorithm == 'unigram_bow' %}selected{% endif %}>Saco de Palavras - 1 Token</option>
-      <option value="bigram_bow" {% if request.GET.algorithm == 'bigram_bow' %}selected{% endif %}>Saco de Palavras - 2 Tokens</option>
+      <option value="multigram_bow_with_unigram" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
+      <option value="multigram_bow_without_unigram" {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}selected{% endif %}>Saco de Palavras(sem unigrams)</option>
       <option value="naive_bayes" {% if request.GET.algorithm == 'naive_bayes' %}selected{% endif %}>Naive Bayes</option>
     </select>
-    <label>
-      <input type="checkbox" name="use_indexes" {% if request.GET.use_indexes %}checked{% endif %}>
-      Utilizar Indexação
-    </label>
     <button class="button">Aplicar filtros</button>
   </div>
 </form>
