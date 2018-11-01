@@ -33,12 +33,7 @@ def get_algorithm_filter(request):
     if algorithm:
         return Q(algorithm=algorithm)
     else:
-        return Q(algorithm='unigram_bow')
-
-
-def get_indexes_filter(request):
-    use_indexes = bool(request.GET.get('use_indexes', False))
-    return Q(use_indexes=use_indexes)
+        return Q(algorithm='multigram_bow_with_unigram')
 
 
 CLASSIFIER_LABELS = {
@@ -63,19 +58,18 @@ CLASSIFIER_LABELS = {
 
 
 def tokens(request):
-    algorithm = request.GET.get('algorithm', None)
+    algorithm = request.GET.get('algorithm', 'multigram_bow_with_unigram')
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request) &
-        get_indexes_filter(request)
+        get_algorithm_filter(request)
     )
+
     bow = Counter()
     for analysis in analyses:
         for stem, token_data in analysis.data.items():
             bow.update({stem: token_data['authors_count']})
 
-    tokens = models.Token.objects.all()
     final_dict = []
     for i, stem in enumerate(bow.most_common(20)):
         obj = {}
@@ -88,11 +82,6 @@ def tokens(request):
             obj['id'] = slugify(stem[0])
             obj['token'] = stem[0]
             obj['stem'] = stem[0]
-        else:
-            token = tokens.get(stem=stem[0])
-            obj['id'] = token.id
-            obj['token'] = token.original
-            obj['stem'] = token.stem
 
         if i > 0:
             previous = final_dict[i - 1]
@@ -108,8 +97,7 @@ def token_authors(request, token):
     date_filter = get_date_filter('start_date', 'end_date', request)
     analyses = models.Analysis.objects.filter(
         date_filter &
-        get_algorithm_filter(request) &
-        get_indexes_filter(request)
+        get_algorithm_filter(request)
     )
     bow = Counter()
     for analysis in analyses:
@@ -139,58 +127,31 @@ def token_authors(request, token):
 
 
 def token_author_manifestations(request, token, author_id):
-    algorithm = request.GET.get('algorithm', None)
-    if algorithm == 'unigram_bow' or algorithm == 'bigram_bow':
-        date_filter = get_date_filter('speech__date', 'speech__date', request)
-        token_filter = Q(token__stem=token) & date_filter
-        token_filter = token_filter & Q(speech__author__id=author_id)
-        man_tokens = models.SpeechToken.objects.filter(
-            token_filter &
-            get_indexes_filter(request)
-        ).order_by('-occurrences')[:50]
+    date_filter = get_date_filter('start_date', 'end_date', request)
+    analyses = models.Analysis.objects.filter(
+        date_filter &
+        get_algorithm_filter(request)
+    )
+    bow = Counter()
+    for analysis in analyses:
+        token_data = analysis.data.get(token, None)
+        if token_data:
+            author_data = token_data['authors'].get(str(author_id), None)
+            if author_data:
+                for speech in author_data['texts']:
+                    bow.update(speech)
 
-        bow = Counter()
-        for mt in man_tokens:
-            bow.update({mt.speech: mt.occurrences})
-
-        final_dict = []
-        for i, speech in enumerate(bow.most_common()):
-            speech = speech[0]
-            obj = {
-                'id': speech.id,
-                'date': speech.date.strftime('%d/%m/%Y'),
-                'time': speech.time.strftime('%H:%M'),
-                'preview': speech.content[:70] + '...',
-            }
-            final_dict.append(obj)
-        return JsonResponse(final_dict, safe=False)
-    else:
-        date_filter = get_date_filter('start_date', 'end_date', request)
-        analyses = models.Analysis.objects.filter(
-            date_filter &
-            get_algorithm_filter(request) &
-            get_indexes_filter(request)
-        )
-        bow = Counter()
-        for analysis in analyses:
-            token_data = analysis.data.get(token, None)
-            if token_data:
-                author_data = token_data['authors'].get(str(author_id), None)
-                if author_data:
-                    for speech in author_data['texts']:
-                        bow.update(speech)
-
-        final_dict = []
-        for speech_id, occurrences in bow.most_common(50):
-            speech = data_models.Speech.objects.get(pk=speech_id)
-            obj = {
-                'id': speech.id,
-                'date': speech.date.strftime('%d/%m/%Y'),
-                'time': speech.time.strftime('%H:%M'),
-                'preview': speech.content[:70] + '...',
-            }
-            final_dict.append(obj)
-        return JsonResponse(final_dict, safe=False)
+    final_dict = []
+    for speech_id, occurrences in bow.most_common(50):
+        speech = data_models.Speech.objects.get(pk=speech_id)
+        obj = {
+            'id': speech.id,
+            'date': speech.date.strftime('%d/%m/%Y'),
+            'time': speech.time.strftime('%H:%M'),
+            'preview': speech.content[:70] + '...',
+        }
+        final_dict.append(obj)
+    return JsonResponse(final_dict, safe=False)
 
 
 def manifestation(request, speech_id, token):
@@ -204,6 +165,5 @@ def manifestation(request, speech_id, token):
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
             'content': original,
-            'indexes': speech.indexes,
         }
     )
