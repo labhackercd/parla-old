@@ -156,14 +156,15 @@ def token_author_manifestations(request, token, author_id):
 
 def manifestation(request, speech_id, token):
     speech = get_object_or_404(Speech, pk=speech_id)
-    original = re.sub(r'\b{}'.format(token),
-                      '<span class="-highlight">{}</span>'.format(token),
-                      speech.original)
+    search = re.compile(r'\b(%s)\b' % token, re.I)
+    original = search.sub('<span class="-highlight">\\1</span>',
+                          speech.original)
 
     return JsonResponse(
         {
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
             'content': original,
+            'indexes': speech.indexes,
         }
     )

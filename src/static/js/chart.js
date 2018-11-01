@@ -6,7 +6,6 @@ function getUrlParameters() {
   var initialDate = searchParams.get('initialDate');
   var endDate = searchParams.get('endDate');
   var algorithm = searchParams.get('algorithm');
-  var use_indexes = searchParams.get('use_indexes');
   var urlParameters = {};
 
   if (initialDate) {
@@ -25,9 +24,6 @@ function getUrlParameters() {
     urlParameters['algorithm'] = algorithm;
   }
 
-  if (use_indexes) {
-    urlParameters['use_indexes'] = 'True';
-  }
   return $.param(urlParameters);
 }
 
@@ -448,6 +444,11 @@ function authorsChart(tokenId, authorId) {
 function manifestationPage(manifestationId, tokenId) {
   loadData(`/visualizations/manifestation/${manifestationId}/${tokenId}/`, function(data) {
     var manifestationPage = $('.manifestation-page');
+    if (data.indexes) {
+      var indexes = data.indexes;
+    } else {
+      var indexes = "-";
+    }
 
     manifestationPage.html(`
       <div class="header">
@@ -457,7 +458,7 @@ function manifestationPage(manifestationId, tokenId) {
       </div>
       <div class="indexes">
         <span>Indexação</span>
-        <p>${data.indexes}</p>
+        <p>${indexes}</p>
       </div>
       <div class="content">
         <p>${data.content}</p>
