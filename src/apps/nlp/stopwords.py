@@ -99,7 +99,11 @@ EXTRA_STOPWORDS = [
     'entanto', 'diante', 'defender', 'dr.', '“', '”', '•', 'v.', './', 'és',
     'senhoras', 'senhores', 'tipo', 'várias', 'gerais', 'quais', 'dessas',
     'deu', 'havia', 'devem', 'enfim', 'apesar', 'passa', 'chegou', 'vêm',
-    'parece', 'u', 'querido', 'deram', 'vendendo', 'deixa-me', 'abaixo'
+    'parece', 'u', 'querido', 'deram', 'vendendo', 'deixa-me', 'abaixo',
+    'naquela', 'inicialmente', 'ouvi', 'assumido', 'veio', 'atento', 'vi',
+    'ouvir', 'entender', 'consigamos', 'debatendo', 'mostrar', 'v.sa', 'vejo',
+    'nessas', 'diga', 'abra', 'mudando', 'graças', 'colocaram', 'irei',
+    'nesses', 'vê-la', 'consigo', 'senão', 'faremos'
 ]
 
 ONEGRAM_STOPWORDS = [
@@ -149,5 +153,7 @@ ONEGRAM_STOPWORDS = [
     'estaduais', 'constitucional', 'recurso', 'certamente', 'nossa', 'turno',
     'candidato', 'eleitores', 'eleito', 'governa', 'vá', 'voltar', 'divulgue',
     'governar', 'direção', 'inadmissível', 'peças', 'acúmulo', 'entristecido',
-    'confiança', 'votado', 'votamos'
+    'confiança', 'votado', 'votamos', 'vazio', 'juntamente', 'convidados',
+    'lógico', 'si', 'chamada', 'salto', 'fale', 'mato', 'agendada', 'ganha',
+    'ame', 'verde', 'amarela', 'entender', 'custa'
 ]

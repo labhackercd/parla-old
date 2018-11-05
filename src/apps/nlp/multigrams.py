@@ -171,7 +171,7 @@ def multigrams_analysis(use_unigram=True):
         with progressbar(queryset) as bar:
             for speech in bar:
                 tokens = get_tokens(speech.original)
-                limit = 2
+                limit = 3
                 stop_fivegrams = []
                 stop_quadgrams = []
                 stop_trigrams = []
