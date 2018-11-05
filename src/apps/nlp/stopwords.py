@@ -99,7 +99,7 @@ EXTRA_STOPWORDS = [
     'entanto', 'diante', 'defender', 'dr.', '“', '”', '•', 'v.', './', 'és',
     'senhoras', 'senhores', 'tipo', 'várias', 'gerais', 'quais', 'dessas',
     'deu', 'havia', 'devem', 'enfim', 'apesar', 'passa', 'chegou', 'vêm',
-    'parece', 'u'
+    'parece', 'u', 'querido', 'deram', 'vendendo', 'deixa-me', 'abaixo'
 ]
 
 ONEGRAM_STOPWORDS = [
@@ -146,5 +146,8 @@ ONEGRAM_STOPWORDS = [
     'representantes', 'fizeram', 'vereador', 'ficou', 'volta', 'quadro',
     'lembrar', 'concluir', 'votos', 'classe', 'atuação', 'médio', 'receita',
     'palavras', 'nível', 'encontro', 'milhão', 'diferente', 'local',
-    'estaduais', 'constitucional', 'recurso', 'certamente', 'nossa'
+    'estaduais', 'constitucional', 'recurso', 'certamente', 'nossa', 'turno',
+    'candidato', 'eleitores', 'eleito', 'governa', 'vá', 'voltar', 'divulgue',
+    'governar', 'direção', 'inadmissível', 'peças', 'acúmulo', 'entristecido',
+    'confiança', 'votado', 'votamos'
 ]
