@@ -27,7 +27,7 @@ function getUrlParameters() {
   return $.param(urlParameters);
 }
 
-function loadData(url, callback) {
+function loadData(url, callback, loadOnly = false) {
   var newArray = [];
 
   $.ajax({
@@ -65,8 +65,10 @@ function loadData(url, callback) {
           });
 
           if (data.length === 0) {
-            $('.js-active-slider').removeClass('-hide');
             $('.js-error-data').removeClass('-hide');
+            if (loadOnly === false) {
+              $('.js-active-slider').removeClass('-hide');
+            }
           } else {
             $('.js-error-data').addClass('-hide');
             callback(data);
@@ -75,8 +77,10 @@ function loadData(url, callback) {
 
       } else {
         if (data.length === 0) {
-          $('.js-active-slider').removeClass('-hide');
           $('.js-error-data').removeClass('-hide');
+          if (loadOnly === false) {
+            $('.js-active-slider').removeClass('-hide');
+          }
         } else {
           $('.js-error-data').addClass('-hide');
           callback(data);
@@ -187,7 +191,7 @@ function drawCanvas(selector, chartName) {
           .classed("js-chart", true)
 }
 
-function createHexagonGroup(canvas, data) {
+function createHexagonGroup(canvas, data, loadOnly = false) {
   return canvas.selectAll("rect")
     .data(data)
     .enter()
@@ -202,8 +206,15 @@ function createHexagonGroup(canvas, data) {
             var chartName = $(this).closest('.js-svg-root').data('chartName');
             return `${chartName}-hexagon-${d.id}`;
           })
-          .classed('_hidden', true)
           .classed('-small', true)
+          // .classed('_hidden', true)
+          .classed('_hidden', function(d, i) {
+            if (loadOnly === true) {
+              return false;
+            } else {
+              return true;
+            }
+          });
 }
 
 function hexagonOnClick(hexagonGroup, callback) {
@@ -319,6 +330,37 @@ function setTransformOrigin(canvas) {
   }
 }
 
+function onlyLoadWordChart(callback) {
+  $('.js-page').remove();
+  loadData("/visualizations/tokens/", function(data) {
+    var canvas = drawCanvas('.wrapper', 'token');
+    var hexagonGroup = createHexagonGroup(canvas, data, loadOnly = true);
+    addHexagons(hexagonGroup, 90);
+    hexagonOnClick(hexagonGroup, function(data) {
+      var currentPage = $(data.element).closest('.js-page');
+      currentPage.removeClass('-active');
+      $('.js-active-slider').addClass('-hide');
+      $('.js-circle').one('transitionend', function(){
+        currentPage.addClass('_hidden');
+        setNavigationTitle(data.token);
+        $('.js-back').removeClass('_hidden');
+
+      });
+      tokensChart(data.stem);
+      tokensScroll = scrollPosition;
+      hammertime.destroy();
+    });
+    positionHexagon(hexagonGroup);
+    addText(hexagonGroup);
+    showHexagonGroup(hexagonGroup);
+    updateCanvasSize(canvas);
+    setTransformOrigin(canvas);
+    enableScroll();
+    visiblePage = 'tokens';
+    callback();
+  }, loadOnly = true);
+}
+
 function wordChart() {
   $('.js-page').remove();
   const params = new URLSearchParams(window.location.search);
@@ -373,7 +415,6 @@ function tokensChart(tokenId) {
         currentPage.addClass('_hidden');
         currentPage.removeClass('-active');
         setNavigationName(data.token);
-        $('.js-inactive-slider').removeClass('-negative');
       });
       authorsChart(tokenId, data.id);
       authorsScroll = scrollPosition;
@@ -390,7 +431,6 @@ function tokensChart(tokenId) {
     $('.js-slider-min').text(parsedMinValue);
     $('.js-slider-max').text(parsedMaxValue);
     $('.js-inactive-slider').removeClass('-hide');
-    $('.js-inactive-slider').addClass('-negative');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();

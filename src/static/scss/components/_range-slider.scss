@@ -1,27 +1,26 @@
-.range-slider-wrapper {
-  position: relative;
-  height: 75px;
-  margin: 0 10vw;
-}
-
 .range-slider {
   position: absolute;
-  user-select: none;
+
   width: 100%;
-  transition: opacity 0.7s 0.5s $swift-out, transform 0.6s 0.25s $swift-out, color 0s $swift-out;
+
+  user-select: none;
+  transition: opacity .7s .5s $swift-out, transform .6s .25s $swift-out, color 0s $swift-out;
 
   &.-hide {
-    opacity: 0;
+    transition: opacity .3s 0s $swift-out, transform .6s 0s $swift-out, color .3s 0s $swift-out;
     transform: translateY(100%);
-    transition: opacity 0.3s 0s $swift-out, transform 0.6s 0s $swift-out, color 0.3s 0s $swift-out;
+
+    opacity: 0;
+    pointer-events: none;
   }
 
-  &.-negative {
-    color: #000;
-    transition: opacity 0.7s 0.5s $swift-out, transform 0.6s 0.25s $swift-out, color 0s $swift-out;
+  // &.-negative {
+  //   transition: opacity .7s .5s $swift-out, transform .6s .25s $swift-out, color 0s $swift-out;
 
-    &.-hide {
-      transition: opacity 0.3s 0s $swift-out, transform 0.6s 0s $swift-out, color 0.3s 0s $swift-out;
-    }
-  }
+  //   color: #000;
+
+  //   &.-hide {
+  //     transition: opacity .3s 0s $swift-out, transform .6s 0s $swift-out, color .3s 0s $swift-out;
+  //   }
+  // }
 }
