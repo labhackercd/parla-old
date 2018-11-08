@@ -3,27 +3,28 @@ from django.shortcuts import get_object_or_404
 from apps.nlp import models
 from apps.data import models as data_models
 from apps.data.models import Speech
-from datetime import datetime
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 from collections import Counter
 from django.http import JsonResponse
 import re
 from django.utils.text import slugify
 
 
-def get_date_filter(start_field, end_field, request):
+def get_date_filter(request):
     date_filter = Q()
-    initial_date = request.GET.get('initial_date', None)
-    final_date = request.GET.get('final_date', None)
+    final = date.today()
+    init = final.replace(day=1)
+    initial_date = request.GET.get('initial_date', str(init))
+    final_date = request.GET.get('final_date', str(final))
 
     if initial_date:
         initial_date = datetime.strptime(initial_date, '%Y-%m-%d')
-        kwargs = {"{}__gte".format(start_field): initial_date}
-        date_filter = date_filter & Q(**kwargs)
+        date_filter = date_filter & Q(start_date__gte=initial_date)
 
     if final_date:
         final_date = datetime.strptime(final_date, '%Y-%m-%d')
-        kwargs = {"{}__lte".format(end_field): final_date}
-        date_filter = date_filter & Q(**kwargs)
+        date_filter = date_filter & Q(end_date__lte=final_date)
 
     return date_filter
 
@@ -33,7 +34,7 @@ def get_algorithm_filter(request):
     if algorithm:
         return Q(algorithm=algorithm)
     else:
-        return Q(algorithm='multigram_bow_with_unigram')
+        return Q(algorithm='multigram_bow_without_unigram')
 
 
 CLASSIFIER_LABELS = {
@@ -58,8 +59,8 @@ CLASSIFIER_LABELS = {
 
 
 def tokens(request):
-    algorithm = request.GET.get('algorithm', 'multigram_bow_with_unigram')
-    date_filter = get_date_filter('start_date', 'end_date', request)
+    algorithm = request.GET.get('algorithm', 'multigram_bow_without_unigram')
+    date_filter = get_date_filter(request)
     analyses = models.Analysis.objects.filter(
         date_filter &
         get_algorithm_filter(request)
@@ -94,7 +95,7 @@ def tokens(request):
 
 
 def token_authors(request, token):
-    date_filter = get_date_filter('start_date', 'end_date', request)
+    date_filter = get_date_filter(request)
     analyses = models.Analysis.objects.filter(
         date_filter &
         get_algorithm_filter(request)
@@ -127,7 +128,7 @@ def token_authors(request, token):
 
 
 def token_author_manifestations(request, token, author_id):
-    date_filter = get_date_filter('start_date', 'end_date', request)
+    date_filter = get_date_filter(request)
     analyses = models.Analysis.objects.filter(
         date_filter &
         get_algorithm_filter(request)
@@ -166,5 +167,26 @@ def manifestation(request, speech_id, token):
             'time': speech.time.strftime('%H:%M'),
             'content': original,
             'indexes': speech.indexes,
+        }
+    )
+
+
+def dateRange(request):
+    try:
+        bound_min = Speech.objects.first().date.strftime('%Y-%m')
+    except Speech.DoesNotExist:
+        bound_min = ''
+    bound_max = date.today() + relativedelta(months=1)
+    bound_max = bound_max.strftime('%Y-%m')
+    default_min = date.today().strftime('%Y-%m')
+    default_max = date.today() + relativedelta(months=1)
+    default_max = default_max.strftime('%Y-%m')
+
+    return JsonResponse(
+        {
+            'bound_min': bound_min,
+            'bound_max': bound_max,
+            'default_min': default_min,
+            'default_max': default_max,
         }
     )

@@ -10,13 +10,13 @@ function getUrlParameters() {
 
   if (initialDate) {
     initialDate = initialDate.split('-');
-    initialDate = new Date(initialDate[0], initialDate[1], 1);
+    initialDate = new Date(initialDate[0], initialDate[1]-1, 1);
     urlParameters['initial_date'] = initialDate.toISOString().split('T')[0];
   }
 
   if (endDate) {
     endDate = endDate.split('-');
-    endDate = new Date(endDate[0], endDate[1], 0);
+    endDate = new Date(endDate[0], endDate[1]-1, 0);
     urlParameters['final_date'] = endDate.toISOString().split('T')[0];
   }
 

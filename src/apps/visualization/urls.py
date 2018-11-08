@@ -8,4 +8,6 @@ urlpatterns = [
          views.token_author_manifestations, name="token_authors"),
     path('manifestation/<int:speech_id>/<str:token>/',
          views.manifestation, name="vis_manifestation"),
+    path('date-range/',
+         views.dateRange, name="vis_date_range"),
 ]
