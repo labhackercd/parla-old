@@ -1,13 +1,7 @@
 from django.db.models import Q
 from dateutil.rrule import rrule, MONTHLY
-from calendar import monthrange
-from click import progressbar, secho
-import datetime
 
-from apps.nlp import models as nlp
-from apps.data import models as data
-
-from apps.nlp.stopwords import EXTRA_STOPWORDS, ONEGRAM_STOPWORDS
+from apps.nlp.stopwords import EXTRA_STOPWORDS
 from nltk import word_tokenize
 from nltk.util import ngrams
 from nltk.corpus import stopwords as nltk_stopwords
@@ -145,96 +139,3 @@ def clean_tokens(tokens, fivegrams=[], quadgrams=[], trigrams=[], bigrams=[],
         new_tokens = tokens
 
     return new_tokens
-
-
-def multigrams_analysis(use_unigram=True):
-    speech_list = data.Speech.objects.all().order_by('date')
-
-    if use_unigram:
-        algorithm = nlp.Analysis.MULTIGRAM_BOW_WITH_UNIGRAM
-    else:
-        algorithm = nlp.Analysis.MULTIGRAM_BOW_WITHOUT_UNIGRAM
-
-    for date in months(speech_list):
-        days = monthrange(date.year, date.month)[1]
-        start_date = datetime.datetime(date.year, date.month, 1)
-        end_date = datetime.datetime(date.year, date.month, days)
-        secho('Fetching data from {} to {}'.format(start_date, end_date))
-
-        queryset = speech_list.filter(
-            date__gte=start_date,
-            date__lte=end_date
-        )
-
-        final_dict = {}
-
-        with progressbar(queryset) as bar:
-            for speech in bar:
-                tokens = get_tokens(speech.original)
-                limit = 3
-                stop_fivegrams = []
-                stop_quadgrams = []
-                stop_trigrams = []
-                stop_bigrams = []
-                fivegrams = ngrams_by_limit(tokens, 5, limit)
-
-                if fivegrams:
-                    stop_fivegrams = list(list(zip(*fivegrams))[0])
-
-                quadgram_tokens = clean_tokens(tokens, stop_fivegrams)
-                quadgrams = ngrams_by_limit(quadgram_tokens, 4, limit)
-
-                if quadgrams:
-                    stop_quadgrams = list(list(zip(*quadgrams))[0])
-
-                trigram_tokens = clean_tokens(tokens, stop_fivegrams,
-                                              stop_quadgrams)
-                trigrams = ngrams_by_limit(trigram_tokens, 3, limit)
-
-                if trigrams:
-                    stop_trigrams = list(list(zip(*trigrams))[0])
-
-                bigram_tokens = clean_tokens(tokens, stop_fivegrams,
-                                             stop_quadgrams, stop_trigrams)
-
-                bigrams = ngrams_by_limit(bigram_tokens, 2, limit)
-
-                if bigrams:
-                    stop_bigrams = list(list(zip(*bigrams))[0])
-
-                onegram_tokens = clean_tokens(tokens, stop_fivegrams,
-                                              stop_quadgrams, stop_trigrams,
-                                              stop_bigrams, ONEGRAM_STOPWORDS)
-                onegrams = ngrams_by_limit(onegram_tokens, 1)
-
-                if use_unigram:
-                    result_tokens = (onegrams + bigrams + trigrams + quadgrams +
-                                     fivegrams)
-                else:
-                    result_tokens = (bigrams + trigrams + quadgrams +
-                                     fivegrams)
-
-                for token in result_tokens:
-                    token_data = final_dict.get(' '.join(token[0]), {})
-                    authors = token_data.get('authors', {})
-                    author_data = authors.get(speech.author.id, {})
-                    texts = author_data.get('texts', [])
-                    texts.append({speech.id: token[1]})
-
-                    author_data['texts_count'] = len(texts)
-                    author_data['texts'] = texts
-                    authors[speech.author.id] = author_data
-                    token_data['authors'] = authors
-                    token_data['authors_count'] = len(authors)
-                    final_dict[' '.join(token[0])] = token_data
-
-            if len(final_dict) > 0:
-                analysis = nlp.Analysis.objects.get_or_create(
-                    start_date=start_date,
-                    end_date=end_date,
-                    use_indexes=False,
-                    algorithm=algorithm
-                )[0]
-
-                analysis.data = final_dict
-                analysis.save()

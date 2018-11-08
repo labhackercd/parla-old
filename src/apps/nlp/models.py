@@ -14,12 +14,12 @@ class Analysis(models.Model):
 
     MULTIGRAM_BOW_WITH_UNIGRAM = 'multigram_bow_with_unigram'
     MULTIGRAM_BOW_WITHOUT_UNIGRAM = 'multigram_bow_without_unigram'
-    NAIVE_BAYES = 'naive_bayes'
+    DECISION_TREE = 'decision_tree'
     ALGORITHM_CHOICES = (
         (MULTIGRAM_BOW_WITH_UNIGRAM, 'Multigrams Bag of Words with unigrams'),
         (MULTIGRAM_BOW_WITHOUT_UNIGRAM,
             'Multigrams Bag of Words without unigrams'),
-        (NAIVE_BAYES, 'Naive naive_bayes'),
+        (DECISION_TREE, 'DecisionTree + Naive Bayes'),
     )
 
     analysis_type = models.CharField(max_length=20,
