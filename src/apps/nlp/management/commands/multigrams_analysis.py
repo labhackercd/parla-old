@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from apps.nlp import multigrams
+from apps.nlp import analysis
 
 
 class Command(BaseCommand):
@@ -10,4 +10,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         use_unigram = bool(options['use_unigram'])
-        multigrams.multigrams_analysis(use_unigram=use_unigram)
+        analysis.multigrams_analysis(use_unigram=use_unigram)
