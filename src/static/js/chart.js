@@ -330,7 +330,7 @@ function setTransformOrigin(canvas) {
   }
 }
 
-function onlyLoadWordChart() {
+function onlyLoadWordChart(callback) {
   $('.js-page').remove();
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
@@ -357,6 +357,7 @@ function onlyLoadWordChart() {
     setTransformOrigin(canvas);
     enableScroll();
     visiblePage = 'tokens';
+    callback();
   }, loadOnly = true);
 }
 

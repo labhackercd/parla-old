@@ -68,42 +68,49 @@ $('.js-player-play').click(function(){
     clearInterval(interval)
   };
 
-  interval = setInterval(function() {
-    var currentTick = parseInt(playerInput.val());
+  function loadInterval() {
+      var currentTick = parseInt(playerInput.val());
 
-    currentMonthFromRange = Math.floor(currentTick / monthRatio);
-    console.log(currentMonthFromRange)
-    if (currentMonthFromRange !== showingMonth) {
-      var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
-      var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
-      var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+2)).slice(-2);
+      currentMonthFromRange = Math.floor(currentTick / monthRatio);
+      console.log(currentMonthFromRange)
+      if (currentMonthFromRange !== showingMonth) {
+        var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
+        var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
+        var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+2)).slice(-2);
 
-      var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
+        var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
 
-      if (urlMinMonthValue == "12") {
-        var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
+        if (urlMinMonthValue == "12") {
+          var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
 
-      } else {
-        var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
+        } else {
+          var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
+        }
+        console.log(urlMaxValue);
+
+        const params = new URLSearchParams(window.location.search);
+        params.set('initialDate', urlMinValue);
+        params.set('endDate', urlMaxValue);
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
+
+        onlyLoadWordChart(function() {
+          interval = setInterval(loadInterval, speed);
+        });
+        if (interval) {
+          clearInterval(interval)
+        };
+        showingMonth = currentMonthFromRange;
       }
-      console.log(urlMaxValue);
 
-      const params = new URLSearchParams(window.location.search);
-      params.set('initialDate', urlMinValue);
-      params.set('endDate', urlMaxValue);
-      window.history.replaceState({}, '', `${location.pathname}?${params}`);
-
-      onlyLoadWordChart();
-      showingMonth = currentMonthFromRange;
+      var nextTick = currentTick + 1;
+      if (nextTick <= max) {
+        playerInput.val(nextTick).change();
+      } else {
+        clearInterval(interval);
+      }
     }
 
-    var nextTick = currentTick + 1;
-    if (nextTick <= max) {
-      playerInput.val(nextTick).change();
-    } else {
-      clearInterval(interval);
-    }
-  }, speed);
+  interval = setInterval(loadInterval, speed);
 
 
 });
