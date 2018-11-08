@@ -37,24 +37,44 @@ def get_algorithm_filter(request):
         return Q(algorithm='multigram_bow_without_unigram')
 
 
-CLASSIFIER_LABELS = {
-    'agricultura': 'Agricultura',
-    'arte-cultura-informacao': 'Arte, Cultura e Informação',
-    'assistencia-social': 'Assistência Social',
-    'cidades': 'Cidades',
-    'ciencia-tecnologia': 'Ciência e Tecnologia',
-    'comercio-consumidor': 'Comércio e Consumidor',
+LABELS_RELATION = {
+    'adm-publica': 'Administração Pública',
+    'agricultura-pecuaria-pesca-extrativismo': 'Agricultura, Pecuária, '
+                                               'Pesca e Extrativismo',
+    'arte-cultura-religiao': 'Arte, Cultura e Religião',
+    'cidades-desenvolvimento-urbano': 'Cidades e Desenvolvimento Urbano',
+    'ciencia-tecnologia-inovacao': 'Ciência, Tecnologia e Inovação',
+    'ciencias-exatas': 'Ciências Exatas',
+    'ciencias-sociais': 'Ciências Sociais',
+    'comunicacoes': 'Comunicações',
+    'defesa-seguranca': 'Defesa e Segurança',
+    'direito-civil': 'Direito Civil e Processual Civil',
+    'direito-constitucional': 'Direito Constitucional',
+    'direito-consumidor': 'Direito e Defesa do Consumidor',
+    'direito-justica': 'Direito e Justiça',
+    'direito-penal': 'Direito Penal e Processual Penal',
     'direitos-humanos-minorias': 'Direitos Humanos e Minorias',
-    'economia-financas-publicas': 'Economia e Finanças Públicas',
+    'economia': 'Economia',
     'educacao': 'Educação',
+    'energia-recursos-hidricos-minerais': 'Energia, Recursos Hídricos '
+                                          'e Minerais',
     'esporte-lazer': 'Esporte e Lazer',
-    'justica': 'Justiça',
-    'meio-ambiente': 'Meio Ambiente',
-    'relacoes-exteriores': 'Relações Exteriores',
+    'estrutura-fundiaria': 'Estrutura Fundiária',
+    'financas-publicas-orcamento': 'Finanças Públicas e Orçamento',
+    'homenagens-datas-comemorativas': 'Homenagens e Datas Comemorativas',
+    'industria-comercio-servicos': 'Indústria, Comércio e Serviços',
+    'meio-ambiente-desenvolvimento-sustentavel': 'Meio Ambiente e '
+                                                 'Desenvolvimento Sustentável',
+    'politica-partidos-eleicoes': 'Política, Partidos e Eleições',
+    'previdencia-assistencia-social': 'Previdência e Assistência Social',
+    'processo-legislativo-atuacao-parlamentar': 'Processo Legislativo e '
+                                                'Atuação Parlamentar',
+    'relacoes-internacionais-comercio-exterior': 'Relações Internacionais e '
+                                                 'Comércio Exterior',
     'saude': 'Saúde',
-    'seguranca': 'Segurança',
     'trabalho-emprego': 'Trabalho e Emprego',
-    'viacao-transporte': 'Viação e Transporte',
+    'turismo': 'Turismo',
+    'viacao-transporte-mobilidade': 'Viação, Transporte e Mobilidade',
 }
 
 
@@ -74,9 +94,9 @@ def tokens(request):
     final_dict = []
     for i, stem in enumerate(bow.most_common(20)):
         obj = {}
-        if algorithm == 'naive_bayes':
+        if algorithm == 'decision_tree':
             obj['id'] = stem[0]
-            obj['token'] = CLASSIFIER_LABELS[stem[0]]
+            obj['token'] = LABELS_RELATION[stem[0]]
             obj['stem'] = stem[0]
         elif (algorithm == 'multigram_bow_with_unigram' or
               algorithm == 'multigram_bow_without_unigram'):
@@ -143,6 +163,7 @@ def token_author_manifestations(request, token, author_id):
                     bow.update(speech)
 
     final_dict = []
+    max_occurrence = bow.most_common(1)[0][1]
     for speech_id, occurrences in bow.most_common(50):
         speech = data_models.Speech.objects.get(pk=speech_id)
         obj = {
@@ -150,6 +171,7 @@ def token_author_manifestations(request, token, author_id):
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
             'preview': speech.content[:70] + '...',
+            'ratio': occurrences / max_occurrence,
         }
         final_dict.append(obj)
     return JsonResponse(final_dict, safe=False)

@@ -8,7 +8,7 @@
     <select name="algorithm" class="algorithm">
       <option value="multigram_bow_without_unigram" {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}selected{% endif %}>Saco de Palavras(sem unigrams)</option>
       <option value="multigram_bow_with_unigram" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
-      <option value="naive_bayes" {% if request.GET.algorithm == 'naive_bayes' %}selected{% endif %}>Naive Bayes</option>
+      <option value="decision_tree" {% if request.GET.algorithm == 'decision_tree' %}selected{% endif %}>Decision Tree + Naive Bayes</option>
     </select>
     <button class="button">Aplicar filtros</button>
   </div>
