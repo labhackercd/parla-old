@@ -5,7 +5,7 @@ from calendar import monthrange
 from click import progressbar, secho
 import datetime
 
-from apps.nlp import models as nlp, naive_bayes, cache
+from apps.nlp import models as nlp, decision_tree, cache
 from apps.data import models as data
 
 
@@ -19,19 +19,8 @@ def months(queryset):
     return rrule(MONTHLY, dtstart=start_date, until=end_date)
 
 
-def get_naive_bayes_classifier():
-    return Classifier(
-        naive_bayes.get_initial_trainset(),
-        feature_extractor=naive_bayes.extract
-    )
-
-
-def naive_bayes_analysis():
+def decision_tree_analysis():
     speech_list = data.Speech.objects.all().order_by('date')
-    print('Training classifier...')
-    classifier = cache.load_from_cache(
-        'classifier', initial_value_method=get_naive_bayes_classifier
-    )
     for date in months(speech_list):
         days = monthrange(date.year, date.month)[1]
         start_date = datetime.datetime(date.year, date.month, 1)
@@ -45,33 +34,29 @@ def naive_bayes_analysis():
         final_dict = {}
         with progressbar(queryset) as bar:
             for speech in bar:
-                if speech.indexes:
-                    indexes = speech.indexes.replace('.', ',')
-                    indexes = indexes.split(',')
+                classes = decision_tree.classify_speech(
+                    speech.original,
+                    normalize=False
+                )
+                for label, occurrences in classes.most_common():
+                    token_data = final_dict.get(label, {})
+                    authors = token_data.get('authors', {})
+                    author_data = authors.get(speech.author.id, {})
+                    texts = author_data.get('texts', [])
+                    texts.append({speech.id: occurrences})
 
-                    for index in indexes:
-                        prob_dist = classifier.prob_classify(index)
-                        label = prob_dist.max()
-                        if prob_dist.prob(label) > 0.5:
-                            token_data = final_dict.get(label, {})
-                            authors = token_data.get('authors', {})
-                            author_data = authors.get(speech.author.id, {})
-                            texts = author_data.get('texts', [])
-                            texts.append({speech.id: 1})
-
-                            author_data['texts_count'] = len(texts)
-                            author_data['texts'] = texts
-                            authors[speech.author.id] = author_data
-                            token_data['authors'] = authors
-                            token_data['authors_count'] = len(authors)
-                            final_dict[label] = token_data
+                    author_data['texts_count'] = len(texts)
+                    author_data['texts'] = texts
+                    authors[speech.author.id] = author_data
+                    token_data['authors'] = authors
+                    token_data['authors_count'] = len(authors)
+                    final_dict[label] = token_data
 
             if len(final_dict) > 0:
                 analysis = nlp.Analysis.objects.get_or_create(
                     start_date=start_date,
                     end_date=end_date,
-                    use_indexes=True,
-                    algorithm='naive_bayes'
+                    algorithm='decision_tree'
                 )[0]
 
                 analysis.data = final_dict
