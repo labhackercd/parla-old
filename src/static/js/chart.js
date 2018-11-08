@@ -398,6 +398,22 @@ function tokensChart(tokenId) {
   })
 }
 
+function calculateSpeechHexagonSize(ratio) {
+  if (ratio <= 1 && ratio > 0.8333) {
+    return 1;
+  } else if (ratio <= 0.8333 && ratio > 0.6666) {
+    return 0.8333;
+  } else if (ratio <= 0.6666 && ratio > 0.5) {
+    return 0.6666;
+  } else if (ratio <= 0.5 && ratio > 0.3334) {
+    return 0.5;
+  } else if (ratio <= 0.3334 && ratio > 0.1666) {
+    return 0.3334;
+  } else {
+    return 0.1666;
+  }
+}
+
 function authorsChart(tokenId, authorId) {
   loadData(`/visualizations/authors/${tokenId}/${authorId}/`, function(data) {
     var speechesPage = $(document.createElement('div'))
@@ -417,8 +433,7 @@ function authorsChart(tokenId, authorId) {
       content.append(timestamp);
       content.append($(`<p>${element.preview}</p>`));
 
-      var hex = $(`<div class="hex">`);
-      hex.addClass(element.hexagon_size);
+      var hex = $(`<div class="hex" style="transform: scale(${calculateSpeechHexagonSize(element.ratio)})">`);
 
       var item = $(`<div class="item js-manifestation" data-manifestation-id=${element.id}>"`);
       hexGrid.append(item);
