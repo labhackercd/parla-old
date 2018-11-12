@@ -103,6 +103,10 @@ def tokens(request):
             obj['id'] = slugify(stem[0])
             obj['token'] = stem[0]
             obj['stem'] = stem[0]
+        else:
+            obj['id'] = stem[0]
+            obj['token'] = stem[0]
+            obj['stem'] = stem[0]
 
         if i > 0:
             previous = final_dict[i - 1]
