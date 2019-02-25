@@ -14,10 +14,34 @@ $('.js-player').rangeslider({
     }
 });
 var interval = undefined;
-var currentMonthFromRange = undefined;
+var currentMonthFromRange = null;
+var datesRange = [];
+
+function generateMonthRangeUrlParam() {
+  var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
+  var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
+  var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+2)).slice(-2);
+
+  var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
+
+  if (urlMinMonthValue == "12") {
+    var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
+
+  } else {
+    var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  params.set('initialDate', urlMinValue);
+  params.set('endDate', urlMaxValue);
+  var manualParams = `?${params}`;
+
+  return manualParams;
+}
 
 $('.js-player-play').click(function(){
-  var datesRange = [];
+  currentMonthFromRange = 0;
+  datesRange = [];
   var initialDate = $(".js-slider").dateRangeSlider("values").min;
   var lastDate = $(".js-slider").dateRangeSlider("values").max;
 
@@ -42,6 +66,8 @@ $('.js-player-play').click(function(){
       currentMonth++;
     };
   };
+
+  onlyLoadWordChart(function(){}, generateMonthRangeUrlParam());
 
   $('.js-current-date').html(datesRange[0]);
 
@@ -75,30 +101,14 @@ $('.js-player-play').click(function(){
 
       currentMonthFromRange = Math.floor(currentTick / monthRatio);
       if (currentMonthFromRange !== showingMonth) {
-        var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
-        var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
-        var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+2)).slice(-2);
-
-        var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
-
-        if (urlMinMonthValue == "12") {
-          var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
-
-        } else {
-          var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        params.set('initialDate', urlMinValue);
-        params.set('endDate', urlMaxValue);
-        manualParams = `?${params}`;
-
         onlyLoadWordChart(function() {
           interval = setInterval(loadInterval, speed);
-        }, manualParams);
+        }, generateMonthRangeUrlParam());
+
         if (interval) {
           clearInterval(interval)
         };
+
         showingMonth = currentMonthFromRange;
       }
 
@@ -127,5 +137,6 @@ $('.js-player-stop').click(function(){
   $('.js-player').off('input');
   $('.js-active-slider').removeClass('-hide');
   $('.js-range-player').addClass('-hide');
+  onlyLoadWordChart();
 });
 
