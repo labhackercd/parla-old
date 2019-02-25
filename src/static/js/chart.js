@@ -69,6 +69,7 @@ function loadData(url, callback, loadOnly = false) {
             if (loadOnly === false) {
               $('.js-active-slider').removeClass('-hide');
             }
+            callback(null);
           } else {
             $('.js-error-data').addClass('-hide');
             callback(data);
@@ -81,10 +82,12 @@ function loadData(url, callback, loadOnly = false) {
           if (loadOnly === false) {
             $('.js-active-slider').removeClass('-hide');
           }
+          callback(null);
         } else {
           $('.js-error-data').addClass('-hide');
           callback(data);
         }
+
       }
 
     },
@@ -96,6 +99,7 @@ function loadData(url, callback, loadOnly = false) {
   });
 
   return newArray;
+
 }
 
 function drawHexagon(scale, radius = 90) {
@@ -333,30 +337,32 @@ function setTransformOrigin(canvas) {
 function onlyLoadWordChart(callback) {
   $('.js-page').remove();
   loadData("/visualizations/tokens/", function(data) {
-    var canvas = drawCanvas('.wrapper', 'token');
-    var hexagonGroup = createHexagonGroup(canvas, data, loadOnly = true);
-    addHexagons(hexagonGroup, 90);
-    hexagonOnClick(hexagonGroup, function(data) {
-      var currentPage = $(data.element).closest('.js-page');
-      currentPage.removeClass('-active');
-      $('.js-active-slider').addClass('-hide');
-      $('.js-circle').one('transitionend', function(){
-        currentPage.addClass('_hidden');
-        setNavigationTitle(data.token);
-        $('.js-back').removeClass('_hidden');
+    if (data) {
+      var canvas = drawCanvas('.wrapper', 'token');
+      var hexagonGroup = createHexagonGroup(canvas, data, loadOnly = true);
+      addHexagons(hexagonGroup, 90);
+      hexagonOnClick(hexagonGroup, function(data) {
+        var currentPage = $(data.element).closest('.js-page');
+        currentPage.removeClass('-active');
+        $('.js-active-slider').addClass('-hide');
+        $('.js-circle').one('transitionend', function(){
+          currentPage.addClass('_hidden');
+          setNavigationTitle(data.token);
+          $('.js-back').removeClass('_hidden');
 
+        });
+        tokensChart(data.stem);
+        tokensScroll = scrollPosition;
+        hammertime.destroy();
       });
-      tokensChart(data.stem);
-      tokensScroll = scrollPosition;
-      hammertime.destroy();
-    });
-    positionHexagon(hexagonGroup);
-    addText(hexagonGroup);
-    showHexagonGroup(hexagonGroup);
-    updateCanvasSize(canvas);
-    setTransformOrigin(canvas);
-    enableScroll();
-    visiblePage = 'tokens';
+      positionHexagon(hexagonGroup);
+      addText(hexagonGroup);
+      showHexagonGroup(hexagonGroup);
+      updateCanvasSize(canvas);
+      setTransformOrigin(canvas);
+      enableScroll();
+      visiblePage = 'tokens';
+    }
     callback();
   }, loadOnly = true);
 }

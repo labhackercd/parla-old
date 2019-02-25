@@ -72,7 +72,6 @@ $('.js-player-play').click(function(){
       var currentTick = parseInt(playerInput.val());
 
       currentMonthFromRange = Math.floor(currentTick / monthRatio);
-      console.log(currentMonthFromRange)
       if (currentMonthFromRange !== showingMonth) {
         var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
         var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
@@ -86,7 +85,6 @@ $('.js-player-play').click(function(){
         } else {
           var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
         }
-        console.log(urlMaxValue);
 
         const params = new URLSearchParams(window.location.search);
         params.set('initialDate', urlMinValue);
