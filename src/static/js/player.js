@@ -89,11 +89,11 @@ $('.js-player-play').click(function(){
         const params = new URLSearchParams(window.location.search);
         params.set('initialDate', urlMinValue);
         params.set('endDate', urlMaxValue);
-        window.history.replaceState({}, '', `${location.pathname}?${params}`);
+        manualParams = `?${params}`;
 
         onlyLoadWordChart(function() {
           interval = setInterval(loadInterval, speed);
-        });
+        }, manualParams);
         if (interval) {
           clearInterval(interval)
         };

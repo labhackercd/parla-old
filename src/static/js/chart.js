@@ -1,8 +1,13 @@
 var visiblePage = undefined;
 window.circleAnimating = undefined;
 
-function getUrlParameters() {
-  searchParams = new URLSearchParams(window.location.search);
+function getUrlParameters(manualParams = false) {
+  searchParams = null;
+  if (manualParams === false) {
+    searchParams = new URLSearchParams(window.location.search);
+  } else {
+    searchParams = new URLSearchParams(manualParams);
+  }
   var initialDate = searchParams.get('initialDate');
   var endDate = searchParams.get('endDate');
   var algorithm = searchParams.get('algorithm');
@@ -27,12 +32,18 @@ function getUrlParameters() {
   return $.param(urlParameters);
 }
 
-function loadData(url, callback, loadOnly = false) {
+function loadData(url, callback, loadOnly = false, manualParams = false) {
   var newArray = [];
+  if (manualParams === false) {
+    url = url + '?' + getUrlParameters();
+  } else {
+    url = url + '?' + getUrlParameters(manualParams);
+  }
+
 
   $.ajax({
     type: "GET",
-    url: url + '?' + getUrlParameters(),
+    url: url,
     beforeSend: function() {
       $('body').addClass('-processing');
 
@@ -336,7 +347,7 @@ function setTransformOrigin(canvas) {
   }
 }
 
-function onlyLoadWordChart(callback) {
+function onlyLoadWordChart(callback, manualParams = false) {
   $('.js-page').remove();
   loadData("/visualizations/tokens/", function(data) {
     if (data) {
@@ -366,7 +377,7 @@ function onlyLoadWordChart(callback) {
       visiblePage = 'tokens';
     }
     callback();
-  }, loadOnly = true);
+  }, loadOnly = true, manualParams);
 }
 
 function wordChart() {
