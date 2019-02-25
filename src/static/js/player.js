@@ -14,10 +14,10 @@ $('.js-player').rangeslider({
     }
 });
 var interval = undefined;
-var datesRange = [];
 var currentMonthFromRange = undefined;
 
 $('.js-player-play').click(function(){
+  var datesRange = [];
   var initialDate = $(".js-slider").dateRangeSlider("values").min;
   var lastDate = $(".js-slider").dateRangeSlider("values").max;
 
@@ -42,6 +42,8 @@ $('.js-player-play').click(function(){
       currentMonth++;
     };
   };
+
+  $('.js-current-date').html(datesRange[0]);
 
   var playerInput = $('.js-player');
 
