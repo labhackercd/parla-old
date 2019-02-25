@@ -68,8 +68,9 @@ function loadData(url, callback, loadOnly = false) {
             $('.js-error-data').removeClass('-hide');
             if (loadOnly === false) {
               $('.js-active-slider').removeClass('-hide');
+            } else {
+              callback(null);
             }
-            callback(null);
           } else {
             $('.js-error-data').addClass('-hide');
             callback(data);
@@ -81,8 +82,9 @@ function loadData(url, callback, loadOnly = false) {
           $('.js-error-data').removeClass('-hide');
           if (loadOnly === false) {
             $('.js-active-slider').removeClass('-hide');
+          } else {
+            callback(null);
           }
-          callback(null);
         } else {
           $('.js-error-data').addClass('-hide');
           callback(data);
