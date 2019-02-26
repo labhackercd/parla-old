@@ -40,13 +40,43 @@ function generateMonthRangeUrlParam() {
 }
 
 $('.js-player-play').click(function(){
-  currentMonthFromRange = 0;
+  if (currentMonthFromRange === null) {
+    currentMonthFromRange = 0;
+    $('.js-current-date').html(datesRange[0]);
+  }
+
   datesRange = [];
   var initialDate = $(".js-slider").dateRangeSlider("values").min;
   var lastDate = $(".js-slider").dateRangeSlider("values").max;
 
   var currentYear = initialDate.getFullYear();
   var currentMonth = initialDate.getMonth();
+
+  function loadInterval() {
+    var currentTick = parseInt(playerInput.val());
+
+    currentMonthFromRange = Math.floor(currentTick / monthRatio);
+
+    if (currentMonthFromRange !== showingMonth) {
+
+      onlyLoadWordChart(function() {
+        interval = setInterval(loadInterval, speed);
+      }, generateMonthRangeUrlParam());
+
+      if (interval) {
+        clearInterval(interval)
+      };
+
+      showingMonth = currentMonthFromRange;
+    }
+
+    var nextTick = currentTick + 1;
+    if (nextTick <= max) {
+      playerInput.val(nextTick).change();
+    } else {
+      clearInterval(interval);
+    }
+  }
 
   $('.js-slider-min').text((monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
   $('.js-slider-max').text((monthShortNames[lastDate.getMonth()]+"/"+lastDate.getFullYear()))
@@ -69,7 +99,6 @@ $('.js-player-play').click(function(){
 
   onlyLoadWordChart(function(){}, generateMonthRangeUrlParam());
 
-  $('.js-current-date').html(datesRange[0]);
 
   var playerInput = $('.js-player');
 
@@ -89,40 +118,13 @@ $('.js-player-play').click(function(){
     var currentMonthFromRange = Math.floor(currentTick / monthRatio);
 
     $('.js-current-date').html(datesRange[currentMonthFromRange]);
-
   });
 
   if (interval) {
     clearInterval(interval)
   };
 
-  function loadInterval() {
-      var currentTick = parseInt(playerInput.val());
-
-      currentMonthFromRange = Math.floor(currentTick / monthRatio);
-      if (currentMonthFromRange !== showingMonth) {
-        onlyLoadWordChart(function() {
-          interval = setInterval(loadInterval, speed);
-        }, generateMonthRangeUrlParam());
-
-        if (interval) {
-          clearInterval(interval)
-        };
-
-        showingMonth = currentMonthFromRange;
-      }
-
-      var nextTick = currentTick + 1;
-      if (nextTick <= max) {
-        playerInput.val(nextTick).change();
-      } else {
-        clearInterval(interval);
-      }
-    }
-
   interval = setInterval(loadInterval, speed);
-
-
 });
 
 $('.js-player-pause').click(function(){
