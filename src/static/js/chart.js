@@ -358,6 +358,13 @@ function onlyLoadWordChart(callback, manualParams = false) {
         var currentPage = $(data.element).closest('.js-page');
         currentPage.removeClass('-active');
         $('.js-active-slider').addClass('-hide');
+        $('.js-player-controls').addClass('-hide');
+        $('.js-range-player').addClass('-hide');
+        if (interval) {
+          clearInterval(interval)
+          $('.js-player-pause').addClass('-hide');
+          $('.js-player-play').removeClass('-hide');
+        };
         $('.js-circle').one('transitionend', function(){
           currentPage.addClass('_hidden');
           setNavigationTitle(data.token);
@@ -399,6 +406,13 @@ function wordChart() {
       var currentPage = $(data.element).closest('.js-page');
       currentPage.removeClass('-active');
       $('.js-active-slider').addClass('-hide');
+      $('.js-player-controls').addClass('-hide');  
+      $('.js-range-player').addClass('-hide');
+      if (interval) {
+        clearInterval(interval)
+        $('.js-player-pause').addClass('-hide');
+        $('.js-player-play').removeClass('-hide');
+      };
       $('.js-circle').one('transitionend', function(){
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);

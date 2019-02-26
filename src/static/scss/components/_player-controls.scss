@@ -8,6 +8,16 @@
   height: 36px;
   margin: 0 10vw 15px 10vw;
 
+  transition: all 0.3s ease;
+
+  &.-hide {
+    visibility: hidden;
+
+    opacity: 0;
+
+    pointer-events: none;
+  }
+
 
 
   & > button {

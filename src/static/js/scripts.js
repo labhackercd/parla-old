@@ -52,8 +52,15 @@ $('.js-back').on('click', function() {
         manifestationPage.removeClass('-open');
       };
       if (visiblePage === 'authors') {
-        $('.js-inactive-slider').addClass('-hide');
-        $('.js-active-slider').removeClass('-hide');
+        $('.js-player-controls').removeClass('-hide');
+
+        if (selectedThroughPlayer === true) {
+          $('.js-range-player').removeClass('-hide');  
+
+        } else {
+          $('.js-inactive-slider').addClass('-hide');
+          $('.js-active-slider').removeClass('-hide');
+        }
       };
       var current = $('.js-page.-active');
       var prev = current.prev('.js-page');

@@ -13,7 +13,8 @@ $('.js-player').rangeslider({
       $('.js-range-player .handle').prepend('<span class="currentdate js-current-date"></span>')
     }
 });
-var interval = undefined;
+selectedThroughPlayer = false;
+interval = undefined;
 var currentMonthFromRange = null;
 var datesRange = [];
 
@@ -40,6 +41,8 @@ function generateMonthRangeUrlParam() {
 }
 
 $('.js-player-play').click(function(){
+  selectedThroughPlayer = true;
+
   $(this).addClass('-hide');
   $('.js-player-pause').removeClass('-hide');
   $('.js-player-stop').removeClass('-hide');
@@ -154,6 +157,7 @@ $('.js-player-pause').click(function(){
 });
 
 $('.js-player-stop').click(function(){
+  selectedThroughPlayer = false;
   if (interval) {
     clearInterval(interval);
   };
