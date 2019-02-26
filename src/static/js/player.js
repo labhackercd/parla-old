@@ -40,6 +40,9 @@ function generateMonthRangeUrlParam() {
 }
 
 $('.js-player-play').click(function(){
+  $(this).addClass('-hide');
+  $('.js-player-pause').removeClass('-hide');
+  $('.js-player-stop').removeClass('-hide');
   if (currentMonthFromRange === null) {
     currentMonthFromRange = 0;
     $('.js-current-date').html(datesRange[0]);
@@ -52,8 +55,11 @@ $('.js-player-play').click(function(){
   var currentYear = initialDate.getFullYear();
   var currentMonth = initialDate.getMonth();
 
+  var nextTick = null;
+  var currentTick = null;
+
   function loadInterval() {
-    var currentTick = parseInt(playerInput.val());
+    currentTick = parseInt(playerInput.val());
 
     currentMonthFromRange = Math.floor(currentTick / monthRatio);
 
@@ -70,12 +76,14 @@ $('.js-player-play').click(function(){
       showingMonth = currentMonthFromRange;
     }
 
-    var nextTick = currentTick + 1;
+    nextTick = currentTick + 1;
     if (nextTick <= max) {
       playerInput.val(nextTick).change();
     } else {
       clearInterval(interval);
     }
+
+    // console.log(currentTick);
   }
 
   $('.js-slider-min').text((monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
@@ -114,31 +122,50 @@ $('.js-player-play').click(function(){
   playerInput.attr('max', max);
 
   playerInput.on('input', function(){
-    var currentTick = parseInt(playerInput.val());
-    var currentMonthFromRange = Math.floor(currentTick / monthRatio);
+    currentTick = parseInt(playerInput.val());
+    currentMonthFromRange = Math.floor(currentTick / monthRatio);
+
+    if (currentTick == max) {
+      if (interval) {
+        clearInterval(interval)
+        $('.js-player-pause').addClass('-hide');
+        $('.js-player-play').removeClass('-hide');
+      };
+    }
 
     $('.js-current-date').html(datesRange[currentMonthFromRange]);
   });
 
   if (interval) {
-    clearInterval(interval)
+    clearInterval(interval);
   };
 
   interval = setInterval(loadInterval, speed);
 });
 
 $('.js-player-pause').click(function(){
+  $(this).addClass('-hide');
+  $('.js-player-play').removeClass('-hide');
+
   if (interval) {
-    clearInterval(interval)
+    clearInterval(interval);
   };
+
 });
 
 $('.js-player-stop').click(function(){
+  if (interval) {
+    clearInterval(interval);
+  };
+  currentMonthFromRange = 0;
+  $(this).addClass('-hide');
+  $('.js-player-pause').addClass('-hide');
+  $('.js-player-play').removeClass('-hide');
   clearInterval(interval);
   $('.js-player').val(0);
   $('.js-player').off('input');
   $('.js-active-slider').removeClass('-hide');
   $('.js-range-player').addClass('-hide');
-  onlyLoadWordChart();
+  onlyLoadWordChart(function(){});
 });
 
