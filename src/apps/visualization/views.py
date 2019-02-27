@@ -204,9 +204,10 @@ def dateRange(request):
         bound_min = ''
     bound_max = date.today() + relativedelta(months=1)
     bound_max = bound_max.strftime('%Y-%m')
-    default_min = date.today().strftime('%Y-%m')
-    default_max = date.today() + relativedelta(months=1)
-    default_max = default_max.strftime('%Y-%m')
+    today = date.today()
+    min_date = date(today.year, 1, 1)
+    default_min = min_date.strftime('%Y-%m')
+    default_max = today.strftime('%Y-%m')
 
     return JsonResponse(
         {
