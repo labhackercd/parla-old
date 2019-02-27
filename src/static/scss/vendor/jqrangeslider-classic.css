@@ -109,13 +109,24 @@
 	background-repeat:no-repeat;
   white-space: nowrap;
   top:-30px;
-  padding:3px 6px 7px;
+  padding:3px 2px 7px;
   cursor:col-resize;
 }
 
 .ui-rangeSlider-label-value {
 	font-size: 12px;
 	text-transform: uppercase;
+}
+
+.ui-rangeSlider-label-value::before {
+  content: '1.º';
+  display: block;
+  position: absolute;
+  bottom: 92%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
 }
 
 .ui-rangeSlider-label-inner{
