@@ -461,8 +461,13 @@ function tokensChart(tokenId) {
     var maxValue = $(".js-slider").dateRangeSlider("values").max;
     var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
     var parsedMaxValue = monthShortNames[maxValue.getMonth()]+"/"+maxValue.getFullYear()
-    $('.js-slider-min').text(parsedMinValue);
-    $('.js-slider-max').text(parsedMaxValue);
+    if (selectedThroughPlayer === true) {
+      $('.js-slider-min').text(datesRange[currentMonthFromRange]);
+      $('.js-slider-max').text(datesRange[currentMonthFromRange + 1]);  
+    } else {
+      $('.js-slider-min').text(parsedMinValue);
+      $('.js-slider-max').text(parsedMaxValue);
+    }
     $('.js-inactive-slider').removeClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);

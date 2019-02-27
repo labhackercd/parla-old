@@ -21,11 +21,16 @@ $('.js-back-word-chart').on('click', function() {
     $('body').removeClass('-invertedbg');
     $('.nav-bar').removeClass('-negative');
     $('.js-inactive-slider').addClass('-hide');
-    $('.js-active-slider').removeClass('-hide');
     $('.js-page-token').removeClass('_hidden');
     $('.js-page-token').addClass('-active');
     $('.js-page:not(.js-page-token)').remove();
     $('.js-back').addClass('_hidden');
+    $('.js-player-controls').removeClass('-hide');
+    if (selectedThroughPlayer === true) {
+      $('.js-range-player').removeClass('-hide');  
+    } else {
+      $('.js-active-slider').removeClass('-hide');
+    }
     if (visiblePage === 'manifestations' || visiblePage === 'manifestation') {
       $('.js-circle').removeClass('-invertedbg');
     };
@@ -53,12 +58,12 @@ $('.js-back').on('click', function() {
       };
       if (visiblePage === 'authors') {
         $('.js-player-controls').removeClass('-hide');
+        $('.js-inactive-slider').addClass('-hide');
 
         if (selectedThroughPlayer === true) {
           $('.js-range-player').removeClass('-hide');  
 
         } else {
-          $('.js-inactive-slider').addClass('-hide');
           $('.js-active-slider').removeClass('-hide');
         }
       };

@@ -15,8 +15,8 @@ $('.js-player').rangeslider({
 });
 selectedThroughPlayer = false;
 interval = undefined;
-var currentMonthFromRange = null;
-var datesRange = [];
+currentMonthFromRange = null;
+datesRange = [];
 
 function generateMonthRangeUrlParam() {
   var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
@@ -85,12 +85,10 @@ $('.js-player-play').click(function(){
     } else {
       clearInterval(interval);
     }
-
-    // console.log(currentTick);
   }
 
-  $('.js-slider-min').text((monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
-  $('.js-slider-max').text((monthShortNames[lastDate.getMonth()]+"/"+lastDate.getFullYear()))
+  $('.js-player-slider-min').text((monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
+  $('.js-player-slider-max').text((monthShortNames[lastDate.getMonth()]+"/"+lastDate.getFullYear()))
 
   var dateDiff = (lastDate.getFullYear() - initialDate.getFullYear())*12 + (lastDate.getMonth() - initialDate.getMonth());
 
