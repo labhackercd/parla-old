@@ -10,7 +10,7 @@ $.ajax({
   async: false,
   dataType: 'json',
   success: function(data) {
-    bound_min = data['bound_min'].split('-');
+    bound_min = [data['bound_min'].split('-')[0], '01']; // First month of the first year in the database
     bound_max = data['bound_max'].split('-');
     default_min = data['default_min'].split('-');
     default_max = data['default_max'].split('-');
