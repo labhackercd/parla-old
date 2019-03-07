@@ -78,11 +78,21 @@
         font-size: 12px;
 
         position: absolute;
-        top: -20px;
+        top: -32px;
         left: 50%;
 
         transform: translateX(-50%);
         text-transform: uppercase;
+        white-space: pre-line;
+        text-align: center;
+        width: 4ch;
+        pointer-events: none;
+
+        > span {
+          opacity: 0;
+          display: block;
+          animation: show-label 0.2s ease forwards;
+        }
       }
     }
   }

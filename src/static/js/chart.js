@@ -1,37 +1,3 @@
-var visiblePage = undefined;
-window.circleAnimating = undefined;
-
-function getUrlParameters(manualParams = false) {
-  searchParams = null;
-  if (manualParams === false) {
-    searchParams = new URLSearchParams(window.location.search);
-  } else {
-    searchParams = new URLSearchParams(manualParams);
-  }
-  var initialDate = searchParams.get('initialDate');
-  var endDate = searchParams.get('endDate');
-  var algorithm = searchParams.get('algorithm');
-  var urlParameters = {};
-
-  if (initialDate) {
-    initialDate = initialDate.split('-');
-    initialDate = new Date(initialDate[0], initialDate[1]-1, 1);
-    urlParameters['initial_date'] = initialDate.toISOString().split('T')[0];
-  }
-
-  if (endDate) {
-    endDate = endDate.split('-');
-    endDate = new Date(endDate[0], endDate[1]-1, 0);
-    urlParameters['final_date'] = endDate.toISOString().split('T')[0];
-  }
-
-  if (algorithm) {
-    urlParameters['algorithm'] = algorithm;
-  }
-
-  return $.param(urlParameters);
-}
-
 function loadData(url, callback, loadOnly = false, manualParams = false) {
   var newArray = [];
   if (manualParams === false) {
@@ -396,7 +362,15 @@ function wordChart() {
     endDate = params.get('endDate').split('-');
     endDate = new Date(endDate[0], endDate[1]-1);
     $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
-  };
+
+    var dateDiff = (endDate.getFullYear() - initialDate.getFullYear())*12 + (endDate.getMonth() - initialDate.getMonth());
+
+    if (dateDiff === 1) {
+      $('.js-player-play').addClass('-hide');
+    } else {
+      $('.js-player-play').removeClass('-hide');
+    }
+  }; 
 
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
@@ -434,7 +408,7 @@ function wordChart() {
   });
 };
 
-wordChart();
+wordChart()
 
 function tokensChart(tokenId) {
   loadData(`/visualizations/authors/${tokenId}`, function(data) {
@@ -459,14 +433,19 @@ function tokensChart(tokenId) {
     addText(hexagonGroup);
     var minValue = $(".js-slider").dateRangeSlider("values").min;
     var maxValue = $(".js-slider").dateRangeSlider("values").max;
+
+    var endDate = new Date($(".js-slider").dateRangeSlider("values").max.getTime());
+
+    endDate.setDate(endDate.getDate() - 1);
+
     var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
-    var parsedMaxValue = monthShortNames[maxValue.getMonth()]+"/"+maxValue.getFullYear()
+    var parsedMaxValue = monthShortNames[endDate.getMonth()]+"/"+endDate.getFullYear()
     if (selectedThroughPlayer === true) {
-      $('.js-slider-min').text(datesRange[currentMonthFromRange]);
-      $('.js-slider-max').text(datesRange[currentMonthFromRange + 1]);  
+      $('.js-slider-min').text('01/' + datesRange[currentMonthFromRange].split(' ')[0] + '/' + datesRange[currentMonthFromRange].split(' ')[1]);
+      $('.js-slider-max').text(endDate.getUTCDate() + '/' + datesRange[currentMonthFromRange].split(' ')[0] + '/' + datesRange[currentMonthFromRange].split(' ')[1]);  
     } else {
-      $('.js-slider-min').text(parsedMinValue);
-      $('.js-slider-max').text(parsedMaxValue);
+      $('.js-slider-min').text('01/' + parsedMinValue);
+      $('.js-slider-max').text(endDate.getUTCDate() + '/' + parsedMaxValue);
     }
     $('.js-inactive-slider').removeClass('-hide');
     updateCanvasSize(canvas);
@@ -566,11 +545,53 @@ function manifestationPage(manifestationId, tokenId) {
   })
 }
 
+$(".js-slider").bind("valuesChanging", function(e, data){
+  var leftLabelText = $('.ui-rangeSlider-leftLabel .ui-rangeSlider-label-inner');
+  var rightLabelText = $('.ui-rangeSlider-rightLabel .ui-rangeSlider-label-inner');
+
+  var endDate = new Date(data.values.max.getTime());
+
+  endDate.setDate(endDate.getDate() - 1);
+
+  var initialDay = data.values.min.getUTCDate()
+  var initialMonth = monthShortNames[data.values.min.getMonth()]
+  var endDay = endDate.getUTCDate()
+  var endMonth = monthShortNames[endDate.getMonth()]
+
+  var leftLabelDay = `<span>${initialDay}</span>`;  
+  var leftLabelMonth = `<span>${initialMonth}</span>`;  
+  var rightLabelDay = `<span>${endDay}</span>`;  
+  var rightLabelMonth = `<span>${endMonth}</span>`;  
+
+  if (data.values.min.getTime() != currentMinValue.getTime()){
+    leftLabelText.empty().append(leftLabelDay, leftLabelMonth);
+  }
+
+  if (data.values.max.getTime() != currentMaxValue.getTime()){
+    rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+  }
+
+  currentMinValue = data.values.min;
+  currentMaxValue = data.values.max;
+});
+
+
 $(".js-slider").bind("valuesChanged", function(e, data){
+  currentMinValue = data.values.min;
+  currentMaxValue = data.values.max;
+
   var minValue = $(".js-slider").dateRangeSlider("values").min;
   var maxValue = $(".js-slider").dateRangeSlider("values").max;
   var parsedMinValue = minValue.getFullYear()+"-"+("0" + (minValue.getMonth() + 1)).slice(-2);
   var parsedMaxValue = maxValue.getFullYear()+"-"+("0" + (maxValue.getMonth() + 1)).slice(-2);
+
+  var dateDiff = (maxValue.getFullYear() - minValue.getFullYear())*12 + (maxValue.getMonth() - minValue.getMonth());
+
+  if (dateDiff === 1) {
+    $('.js-player-play').addClass('-hide');
+  } else {
+    $('.js-player-play').removeClass('-hide');
+  }
 
   const params = new URLSearchParams(window.location.search);
   params.set('initialDate', parsedMinValue);
