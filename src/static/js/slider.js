@@ -18,8 +18,9 @@ $.ajax({
 
     var parsedMinValue = `${default_min[0]}-${default_min[1]}`
     var parsedMaxValue = `${default_max[0]}-${default_max[1]}`
+    getUrlParameters();
 
-    if (getUrlParameters() === '') {
+    if (searchParams.get('initialDate') === null || searchParams.get('endDate') === null) {
       const params = new URLSearchParams(window.location.search);
       params.set('initialDate', parsedMinValue);
       params.set('endDate', parsedMaxValue);
