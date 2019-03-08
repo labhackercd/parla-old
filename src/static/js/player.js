@@ -43,6 +43,7 @@ function generateMonthRangeUrlParam() {
 
 $('.js-player-play').click(function(){
   selectedThroughPlayer = true;
+  playerRunning = true;
 
   $(this).addClass('-hide');
   $('.js-player-pause').removeClass('-hide');
@@ -60,7 +61,7 @@ $('.js-player-play').click(function(){
   var currentMonth = initialDate.getMonth();
 
   var nextTick = null;
-  var currentTick = null;
+   currentTick = null;
 
   function loadInterval() {
     currentTick = parseInt(playerInput.val());
@@ -89,7 +90,11 @@ $('.js-player-play').click(function(){
   }
 
   $('.js-player-slider-min').text('01/' + (monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
-  $('.js-player-slider-max').text(subtractedLastDate.getUTCDate() + '/' + (monthShortNames[subtractedLastDate.getMonth()]+"/"+subtractedLastDate.getFullYear()))
+  if (lastDate.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+    $('.js-player-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + (monthShortNames[subtractedLastDate.getMonth()]+"/"+subtractedLastDate.getFullYear()))
+  } else {
+    $('.js-player-slider-max').text(subtractedLastDate.getUTCDate() + '/' + (monthShortNames[subtractedLastDate.getMonth()]+"/"+subtractedLastDate.getFullYear()))
+  }
 
   var dateDiff = (lastDate.getFullYear() - initialDate.getFullYear())*12 + (lastDate.getMonth() - initialDate.getMonth());
 
@@ -116,7 +121,7 @@ $('.js-player-play').click(function(){
   var months = datesRange.length;
 
   var monthSecs = 2;
-  var monthRatio = max / months;
+   monthRatio = max / months;
 
   var speed = max / monthRatio * monthSecs * 2;
 
@@ -130,20 +135,39 @@ $('.js-player-play').click(function(){
     currentTick = parseInt(playerInput.val());
 
     if (currentTick < max) {
-      if (currentMonthFromRange != previousCurrentMonthFromRange || currentTick == 1) {
+      if (currentMonthFromRange != previousCurrentMonthFromRange || currentTick == 1 ) {
         $('.js-current-date').html(`<span>${datesRange[currentMonthFromRange]}</span>`);
+
+      }
+        if (currentTick <= 1) {
+          $('.js-current-date span').addClass('-noanimation');
+        } else if (currentTick > 1) {
+          $('.js-current-date span').removeClass('-noanimation');
+
+        }
+      if (playerRunning === false) {
+        $('.js-player-play').removeClass('-hide');
+        $('.js-player-stop').removeClass('-movestop');
       }
     }
 
     previousCurrentMonthFromRange = currentMonthFromRange
-    currentMonthFromRange = Math.floor(currentTick / monthRatio);
+
+    if (Math.floor(currentTick / monthRatio) < months) {
+      currentMonthFromRange = Math.floor(currentTick / monthRatio);
+    }
 
 
-    if (currentTick == max) {
+    if (currentTick >= max) {
       if (interval) {
         clearInterval(interval)
+        playerRunning = false;
         $('.js-player-pause').addClass('-hide');
-        $('.js-player-play').removeClass('-hide');
+        $('.js-player-play').addClass('-hide');
+        $('.js-player-stop').addClass('-movestop');
+        currentMonthFromRange = datesRange.length - 1;
+        $('.js-current-date').html(`<span>${datesRange[currentMonthFromRange]}</span>`);
+        $('.js-current-date span').addClass('-noanimation');
       };
     }
 
@@ -157,8 +181,11 @@ $('.js-player-play').click(function(){
 });
 
 $('.js-player-pause').click(function(){
+  playerRunning = false;
+
   $(this).addClass('-hide');
   $('.js-player-play').removeClass('-hide');
+  $('.js-player-stop').removeClass('-movestop');
 
   if (interval) {
     clearInterval(interval);
@@ -167,11 +194,14 @@ $('.js-player-pause').click(function(){
 
 $('.js-player-stop').click(function(){
   selectedThroughPlayer = false;
+  playerRunning = false;
+
   if (interval) {
     clearInterval(interval);
   };
   currentMonthFromRange = 0;
   $(this).addClass('-hide');
+  $(this).removeClass('-movestop');
   $('.js-player-pause').addClass('-hide');
   $('.js-player-play').removeClass('-hide');
   clearInterval(interval);

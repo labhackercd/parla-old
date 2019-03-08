@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from apps.nlp import models
 from apps.data import models as data_models
 from apps.data.models import Speech
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from collections import Counter
 from django.http import JsonResponse
@@ -204,7 +204,7 @@ def dateRange(request):
         bound_min = ''
     bound_max = date.today() + relativedelta(months=1)
     bound_max = bound_max.strftime('%Y-%m')
-    today = date.today()
+    today = date.today() + relativedelta(months=1)
     min_date = date(today.year, 1, 1)
     default_min = min_date.strftime('%Y-%m')
     default_max = today.strftime('%Y-%m')

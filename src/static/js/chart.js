@@ -329,7 +329,6 @@ function onlyLoadWordChart(callback, manualParams = false) {
         if (interval) {
           clearInterval(interval)
           $('.js-player-pause').addClass('-hide');
-          $('.js-player-play').removeClass('-hide');
         };
         $('.js-circle').one('transitionend', function(){
           currentPage.addClass('_hidden');
@@ -427,32 +426,54 @@ function tokensChart(tokenId) {
       authorsScroll = scrollPosition;
       hammertime.destroy();
 
-    })
+    });
 
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
+
     var minValue = $(".js-slider").dateRangeSlider("values").min;
     var maxValue = $(".js-slider").dateRangeSlider("values").max;
 
     var endDate = new Date($(".js-slider").dateRangeSlider("values").max.getTime());
-
     endDate.setDate(endDate.getDate() - 1);
 
     var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
     var parsedMaxValue = monthShortNames[endDate.getMonth()]+"/"+endDate.getFullYear()
+    var currentDate = datesRange[currentMonthFromRange];
+
+    // Setting the correct dates in js-slider-min/js-slider-max labels for all cases. I wish you luck in figuring this out.
     if (selectedThroughPlayer === true) {
-      $('.js-slider-min').text('01/' + datesRange[currentMonthFromRange].split(' ')[0] + '/' + datesRange[currentMonthFromRange].split(' ')[1]);
-      $('.js-slider-max').text(endDate.getUTCDate() + '/' + datesRange[currentMonthFromRange].split(' ')[0] + '/' + datesRange[currentMonthFromRange].split(' ')[1]);  
+
+      $('.js-slider-min').text('01/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]);
+
+      if (datesRange.indexOf(currentDate) == datesRange.length-1 && $(".js-slider").dateRangeSlider("bounds").max.getTime() == maxValue.getTime() ) {
+        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+      } else {
+        var currentLastDate = new Date()
+        currentLastDate.setMonth(monthShortNames.indexOf(datesRange[currentMonthFromRange].split(" ")[0]))
+        currentLastDate.setFullYear(parseInt(datesRange[currentMonthFromRange].split(" ")[1]))
+        currentLastDate = new Date(currentLastDate.getFullYear(), currentLastDate.getMonth() + 1, 0)
+        $('.js-slider-max').text(currentLastDate.getUTCDate() + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+      }
+
     } else {
+
       $('.js-slider-min').text('01/' + parsedMinValue);
-      $('.js-slider-max').text(endDate.getUTCDate() + '/' + parsedMaxValue);
+
+      if (maxValue.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + parsedMaxValue);
+      } else {
+        $('.js-slider-max').text(endDate.getUTCDate() + '/' + parsedMaxValue);
+      }
+
     }
+
     $('.js-inactive-slider').removeClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
     visiblePage = 'authors';
-  })
+  });
 }
 
 function calculateSpeechHexagonSize(ratio) {
@@ -568,7 +589,11 @@ $(".js-slider").bind("valuesChanging", function(e, data){
   }
 
   if (data.values.max.getTime() != currentMaxValue.getTime()){
-    rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+    if (data.values.max.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+      rightLabelText.empty().append(`<span>${new Date().getUTCDate()}</span>`, rightLabelMonth);
+    } else {
+      rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+    }
   }
 
   currentMinValue = data.values.min;

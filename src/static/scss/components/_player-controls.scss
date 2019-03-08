@@ -65,6 +65,14 @@
     &:not(.-hide) ~ .pause {
       transform: translateX(50%);
     }
+
+    &.-movestop {
+      transform: translateX(0);
+
+      & ~ .play {
+        transform: translateX(0);
+      }
+    }
   }
 
   & > .pause {

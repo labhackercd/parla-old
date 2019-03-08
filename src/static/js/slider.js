@@ -35,7 +35,7 @@ $.ajax({
 
       defaultValues:{
         min: new Date(default_min[0], default_min[1]-1),
-        max: new Date(default_max[0], default_max[1]-1)
+        max: new Date(default_max[0], default_max[1])
       },
 
       range:{
@@ -100,6 +100,12 @@ $.ajax({
 
     leftLabelText.empty().append(leftLabelDay, leftLabelMonth);
     rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+
+    if (getUrlParameters(false, true).parsedEndDate === parsedMaxValue) {
+      rightLabelText.empty().append(`<span>${new Date().getUTCDate()}</span>`, rightLabelMonth);
+    } else {
+      rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+    }
   }
 });
 

@@ -10,6 +10,8 @@ function getUrlParameters(manualParams = false, returnTimelineValues = false) {
   }
   var initialDate = searchParams.get('initialDate');
   var endDate = searchParams.get('endDate');
+  var parsedEndDate = endDate;
+  var parsedInitialDate = initialDate;
   var algorithm = searchParams.get('algorithm');
   var urlParameters = {};
 
@@ -33,9 +35,10 @@ function getUrlParameters(manualParams = false, returnTimelineValues = false) {
     var initialDay = initialDate.getUTCDate()
     var initialMonth = monthShortNames[initialDate.getMonth()]
     var endDay = endDate.getUTCDate()
+
     var endMonth = monthShortNames[endDate.getMonth()]
 
-    return {initialDay: initialDay, initialMonth: initialMonth, endDay: endDay, endMonth: endMonth}
+    return {initialDay: initialDay, initialMonth: initialMonth, endDay: endDay, endMonth: endMonth, parsedInitialDate: parsedInitialDate, parsedEndDate: parsedEndDate}
   }
 
   return $.param(urlParameters);
