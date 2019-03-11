@@ -202,3 +202,10 @@ $('.js-filter-form').submit(function() {
   $('.js-initialDate').val(parameters.parsedInitialDate);
   $('.js-endDate').val(parameters.parsedEndDate);
 })
+
+$('.js-form-hint-algorithm').text($(`.js-form-select-algorithm option[value=${$('.js-form-select-algorithm').val()}]`).data('hint'))
+
+$(".js-form-select-algorithm").change(function(){
+  $('.js-form-hint-algorithm').text($(`.js-form-select-algorithm option[value=${$('.js-form-select-algorithm').val()}]`).data('hint'))
+});
+

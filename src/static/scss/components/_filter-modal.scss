@@ -29,7 +29,7 @@
     display: flex;
     flex-direction: column;
 
-    width: 80%;
+    max-width: 30rem;
     margin: 0 auto;
     margin-bottom: 20px;
   }
@@ -69,6 +69,11 @@
     }
   }
 
+  & > .content > .hint {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
   & > .content > .button {
     font-size: 16px;
 
@@ -76,25 +81,36 @@
     align-items: center;
     justify-content: center;
 
+    width: 10rem;
     margin-top: 30px;
+    margin-right: auto;
+    margin-left: auto;
     padding: 10px;
 
     text-decoration: none;
 
     color: #FFF;
-    background-color: $color-purple;
+    background-color: $color-purple-dark;
 
     &:hover {
-      background-color: $color-purple-dark;
+      background-color: lighten($color-purple-dark, 5%);
     }
   }
 
   & > .content > select {
+    font-weight: 600;
+
     margin-top: 4px;
     padding-top: 6px;
+    padding-right: 21px;
     padding-bottom: 6px;
 
+    color: $color-purple-dark;
     border-bottom: 1px solid #000;
+    background-image: url('../img/dropdown-arrow.svg');
+    background-repeat: no-repeat;
+    background-position: 100% 58%;
+    background-size: 16px;
   }
 
   & > .nav > a {
