@@ -10,6 +10,8 @@
       <option value="multigram_bow_with_unigram" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
       <option value="decision_tree" {% if request.GET.algorithm == 'decision_tree' %}selected{% endif %}>Decision Tree + Naive Bayes</option>
     </select>
+    <input type="hidden" class="js-initialDate" name="initialDate">
+    <input type="hidden" class="js-endDate" name="endDate">
     <button class="button">Aplicar filtros</button>
   </div>
 </form>

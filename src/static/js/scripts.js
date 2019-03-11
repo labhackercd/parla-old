@@ -196,3 +196,9 @@ function zoomOutAnimation() {
 document.addEventListener('touchmove', function(e) {
   return false;
 });
+
+$('.js-filter-form').submit(function() {
+  var parameters = getUrlParameters(false, true);
+  $('.js-initialDate').val(parameters.parsedInitialDate);
+  $('.js-endDate').val(parameters.parsedEndDate);
+})
