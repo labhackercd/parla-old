@@ -10,6 +10,8 @@
   color: #FFF;
   background-color: #FFF;
 
+  margin-top: 45px;
+
   &.-hide {
     transition: opacity .3s 0s $swift-out, transform .6s 0s $swift-out, color .3s 0s $swift-out;
     transform: translateY(100%);

@@ -5,15 +5,27 @@
   display: flex;
   justify-content: center;
 
+  height: 36px;
   margin: 0 10vw 15px 10vw;
 
-  & > * + * {
-    margin-left: 20px;
+  transition: all 0.3s ease;
+
+  &.-hide {
+    visibility: hidden;
+
+    opacity: 0;
+
+    pointer-events: none;
   }
 
-  & > span {
-    display: inline-block;
 
+
+  & > button {
+    position: absolute;
+
+    display: inline-flex;
+
+    box-sizing: content-box;
     width: 16px;
     height: 16px;
     padding: 10px;
@@ -23,6 +35,14 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;
+
+    transition: transform 0.3s $swift-out, visibility 0.3s, opacity 0.15s ease;
+
+    &.-hide {
+      visibility: hidden;
+
+      opacity: 0;
+    }
   }
 
   & > .play {
@@ -30,10 +50,38 @@
   }
 
   & > .stop {
+    transform: translateX(-50%);
+
     background-image: url('../img/stop.svg');
+
+    &.-hide {
+      transform: translateX(0);
+    }
+
+    &:not(.-hide) ~ .play {
+      transform: translateX(50%);
+    }
+
+    &:not(.-hide) ~ .pause {
+      transform: translateX(50%);
+    }
+
+    &.-movestop {
+      transform: translateX(0);
+
+      & ~ .play {
+        transform: translateX(0);
+      }
+    }
   }
 
   & > .pause {
+    transform: translateX(50%);
+
     background-image: url('../img/pause.svg');
+
+    &.-hide {
+      transform: translateX(0);
+    }
   }
 }

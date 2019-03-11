@@ -1,1 +1,14 @@
 $swift-out: cubic-bezier(.55, 0, .1, 1);
+
+
+@keyframes show-label {
+  0% {
+    transform: translateY(-2rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

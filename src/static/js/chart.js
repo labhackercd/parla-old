@@ -1,38 +1,15 @@
-var visiblePage = undefined;
-window.circleAnimating = undefined;
-
-function getUrlParameters() {
-  searchParams = new URLSearchParams(window.location.search);
-  var initialDate = searchParams.get('initialDate');
-  var endDate = searchParams.get('endDate');
-  var algorithm = searchParams.get('algorithm');
-  var urlParameters = {};
-
-  if (initialDate) {
-    initialDate = initialDate.split('-');
-    initialDate = new Date(initialDate[0], initialDate[1]-1, 1);
-    urlParameters['initial_date'] = initialDate.toISOString().split('T')[0];
-  }
-
-  if (endDate) {
-    endDate = endDate.split('-');
-    endDate = new Date(endDate[0], endDate[1]-1, 0);
-    urlParameters['final_date'] = endDate.toISOString().split('T')[0];
-  }
-
-  if (algorithm) {
-    urlParameters['algorithm'] = algorithm;
-  }
-
-  return $.param(urlParameters);
-}
-
-function loadData(url, callback, loadOnly = false) {
+function loadData(url, callback, loadOnly = false, manualParams = false) {
   var newArray = [];
+  if (manualParams === false) {
+    url = url + '?' + getUrlParameters();
+  } else {
+    url = url + '?' + getUrlParameters(manualParams);
+  }
+
 
   $.ajax({
     type: "GET",
-    url: url + '?' + getUrlParameters(),
+    url: url,
     beforeSend: function() {
       $('body').addClass('-processing');
 
@@ -68,6 +45,8 @@ function loadData(url, callback, loadOnly = false) {
             $('.js-error-data').removeClass('-hide');
             if (loadOnly === false) {
               $('.js-active-slider').removeClass('-hide');
+            } else {
+              callback(null);
             }
           } else {
             $('.js-error-data').addClass('-hide');
@@ -80,11 +59,14 @@ function loadData(url, callback, loadOnly = false) {
           $('.js-error-data').removeClass('-hide');
           if (loadOnly === false) {
             $('.js-active-slider').removeClass('-hide');
+          } else {
+            callback(null);
           }
         } else {
           $('.js-error-data').addClass('-hide');
           callback(data);
         }
+
       }
 
     },
@@ -96,6 +78,7 @@ function loadData(url, callback, loadOnly = false) {
   });
 
   return newArray;
+
 }
 
 function drawHexagon(scale, radius = 90) {
@@ -330,35 +313,43 @@ function setTransformOrigin(canvas) {
   }
 }
 
-function onlyLoadWordChart(callback) {
+function onlyLoadWordChart(callback, manualParams = false) {
   $('.js-page').remove();
   loadData("/visualizations/tokens/", function(data) {
-    var canvas = drawCanvas('.wrapper', 'token');
-    var hexagonGroup = createHexagonGroup(canvas, data, loadOnly = true);
-    addHexagons(hexagonGroup, 90);
-    hexagonOnClick(hexagonGroup, function(data) {
-      var currentPage = $(data.element).closest('.js-page');
-      currentPage.removeClass('-active');
-      $('.js-active-slider').addClass('-hide');
-      $('.js-circle').one('transitionend', function(){
-        currentPage.addClass('_hidden');
-        setNavigationTitle(data.token);
-        $('.js-back').removeClass('_hidden');
+    if (data) {
+      var canvas = drawCanvas('.wrapper', 'token');
+      var hexagonGroup = createHexagonGroup(canvas, data, loadOnly = true);
+      addHexagons(hexagonGroup, 90);
+      hexagonOnClick(hexagonGroup, function(data) {
+        var currentPage = $(data.element).closest('.js-page');
+        currentPage.removeClass('-active');
+        $('.js-active-slider').addClass('-hide');
+        $('.js-player-controls').addClass('-hide');
+        $('.js-range-player').addClass('-hide');
+        if (interval) {
+          clearInterval(interval)
+          $('.js-player-pause').addClass('-hide');
+        };
+        $('.js-circle').one('transitionend', function(){
+          currentPage.addClass('_hidden');
+          setNavigationTitle(data.token);
+          $('.js-back').removeClass('_hidden');
 
+        });
+        tokensChart(data.stem);
+        tokensScroll = scrollPosition;
+        hammertime.destroy();
       });
-      tokensChart(data.stem);
-      tokensScroll = scrollPosition;
-      hammertime.destroy();
-    });
-    positionHexagon(hexagonGroup);
-    addText(hexagonGroup);
-    showHexagonGroup(hexagonGroup);
-    updateCanvasSize(canvas);
-    setTransformOrigin(canvas);
-    enableScroll();
-    visiblePage = 'tokens';
+      positionHexagon(hexagonGroup);
+      addText(hexagonGroup);
+      showHexagonGroup(hexagonGroup);
+      updateCanvasSize(canvas);
+      setTransformOrigin(canvas);
+      enableScroll();
+      visiblePage = 'tokens';
+    }
     callback();
-  }, loadOnly = true);
+  }, loadOnly = true, manualParams);
 }
 
 function wordChart() {
@@ -370,7 +361,15 @@ function wordChart() {
     endDate = params.get('endDate').split('-');
     endDate = new Date(endDate[0], endDate[1]-1);
     $(".js-slider").dateRangeSlider("values", new Date(initialDate), new Date(endDate));
-  };
+
+    var dateDiff = (endDate.getFullYear() - initialDate.getFullYear())*12 + (endDate.getMonth() - initialDate.getMonth());
+
+    if (dateDiff === 1) {
+      $('.js-player-play').addClass('-hide');
+    } else {
+      $('.js-player-play').removeClass('-hide');
+    }
+  }; 
 
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
@@ -380,6 +379,13 @@ function wordChart() {
       var currentPage = $(data.element).closest('.js-page');
       currentPage.removeClass('-active');
       $('.js-active-slider').addClass('-hide');
+      $('.js-player-controls').addClass('-hide');  
+      $('.js-range-player').addClass('-hide');
+      if (interval) {
+        clearInterval(interval)
+        $('.js-player-pause').addClass('-hide');
+        $('.js-player-play').removeClass('-hide');
+      };
       $('.js-circle').one('transitionend', function(){
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
@@ -401,7 +407,7 @@ function wordChart() {
   });
 };
 
-wordChart();
+wordChart()
 
 function tokensChart(tokenId) {
   loadData(`/visualizations/authors/${tokenId}`, function(data) {
@@ -420,22 +426,54 @@ function tokensChart(tokenId) {
       authorsScroll = scrollPosition;
       hammertime.destroy();
 
-    })
+    });
 
     positionHexagon(hexagonGroup);
     addText(hexagonGroup);
+
     var minValue = $(".js-slider").dateRangeSlider("values").min;
     var maxValue = $(".js-slider").dateRangeSlider("values").max;
+
+    var endDate = new Date($(".js-slider").dateRangeSlider("values").max.getTime());
+    endDate.setDate(endDate.getDate() - 1);
+
     var parsedMinValue = monthShortNames[minValue.getMonth()]+"/"+minValue.getFullYear()
-    var parsedMaxValue = monthShortNames[maxValue.getMonth()]+"/"+maxValue.getFullYear()
-    $('.js-slider-min').text(parsedMinValue);
-    $('.js-slider-max').text(parsedMaxValue);
+    var parsedMaxValue = monthShortNames[endDate.getMonth()]+"/"+endDate.getFullYear()
+    var currentDate = datesRange[currentMonthFromRange];
+
+    // Setting the correct dates in js-slider-min/js-slider-max labels for all cases. I wish you luck in figuring this out.
+    if (selectedThroughPlayer === true) {
+
+      $('.js-slider-min').text('01/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]);
+
+      if (datesRange.indexOf(currentDate) == datesRange.length-1 && $(".js-slider").dateRangeSlider("bounds").max.getTime() == maxValue.getTime() ) {
+        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+      } else {
+        var currentLastDate = new Date()
+        currentLastDate.setMonth(monthShortNames.indexOf(datesRange[currentMonthFromRange].split(" ")[0]))
+        currentLastDate.setFullYear(parseInt(datesRange[currentMonthFromRange].split(" ")[1]))
+        currentLastDate = new Date(currentLastDate.getFullYear(), currentLastDate.getMonth() + 1, 0)
+        $('.js-slider-max').text(currentLastDate.getUTCDate() + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+      }
+
+    } else {
+
+      $('.js-slider-min').text('01/' + parsedMinValue);
+
+      if (maxValue.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + parsedMaxValue);
+      } else {
+        $('.js-slider-max').text(endDate.getUTCDate() + '/' + parsedMaxValue);
+      }
+
+    }
+
     $('.js-inactive-slider').removeClass('-hide');
     updateCanvasSize(canvas);
     setTransformOrigin(canvas);
     enableScroll();
     visiblePage = 'authors';
-  })
+  });
 }
 
 function calculateSpeechHexagonSize(ratio) {
@@ -528,11 +566,57 @@ function manifestationPage(manifestationId, tokenId) {
   })
 }
 
+$(".js-slider").bind("valuesChanging", function(e, data){
+  var leftLabelText = $('.ui-rangeSlider-leftLabel .ui-rangeSlider-label-inner');
+  var rightLabelText = $('.ui-rangeSlider-rightLabel .ui-rangeSlider-label-inner');
+
+  var endDate = new Date(data.values.max.getTime());
+
+  endDate.setDate(endDate.getDate() - 1);
+
+  var initialDay = data.values.min.getUTCDate()
+  var initialMonth = monthShortNames[data.values.min.getMonth()]
+  var endDay = endDate.getUTCDate()
+  var endMonth = monthShortNames[endDate.getMonth()]
+
+  var leftLabelDay = `<span>${initialDay}</span>`;  
+  var leftLabelMonth = `<span>${initialMonth}</span>`;  
+  var rightLabelDay = `<span>${endDay}</span>`;  
+  var rightLabelMonth = `<span>${endMonth}</span>`;  
+
+  if (data.values.min.getTime() != currentMinValue.getTime()){
+    leftLabelText.empty().append(leftLabelDay, leftLabelMonth);
+  }
+
+  if (data.values.max.getTime() != currentMaxValue.getTime()){
+    if (data.values.max.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+      rightLabelText.empty().append(`<span>${new Date().getUTCDate()}</span>`, rightLabelMonth);
+    } else {
+      rightLabelText.empty().append(rightLabelDay, rightLabelMonth);
+    }
+  }
+
+  currentMinValue = data.values.min;
+  currentMaxValue = data.values.max;
+});
+
+
 $(".js-slider").bind("valuesChanged", function(e, data){
+  currentMinValue = data.values.min;
+  currentMaxValue = data.values.max;
+
   var minValue = $(".js-slider").dateRangeSlider("values").min;
   var maxValue = $(".js-slider").dateRangeSlider("values").max;
   var parsedMinValue = minValue.getFullYear()+"-"+("0" + (minValue.getMonth() + 1)).slice(-2);
   var parsedMaxValue = maxValue.getFullYear()+"-"+("0" + (maxValue.getMonth() + 1)).slice(-2);
+
+  var dateDiff = (maxValue.getFullYear() - minValue.getFullYear())*12 + (maxValue.getMonth() - minValue.getMonth());
+
+  if (dateDiff === 1) {
+    $('.js-player-play').addClass('-hide');
+  } else {
+    $('.js-player-play').removeClass('-hide');
+  }
 
   const params = new URLSearchParams(window.location.search);
   params.set('initialDate', parsedMinValue);

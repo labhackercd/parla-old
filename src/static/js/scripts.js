@@ -1,3 +1,49 @@
+var visiblePage = undefined;
+window.circleAnimating = undefined;
+
+function getUrlParameters(manualParams = false, returnTimelineValues = false) {
+  searchParams = null;
+  if (manualParams === false) {
+    searchParams = new URLSearchParams(window.location.search);
+  } else {
+    searchParams = new URLSearchParams(manualParams);
+  }
+  var initialDate = searchParams.get('initialDate');
+  var endDate = searchParams.get('endDate');
+  var parsedEndDate = endDate;
+  var parsedInitialDate = initialDate;
+  var algorithm = searchParams.get('algorithm');
+  var urlParameters = {};
+
+  if (initialDate) {
+    initialDate = initialDate.split('-');
+    initialDate = new Date(initialDate[0], initialDate[1]-1, 1);
+    urlParameters['initial_date'] = initialDate.toISOString().split('T')[0];
+  }
+
+  if (endDate) {
+    endDate = endDate.split('-');
+    endDate = new Date(endDate[0], endDate[1]-1, 0);
+    urlParameters['final_date'] = endDate.toISOString().split('T')[0];
+  }
+
+  if (algorithm) {
+    urlParameters['algorithm'] = algorithm;
+  }
+
+  if (returnTimelineValues) {
+    var initialDay = initialDate.getUTCDate()
+    var initialMonth = monthShortNames[initialDate.getMonth()]
+    var endDay = endDate.getUTCDate()
+
+    var endMonth = monthShortNames[endDate.getMonth()]
+
+    return {initialDay: initialDay, initialMonth: initialMonth, endDay: endDay, endMonth: endMonth, parsedInitialDate: parsedInitialDate, parsedEndDate: parsedEndDate}
+  }
+
+  return $.param(urlParameters);
+}
+
 $('.filter').click(function() {
   $('.filter-modal').addClass('-active');
 });
@@ -21,11 +67,16 @@ $('.js-back-word-chart').on('click', function() {
     $('body').removeClass('-invertedbg');
     $('.nav-bar').removeClass('-negative');
     $('.js-inactive-slider').addClass('-hide');
-    $('.js-active-slider').removeClass('-hide');
     $('.js-page-token').removeClass('_hidden');
     $('.js-page-token').addClass('-active');
     $('.js-page:not(.js-page-token)').remove();
     $('.js-back').addClass('_hidden');
+    $('.js-player-controls').removeClass('-hide');
+    if (selectedThroughPlayer === true) {
+      $('.js-range-player').removeClass('-hide');  
+    } else {
+      $('.js-active-slider').removeClass('-hide');
+    }
     if (visiblePage === 'manifestations' || visiblePage === 'manifestation') {
       $('.js-circle').removeClass('-invertedbg');
     };
@@ -52,8 +103,15 @@ $('.js-back').on('click', function() {
         manifestationPage.removeClass('-open');
       };
       if (visiblePage === 'authors') {
+        $('.js-player-controls').removeClass('-hide');
         $('.js-inactive-slider').addClass('-hide');
-        $('.js-active-slider').removeClass('-hide');
+
+        if (selectedThroughPlayer === true) {
+          $('.js-range-player').removeClass('-hide');  
+
+        } else {
+          $('.js-active-slider').removeClass('-hide');
+        }
       };
       var current = $('.js-page.-active');
       var prev = current.prev('.js-page');
@@ -138,3 +196,9 @@ function zoomOutAnimation() {
 document.addEventListener('touchmove', function(e) {
   return false;
 });
+
+$('.js-filter-form').submit(function() {
+  var parameters = getUrlParameters(false, true);
+  $('.js-initialDate').val(parameters.parsedInitialDate);
+  $('.js-endDate').val(parameters.parsedEndDate);
+})

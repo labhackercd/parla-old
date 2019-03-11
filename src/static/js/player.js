@@ -13,27 +13,96 @@ $('.js-player').rangeslider({
       $('.js-range-player .handle').prepend('<span class="currentdate js-current-date"></span>')
     }
 });
-var interval = undefined;
-var datesRange = [];
-var currentMonthFromRange = undefined;
+selectedThroughPlayer = false;
+interval = undefined;
+currentMonthFromRange = 0;
+datesRange = [];
+
+function generateMonthRangeUrlParam() {
+  var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split(' ')[0]))+1)).slice(-2);
+  var urlMinYearValue = datesRange[currentMonthFromRange].split(' ')[1]
+  var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split(' ')[0]))+2)).slice(-2);
+
+
+  var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
+
+  if (urlMinMonthValue == "12") {
+    var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
+
+  } else {
+    var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  params.set('initialDate', urlMinValue);
+  params.set('endDate', urlMaxValue);
+  var manualParams = `?${params}`;
+
+  return manualParams;
+}
 
 $('.js-player-play').click(function(){
+  selectedThroughPlayer = true;
+  playerRunning = true;
+
+  $(this).addClass('-hide');
+  $('.js-player-pause').removeClass('-hide');
+  $('.js-player-stop').removeClass('-hide');
+
+  datesRange = [];
+
   var initialDate = $(".js-slider").dateRangeSlider("values").min;
   var lastDate = $(".js-slider").dateRangeSlider("values").max;
+
+  var subtractedLastDate = new Date($(".js-slider").dateRangeSlider("values").max.getTime());
+  subtractedLastDate.setDate(subtractedLastDate.getDate() - 1);
 
   var currentYear = initialDate.getFullYear();
   var currentMonth = initialDate.getMonth();
 
-  $('.js-slider-min').text((monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
-  $('.js-slider-max').text((monthShortNames[lastDate.getMonth()]+"/"+lastDate.getFullYear()))
+  var nextTick = null;
+   currentTick = null;
+
+  function loadInterval() {
+    currentTick = parseInt(playerInput.val());
+
+    currentMonthFromRange = Math.floor(currentTick / monthRatio);
+
+    if (currentMonthFromRange !== showingMonth) {
+
+      onlyLoadWordChart(function() {
+        interval = setInterval(loadInterval, speed);
+      }, generateMonthRangeUrlParam());
+
+      if (interval) {
+        clearInterval(interval)
+      };
+
+      showingMonth = currentMonthFromRange;
+    }
+
+    nextTick = currentTick + 1;
+    if (nextTick <= max) {
+      playerInput.val(nextTick).change();
+    } else {
+      clearInterval(interval);
+    }
+  }
+
+  $('.js-player-slider-min').text('01/' + (monthShortNames[initialDate.getMonth()]+"/"+initialDate.getFullYear()))
+  if (lastDate.getTime() === $(".js-slider").dateRangeSlider("bounds").max.getTime()) {
+    $('.js-player-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + (monthShortNames[subtractedLastDate.getMonth()]+"/"+subtractedLastDate.getFullYear()))
+  } else {
+    $('.js-player-slider-max').text(subtractedLastDate.getUTCDate() + '/' + (monthShortNames[subtractedLastDate.getMonth()]+"/"+subtractedLastDate.getFullYear()))
+  }
 
   var dateDiff = (lastDate.getFullYear() - initialDate.getFullYear())*12 + (lastDate.getMonth() - initialDate.getMonth());
 
   $('.js-active-slider').addClass('-hide');
   $('.js-range-player').removeClass('-hide');
 
-  for (i = 0; i < dateDiff + 1; i++) {
-    datesRange.push(monthShortNames[currentMonth]+"/"+currentYear);
+  for (i = 0; i < dateDiff; i++) {
+    datesRange.push(monthShortNames[currentMonth]+" "+currentYear);
 
     if (currentMonth == 11) {
       currentMonth = 0;
@@ -43,89 +112,103 @@ $('.js-player-play').click(function(){
     };
   };
 
+  onlyLoadWordChart(function(){}, generateMonthRangeUrlParam());
+
+
   var playerInput = $('.js-player');
 
   var max = 500;
   var months = datesRange.length;
 
   var monthSecs = 2;
-  var monthRatio = max / months;
+   monthRatio = max / months;
 
   var speed = max / monthRatio * monthSecs * 2;
 
   var showingMonth = 0;
   playerInput.attr('max', max);
 
-  playerInput.on('input', function(){
-    var currentTick = parseInt(playerInput.val());
-    var currentMonthFromRange = Math.floor(currentTick / monthRatio);
+  previousCurrentMonthFromRange = 0
 
-    $('.js-current-date').html(datesRange[currentMonthFromRange]);
+  playerInput.on('input', function(){
+
+    currentTick = parseInt(playerInput.val());
+
+    if (currentTick < max) {
+      if (currentMonthFromRange != previousCurrentMonthFromRange || currentTick == 1 ) {
+        $('.js-current-date').html(`<span>${datesRange[currentMonthFromRange]}</span>`);
+
+      }
+        if (currentTick <= 1) {
+          $('.js-current-date span').addClass('-noanimation');
+        } else if (currentTick > 1) {
+          $('.js-current-date span').removeClass('-noanimation');
+
+        }
+      if (playerRunning === false) {
+        $('.js-player-play').removeClass('-hide');
+        $('.js-player-stop').removeClass('-movestop');
+      }
+    }
+
+    previousCurrentMonthFromRange = currentMonthFromRange
+
+    if (Math.floor(currentTick / monthRatio) < months) {
+      currentMonthFromRange = Math.floor(currentTick / monthRatio);
+    }
+
+
+    if (currentTick >= max) {
+      if (interval) {
+        clearInterval(interval)
+        playerRunning = false;
+        $('.js-player-pause').addClass('-hide');
+        $('.js-player-play').addClass('-hide');
+        $('.js-player-stop').addClass('-movestop');
+        currentMonthFromRange = datesRange.length - 1;
+        $('.js-current-date').html(`<span>${datesRange[currentMonthFromRange]}</span>`);
+        $('.js-current-date span').addClass('-noanimation');
+      };
+    }
 
   });
 
   if (interval) {
-    clearInterval(interval)
+    clearInterval(interval);
   };
 
-  function loadInterval() {
-      var currentTick = parseInt(playerInput.val());
-
-      currentMonthFromRange = Math.floor(currentTick / monthRatio);
-      console.log(currentMonthFromRange)
-      if (currentMonthFromRange !== showingMonth) {
-        var urlMinMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+1)).slice(-2);
-        var urlMinYearValue = datesRange[currentMonthFromRange].split('/')[1]
-        var urlMaxMonthValue = ("0" + ((monthShortNames.indexOf(datesRange[currentMonthFromRange].split('/')[0]))+2)).slice(-2);
-
-        var urlMinValue = urlMinYearValue+"-"+urlMinMonthValue;
-
-        if (urlMinMonthValue == "12") {
-          var urlMaxValue = parseInt(urlMinYearValue) + 1 +"-"+"01";
-
-        } else {
-          var urlMaxValue = urlMinYearValue +"-"+urlMaxMonthValue
-        }
-        console.log(urlMaxValue);
-
-        const params = new URLSearchParams(window.location.search);
-        params.set('initialDate', urlMinValue);
-        params.set('endDate', urlMaxValue);
-        window.history.replaceState({}, '', `${location.pathname}?${params}`);
-
-        onlyLoadWordChart(function() {
-          interval = setInterval(loadInterval, speed);
-        });
-        if (interval) {
-          clearInterval(interval)
-        };
-        showingMonth = currentMonthFromRange;
-      }
-
-      var nextTick = currentTick + 1;
-      if (nextTick <= max) {
-        playerInput.val(nextTick).change();
-      } else {
-        clearInterval(interval);
-      }
-    }
-
   interval = setInterval(loadInterval, speed);
-
-
 });
 
 $('.js-player-pause').click(function(){
+  playerRunning = false;
+
+  $(this).addClass('-hide');
+  $('.js-player-play').removeClass('-hide');
+  $('.js-player-stop').removeClass('-movestop');
+
   if (interval) {
-    clearInterval(interval)
+    clearInterval(interval);
   };
 });
 
 $('.js-player-stop').click(function(){
+  selectedThroughPlayer = false;
+  playerRunning = false;
+
+  if (interval) {
+    clearInterval(interval);
+  };
+  currentMonthFromRange = 0;
+  $(this).addClass('-hide');
+  $(this).removeClass('-movestop');
+  $('.js-player-pause').addClass('-hide');
+  $('.js-player-play').removeClass('-hide');
   clearInterval(interval);
   $('.js-player').val(0);
   $('.js-player').off('input');
   $('.js-active-slider').removeClass('-hide');
   $('.js-range-player').addClass('-hide');
+  onlyLoadWordChart(function(){});
 });
 
