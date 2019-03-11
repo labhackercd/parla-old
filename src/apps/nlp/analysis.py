@@ -34,7 +34,7 @@ def decision_tree_analysis():
         with progressbar(queryset) as bar:
             for speech in bar:
                 classes = decision_tree.classify_speech(
-                    speech.original,
+                    speech.content,
                     normalize=False
                 )
                 for label, occurrences in classes.most_common():
@@ -85,7 +85,7 @@ def multigrams_analysis(use_unigram=True):
 
         with progressbar(queryset) as bar:
             for speech in bar:
-                tokens = multigrams.get_tokens(speech.original)
+                tokens = multigrams.get_tokens(speech.content)
                 limit = 2
                 stop_fivegrams = []
                 stop_quadgrams = []

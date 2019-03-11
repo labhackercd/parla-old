@@ -18,6 +18,8 @@ python-dateutil = "*"
 click = "*"
 unidecode = "*"
 textblob = "*"
+"html2text" = "*"
+django-pandas = "*"
 
 [requires]
 python_version = "3.6"

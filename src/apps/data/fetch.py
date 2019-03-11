@@ -1,82 +1,215 @@
-from django.conf import settings
 from django.db import transaction
 from apps.data import models
-from apps.nlp import pre_processing
 from datetime import datetime
+from html2text import HTML2Text
+from functools import lru_cache
+from urllib import parse
+import click
 import requests
-import urllib
+import re
 
 
-def url_parameters(resource_id, page):
+API_URL = 'http://vvmchjar01.redecamara.camara.gov.br:8082/fastsearchWS/' \
+          'webservice/getConsulta'
+
+DAY_ORDER = set([
+    'DISCUSSÃO',
+    'ENCAMINHAMENTO DE VOTAÇÃO',
+    'ORIENTAÇÃO DE BANCADA',
+    'COMO RELATOR',
+    'PARECER',
+    'COMO LÍDER',
+    'PELA ORDEM',
+    'DISCURSO ENCAMINHADO',
+    'QUESTÃO DE ORDEM',
+    'RECLAMAÇÃO',
+    'FALA DO PRESIDENTE OU NO EXERCÍCIO DA PRESIDÊNCIA',
+])
+
+EXCLUDED_PHASES = set([
+])
+
+
+def get_url_params(initial_date, end_date, page):
     params = {
-        'manifestation_type__id': resource_id,
-        'page': page,
+        'siglaAplicacao': 'novoDiscurso',
+        'ordenacao': 'data',
+        'ordenacaoDir': 'asc',
+        'dataInicial': initial_date,
+        'dataFinal': end_date,
+        'pagina': page,
     }
 
-    last_speech = models.Speech.objects.last()
-    if last_speech:
-        params['timestamp__gte'] = last_speech.date.strftime('%Y-%m-%d')
-
-    return urllib.parse.urlencode(params)
+    return params
 
 
-def get_json_data(resource_name, resource_id, page=1):
-    url = '{}{}?{}'.format(
-        settings.BABEL_API_URL,
-        resource_name,
-        url_parameters(resource_id, page)
+def fetch_data(initial_date, end_date):
+    response = requests.get(
+        API_URL,
+        params=get_url_params(initial_date, end_date, 1)
     )
-
-    full_data = []
-
-    response = requests.get(url)
     data = response.json()
-    full_data.extend(data['results'])
-    if data['next']:
-        full_data.extend(
-            get_json_data(resource_name, resource_id, page + 1)
+    pages = data['qtdDePaginas']
+
+    speeches_data = data['indexProfile']
+
+    with click.progressbar(range(2, pages + 1),
+                           label='Fetching speeches') as bar:
+        for page in bar:
+            response = requests.get(
+                API_URL,
+                params=get_url_params(initial_date, end_date, page)
+            )
+            data = response.json()
+            speeches_data += data['indexProfile']
+
+    return speeches_data
+
+
+def fetch_author_photo(author):
+    name = re.sub(r'\([^)]*\)', '', author.name)
+
+    url = 'https://dadosabertos.camara.leg.br/api/v2/deputados'
+    today = datetime.now().date()
+    params = {
+        'nome': name.strip(),
+        'dataInicio': '2015-01-01',
+        'dataFim': today.strftime('%Y-%m-%d'),
+        'ordem': 'DESC',
+        'ordenarPor': 'idLegislatura'
+    }
+    response = requests.get(url, params=params, headers={
+        'accept': 'application/json'
+    })
+    data = response.json()
+    if len(data['dados']) > 0:
+        author.photo_url = data['dados'][0]['urlFoto']
+        author.save()
+        return True
+    else:
+        return False
+
+
+@lru_cache()
+def create_author(name, party, state, gender, author_type):
+    if name is None:
+        name = ''
+    else:
+        name = re.sub(r'\([^)]*\)', '', name)
+
+    if party is None:
+        party = ''
+
+    if state is None:
+        state = ''
+
+    if gender is None:
+        gender = ''
+
+    if author_type is None:
+        author_type = ''
+
+    return models.Author.objects.get_or_create(
+        name=name.strip().title(),
+        party=party.strip(),
+        state=state.strip(),
+        gender=gender.strip(),
+        author_type=author_type.strip().title(),
+    )[0]
+
+
+def create_themes(themes):
+    if themes is None:
+        return []
+    themes = themes.split(';')
+    return [
+        models.SpeechTheme.objects.get_or_create(name=theme)[0]
+        for theme in themes
+    ]
+
+
+def create_speech(data, author):
+    html2text = HTML2Text()
+    html2text.ignore_links = True
+    html2text.ignore_emphasis = True
+    html2text.ignore_images = True
+    html2text.ignore_tables = True
+
+    html = data['companyteaser']
+    regex = re.search('<body>(.*)</body>', html)
+    if regex:
+        html_body = regex.group(1)
+    else:
+        return None
+    speech = re.sub('\n', ' ', html2text.handle(html_body)).strip()
+
+    if data['keywords']:
+        indexes = data['keywords'].strip()
+    else:
+        indexes = None
+
+    if data['teaser']:
+        summary = data['teaser'].strip()
+    else:
+        summary = None
+
+    phase = data['generic6']
+    day_order_phase = None
+
+    if phase in DAY_ORDER:
+        phase = 'ORDEM DO DIA'
+        day_order_phase = phase.strip().upper()
+
+    if phase is None and data['fase']:
+        phase = data['fase'].strip().upper()
+
+    if data['docdatetime'] is not None:
+        speech_datetime = datetime.strptime(
+            data['docdatetime'].strip(), '%Y-%m-%dT%H:%M:%SZ'
         )
 
-    return full_data
+    url_params = parse.parse_qs(data['url'])
+    identifier = '{} {} {} {}'.format(
+        url_params['numSessao'][0],
+        url_params['numQuarto'][0],
+        url_params['numOrador'][0],
+        url_params['numInsercao'][0],
+    )
+
+    obj = models.Speech.objects.get_or_create(identifier=identifier, defaults={
+        'content': speech,
+        'html': html_body,
+        'indexes': indexes,
+        'date': speech_datetime.date(),
+        'time': speech_datetime.time(),
+        'phase': phase,
+        'day_order_phase': day_order_phase,
+        'summary': summary,
+        'author': author,
+    })[0]
+
+    return obj
 
 
 @transaction.atomic
-def create_author(profile_url):
-    response = requests.get(profile_url)
-    author_data = response.json()
-    try:
-        author = models.Author.objects.get(id=author_data['id'])
-    except models.Author.DoesNotExist:
-        author = models.Author()
-        author.id = author_data['id']
-    author.name = author_data['id_in_channel']
-    author.save()
-    return author
+def create_speeches(speeches_data):
+    with click.progressbar(speeches_data,
+                           label='Saving speeches') as bar:
+        for data in bar:
+            if data['tiponorma'] == 'Plenário':
+                author = create_author(
+                    data['autor'],
+                    data['partido'],
+                    data['estado'],
+                    data['emails'],
+                    data['tipoautor']
+                )
+                fetch_author_photo(author)
+                themes = create_themes(data['temas'])
+                speech = create_speech(data, author)
+                if speech:
+                    speech.author = author
+                    speech.save()
 
-
-@transaction.atomic
-def create_speeches(data_list):
-    speech_list = []
-    for data in data_list:
-        try:
-            speech = models.Speech.objects.get(id=data['id'])
-        except models.Speech.DoesNotExist:
-            speech = models.Speech()
-            speech.id = data['id']
-        speech.id_in_channel = data['id_in_channel']
-        speech.author = create_author(data['profile'])
-        timestamp = datetime.strptime(data['timestamp'][:-6],
-                                      '%Y-%m-%dT%H:%M:%S')
-        speech.date = timestamp.date()
-        speech.time = timestamp.time()
-        for attr in data['attrs']:
-            if hasattr(speech, attr['field']):
-                setattr(speech, attr['field'], attr['value'])
-            if attr['field'] == 'indexacao':
-                speech.indexes = attr['value']
-
-        speech.content = pre_processing.clear_speech(speech.original)
-        speech.save()
-        print(speech)
-        speech_list.append(speech)
-    return speech_list
+                    for theme in themes:
+                        speech.themes.add(theme)

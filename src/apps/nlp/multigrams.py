@@ -10,6 +10,23 @@ from string import punctuation
 import re
 
 
+STATES_STOPWORDS = [
+    'acre', 'ac', 'alagoas', 'al', 'amapá', 'amapa', 'ap', 'amazonas', 'am',
+    'bahia', 'ba', 'ceara', 'ceará', 'ce', 'distrito', 'federal', 'df',
+    'espírito', 'espirito', 'santo', 'es', 'goiás', 'goias', 'go', 'maranhao',
+    'maranhão', 'ma', 'mato', 'grosso', 'sul', 'mt', 'ms', 'minas', 'gerais',
+    'mg', 'pará', 'para', 'pa', 'paraíba', 'paraiba', 'pb', 'pernambuco', 'pe',
+    'piaui', 'piauí', 'rio', 'janeiro', 'grande', 'norte', 'rj', 'rn', 'rs',
+    'rondônia', 'rondonia', 'ro', 'roraima', 'rr', 'santa', 'catarina', 'sc',
+    'são', 'são', 'paulo', 'sp', 'sergipe', 'se', 'tocantins', 'to'
+]
+
+COMMON_NAMES_STOPWORDS = [
+    'eduardo', 'cunha', 'michel', 'temer', 'dilma', 'rouseff', 'jair',
+    'bolsonaro'
+]
+
+
 def date_filter(start_date, end_date):
     return Q(speech__date__gte=start_date, speech__date__lte=end_date)
 
@@ -44,9 +61,9 @@ def get_tokens(speech):
     Retorna:
         Uma lista palavras do discurso que não estão nas "stopwords".
     """
-    special_stopwords = ['são', 'nossa']
+    special_stopwords = []
     stopwords = (nltk_stopwords.words('portuguese') + list(punctuation) +
-                 EXTRA_STOPWORDS)
+                 EXTRA_STOPWORDS + STATES_STOPWORDS + COMMON_NAMES_STOPWORDS)
     stopwords = [word for word in stopwords if word not in special_stopwords]
     tokens = []
     text = clear_speech(speech)
