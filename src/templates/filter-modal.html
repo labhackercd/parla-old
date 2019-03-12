@@ -6,8 +6,8 @@
   <div class="content">
     <label for="data">Algoritimos</label>
     <select name="algorithm" class="algorithm js-form-select-algorithm">
-      <option value="multigram_bow_without_unigram" data-hint="Mostra as expressões de uma palavra só mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}selected{% endif %}>Saco de Palavras (sem unigrams)</option>
-      <option value="multigram_bow_with_unigram" data-hint="Mostra as expressões mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
+      <option value="multigram_bow_without_unigram" data-hint="Mostra as expressões mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}selected{% endif %}>Saco de Palavras (sem unigrams)</option>
+      <option value="multigram_bow_with_unigram" data-hint="Mostra as expressões de uma palavra só mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
       <option value="decision_tree" data-hint="Classifica os discursos em 33 temas pré-estabelecidos" {% if request.GET.algorithm == 'decision_tree' %}selected{% endif %}>Decision Tree + Naive Bayes</option>
     </select>
     <span class="hint js-form-hint-algorithm"></span>
