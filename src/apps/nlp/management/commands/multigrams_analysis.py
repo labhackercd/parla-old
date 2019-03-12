@@ -10,4 +10,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         use_unigram = bool(options['use_unigram'])
-        analysis.multigrams_analysis(use_unigram=use_unigram)
+        analysis.multigram_analysis_by_phase(use_unigram=use_unigram)

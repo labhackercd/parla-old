@@ -6,4 +6,4 @@ class Command(BaseCommand):
     help = 'Run naive bayes thematic analysis'
 
     def handle(self, *args, **options):
-        analysis.decision_tree_analysis()
+        analysis.decision_tree_analysis_by_phase()

@@ -18,15 +18,28 @@ def months(queryset):
     return rrule(MONTHLY, dtstart=start_date, until=end_date)
 
 
-def decision_tree_analysis():
+def get_phases(qs):
+    return sorted(set(list(qs.values_list('phase', flat=True))))
+
+
+def decision_tree_analysis_by_phase():
+    secho('\nProcessing speeches from ALL phases')
     speech_list = data.Speech.objects.all().order_by('date')
-    for date in months(speech_list):
+    decision_tree_analysis(speech_list, 'TODAS')
+    for phase in get_phases(speech_list):
+        secho('\nFiltering speeches from phase: {}'.format(phase))
+        filtred_speeches = speech_list.filter(phase=phase)
+        decision_tree_analysis(filtred_speeches, phase)
+
+
+def decision_tree_analysis(speeches, phase):
+    for date in months(speeches):
         days = monthrange(date.year, date.month)[1]
         start_date = datetime.datetime(date.year, date.month, 1)
         end_date = datetime.datetime(date.year, date.month, days)
         secho('Fetching data from {} to {}'.format(start_date, end_date))
 
-        queryset = speech_list.filter(
+        queryset = speeches.filter(
             date__gte=start_date,
             date__lte=end_date
         )
@@ -55,28 +68,37 @@ def decision_tree_analysis():
                 analysis = nlp.Analysis.objects.get_or_create(
                     start_date=start_date,
                     end_date=end_date,
-                    algorithm='decision_tree'
+                    algorithm='decision_tree',
+                    phase=phase
                 )[0]
 
                 analysis.data = final_dict
                 analysis.save()
 
 
-def multigrams_analysis(use_unigram=True):
+def multigram_analysis_by_phase(use_unigram=True):
+    secho('\nProcessing speeches from ALL phases')
     speech_list = data.Speech.objects.all().order_by('date')
+    multigrams_analysis(use_unigram, speech_list, 'TODAS')
+    for phase in get_phases(speech_list):
+        secho('\nFiltering speeches from phase: {}'.format(phase))
+        filtred_speeches = speech_list.filter(phase=phase)
+        multigrams_analysis(use_unigram, filtred_speeches, phase)
 
+
+def multigrams_analysis(use_unigram, speeches, phase):
     if use_unigram:
         algorithm = nlp.Analysis.MULTIGRAM_BOW_WITH_UNIGRAM
     else:
         algorithm = nlp.Analysis.MULTIGRAM_BOW_WITHOUT_UNIGRAM
 
-    for date in months(speech_list):
+    for date in months(speeches):
         days = monthrange(date.year, date.month)[1]
         start_date = datetime.datetime(date.year, date.month, 1)
         end_date = datetime.datetime(date.year, date.month, days)
         secho('Fetching data from {} to {}'.format(start_date, end_date))
 
-        queryset = speech_list.filter(
+        queryset = speeches.filter(
             date__gte=start_date,
             date__lte=end_date
         )
@@ -107,7 +129,8 @@ def multigrams_analysis(use_unigram=True):
                 trigram_tokens = multigrams.clean_tokens(tokens,
                                                          stop_fivegrams,
                                                          stop_quadgrams)
-                trigrams = multigrams.ngrams_by_limit(trigram_tokens, 3, limit)
+                trigrams = multigrams.ngrams_by_limit(trigram_tokens,
+                                                      3, limit)
 
                 if trigrams:
                     stop_trigrams = list(list(zip(*trigrams))[0])
@@ -116,7 +139,8 @@ def multigrams_analysis(use_unigram=True):
                     tokens, stop_fivegrams, stop_quadgrams, stop_trigrams
                 )
 
-                bigrams = multigrams.ngrams_by_limit(bigram_tokens, 2, limit)
+                bigrams = multigrams.ngrams_by_limit(bigram_tokens,
+                                                     2, limit)
 
                 if bigrams:
                     stop_bigrams = list(list(zip(*bigrams))[0])
@@ -153,7 +177,8 @@ def multigrams_analysis(use_unigram=True):
                 analysis = nlp.Analysis.objects.get_or_create(
                     start_date=start_date,
                     end_date=end_date,
-                    algorithm=algorithm
+                    algorithm=algorithm,
+                    phase=phase
                 )[0]
 
                 analysis.data = final_dict

@@ -75,6 +75,11 @@ LABELS_RELATION = {
     'trabalho-emprego': 'Trabalho e Emprego',
     'turismo': 'Turismo',
     'viacao-transporte-mobilidade': 'Viação, Transporte e Mobilidade',
+    'reforma-politica': 'Reforma Política',
+    'impeachment': 'Impeachment',
+    'corrupcao': 'Corrupção',
+    'servico-publico': 'Serviço Público',
+    'eleicao': 'Eleição',
 }
 
 

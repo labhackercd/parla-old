@@ -47,7 +47,14 @@ LABELS_RELATION = {
     30: 'trabalho-emprego',
     31: 'turismo',
     32: 'viacao-transporte-mobilidade',
+    33: 'impeachment',
+    34: 'corrupcao',
+    35: 'servico-publico',
+    36: 'reforma-politica',
+    37: 'eleicao',
 }
+
+EXCLUDED_THEMES = [1, 22, 25, 27]
 
 MACRO_THEMES_RELATION = {
     'cidades-desenvolvimento-urbano': 'cidades-transportes',
@@ -71,10 +78,10 @@ MACRO_THEMES_RELATION = {
     'esporte-lazer': 'educacao-cultura-esporte',
     'turismo': 'educacao-cultura-esporte',
 
-    'homenagens-datas-comemorativas': 'politica-adm-publica',
-    'politica-partidos-eleicoes': 'politica-adm-publica',
-    'processo-legislativo-atuacao-parlamentar': 'politica-adm-publica',
-    'adm-publica': 'politica-adm-publica',
+#     'homenagens-datas-comemorativas': 'politica-adm-publica',
+#     'politica-partidos-eleicoes': 'politica-adm-publica',
+#     'processo-legislativo-atuacao-parlamentar': 'politica-adm-publica',
+#     'adm-publica': 'politica-adm-publica',
 
     'ciencias-sociais': 'direitos-humanos',
     'direitos-humanos-minorias': 'direitos-humanos',
@@ -95,6 +102,13 @@ MACRO_THEMES_RELATION = {
     'direito-constitucional': 'justica',
     'direito-justica': 'justica',
     'direito-penal': 'justica',
+
+    'impeachment': 'adm-publica',
+    'corrupcao': 'adm-publica',
+    'servico-publico': 'adm-publica',
+
+    'reforma-politica': 'politica-partidos-eleicoes',
+    'eleicao': 'politica-partidos-eleicoes',
 }
 
 
@@ -165,7 +179,7 @@ def load_dataset():
         next(reader)
         for row in reader:
             for idx, category in enumerate(row[1:-1]):
-                if category != '' and idx > 0:
+                if category != '' and idx > 0 and idx not in EXCLUDED_THEMES:
                     theme_dataset.append((row[0], LABELS_RELATION[idx]))
                     content_dataset.append((row[0], 'content'))
                 elif category != '' and idx == 0:
@@ -191,7 +205,7 @@ def load_theme_dataset():
         'direitos-humanos': [],
         'saude': [],
         'seguranca': [],
-        'politica-adm-publica': [],
+        # 'politica-adm-publica': [],
         'meio-ambiente-energia': [],
         'cidades-transportes': [],
         'educacao-cultura-esporte': [],
@@ -199,6 +213,8 @@ def load_theme_dataset():
         'trabalho-previdencia-assistencia': [],
         'economia': [],
         'relacoes-exteriores': [],
+        'politica-partidos-eleicoes': [],
+        'adm-publica': [],
     }
     _, theme_dataset = load_dataset()
 
