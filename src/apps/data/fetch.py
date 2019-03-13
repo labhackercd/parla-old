@@ -162,6 +162,8 @@ def create_speech(data, author):
 
     if phase is None and data['fase']:
         phase = data['fase'].strip().upper()
+    else:
+        return None
 
     if data['docdatetime'] is not None:
         speech_datetime = datetime.strptime(
