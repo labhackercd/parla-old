@@ -372,7 +372,7 @@ function wordChart() {
     } else {
       $('.js-player-play').removeClass('-hide');
     }
-  }; 
+  };
 
   loadData("/visualizations/tokens/", function(data) {
     var canvas = drawCanvas('.wrapper', 'token');
@@ -382,7 +382,7 @@ function wordChart() {
       var currentPage = $(data.element).closest('.js-page');
       currentPage.removeClass('-active');
       $('.js-active-slider').addClass('-hide');
-      $('.js-player-controls').addClass('-hide');  
+      $('.js-player-controls').addClass('-hide');
       $('.js-range-player').addClass('-hide');
       if (interval) {
         clearInterval(interval)
@@ -452,13 +452,13 @@ function tokensChart(tokenId) {
       $('.js-slider-min').text('01/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]);
 
       if (datesRange.indexOf(currentDate) == datesRange.length-1 && $(".js-slider").dateRangeSlider("bounds").max.getTime() == maxValue.getTime() ) {
-        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+        $('.js-slider-max').text(("0" + new Date().getUTCDate()).slice(-2) + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]);
       } else {
         var currentLastDate = new Date()
         currentLastDate.setMonth(monthShortNames.indexOf(datesRange[currentMonthFromRange].split(" ")[0]))
         currentLastDate.setFullYear(parseInt(datesRange[currentMonthFromRange].split(" ")[1]))
         currentLastDate = new Date(currentLastDate.getFullYear(), currentLastDate.getMonth() + 1, 0)
-        $('.js-slider-max').text(currentLastDate.getUTCDate() + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]); 
+        $('.js-slider-max').text(currentLastDate.getUTCDate() + '/' + currentDate.split(' ')[0] + '/' + currentDate.split(' ')[1]);
       }
 
     } else {
@@ -554,12 +554,13 @@ function manifestationPage(manifestationId, tokenId) {
         <strong class='date'>${data.date}  às </strong>
         <strong class='time'>${data.time}</strong>
       </div>
-      <div class="indexes">
-        <span>Indexação</span>
-        <p>${indexes}</p>
-      </div>
       <div class="content">
+        <p>${data.summary}</p>
         <p>${data.content}</p>
+        <div class="indexes">
+          <span>Indexação</span>
+          <p>${indexes}</p>
+        </div>
       </div>
     `);
     manifestationPage.addClass('-open');
@@ -584,10 +585,10 @@ $(".js-slider").bind("valuesChanging", function(e, data){
   var endDay = endDate.getUTCDate()
   var endMonth = monthShortNames[endDate.getMonth()]
 
-  var leftLabelDay = `<span>${initialDay}</span>`;  
-  var leftLabelMonth = `<span>${initialMonth}</span>`;  
-  var rightLabelDay = `<span>${endDay}</span>`;  
-  var rightLabelMonth = `<span>${endMonth}</span>`;  
+  var leftLabelDay = `<span>${initialDay}</span>`;
+  var leftLabelMonth = `<span>${initialMonth}</span>`;
+  var rightLabelDay = `<span>${endDay}</span>`;
+  var rightLabelMonth = `<span>${endMonth}</span>`;
 
   if (data.values.min.getTime() != currentMinValue.getTime()){
     leftLabelText.empty().append(leftLabelDay, leftLabelMonth);

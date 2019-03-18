@@ -196,6 +196,7 @@ def manifestation(request, speech_id, token):
         {
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
+            'summary': speech.summary,
             'content': original,
             'indexes': speech.indexes,
         }
