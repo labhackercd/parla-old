@@ -76,6 +76,16 @@ def decision_tree_analysis(speeches, phase):
                 analysis.save()
 
 
+def translate_stem(stem, stems_dict):
+    stem_words = stem.split(' ')
+    words = []
+    for word in stem_words:
+        stem_list = stems_dict.get(word)
+        words.append(max(stem_list, key=stem_list.count))
+
+    return ' '.join(words)
+
+
 def multigram_analysis_by_phase(use_unigram=True):
     secho('\nProcessing speeches from ALL phases')
     speech_list = data.Speech.objects.all().order_by('date')
@@ -107,7 +117,7 @@ def multigrams_analysis(use_unigram, speeches, phase):
 
         with progressbar(queryset) as bar:
             for speech in bar:
-                tokens = multigrams.get_tokens(speech.content)
+                tokens, stems_dict = multigrams.get_tokens(speech.content)
                 limit = 2
                 stop_fivegrams = []
                 stop_quadgrams = []
@@ -160,7 +170,8 @@ def multigrams_analysis(use_unigram, speeches, phase):
                                      fivegrams)
 
                 for token in result_tokens:
-                    token_data = final_dict.get(' '.join(token[0]), {})
+                    word_token = translate_stem(' '.join(token[0]), stems_dict)
+                    token_data = final_dict.get(word_token, {})
                     authors = token_data.get('authors', {})
                     author_data = authors.get(speech.author.id, {})
                     texts = author_data.get('texts', [])
@@ -171,7 +182,7 @@ def multigrams_analysis(use_unigram, speeches, phase):
                     authors[speech.author.id] = author_data
                     token_data['authors'] = authors
                     token_data['authors_count'] = len(authors)
-                    final_dict[' '.join(token[0])] = token_data
+                    final_dict[word_token] = token_data
 
             if len(final_dict) > 0:
                 analysis = nlp.Analysis.objects.get_or_create(

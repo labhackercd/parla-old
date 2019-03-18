@@ -1,13 +1,15 @@
 from django.db.models import Q
 from dateutil.rrule import rrule, MONTHLY
-
+from functools import lru_cache
 from apps.nlp.stopwords import EXTRA_STOPWORDS
 from nltk import word_tokenize
 from nltk.util import ngrams
 from nltk.corpus import stopwords as nltk_stopwords
+from nltk.stem import RSLPStemmer
 from collections import Counter
 from string import punctuation
 import re
+from collections import defaultdict
 
 
 STATES_STOPWORDS = [
@@ -25,6 +27,9 @@ COMMON_NAMES_STOPWORDS = [
     'eduardo', 'cunha', 'michel', 'temer', 'dilma', 'rouseff', 'jair',
     'bolsonaro'
 ]
+
+
+stemmer = RSLPStemmer()
 
 
 def date_filter(start_date, end_date):
@@ -52,6 +57,11 @@ def clear_speech(text):
     return text.strip()
 
 
+@lru_cache()
+def stemmize(word):
+    return stemmer.stem(word)
+
+
 def get_tokens(speech):
     """
     Função que retorna tokens de discursos removendo as "stopwords".
@@ -61,16 +71,19 @@ def get_tokens(speech):
     Retorna:
         Uma lista palavras do discurso que não estão nas "stopwords".
     """
-    special_stopwords = []
     stopwords = (nltk_stopwords.words('portuguese') + list(punctuation) +
                  EXTRA_STOPWORDS + STATES_STOPWORDS + COMMON_NAMES_STOPWORDS)
-    stopwords = [word for word in stopwords if word not in special_stopwords]
-    tokens = []
     text = clear_speech(speech)
-    tokens += [i for i in word_tokenize(
-        text.lower(), language='portuguese') if i not in stopwords]
-
-    return tokens
+    tokens = word_tokenize(text.lower(), language='portuguese')
+    stopwords = [stemmize(word) for word in stopwords]
+    stems_dict = defaultdict(list)
+    for token in tokens:
+        if stemmize(token) not in stopwords:
+            stems_dict[stemmize(token)].append(token)
+    stem_tokens = [stemmize(token)
+                   for token in tokens
+                   if stemmize(token) not in stopwords]
+    return stem_tokens, stems_dict
 
 
 def ngrams_by_limit(tokens, n, limit=0):
@@ -151,7 +164,11 @@ def clean_tokens(tokens, fivegrams=[], quadgrams=[], trigrams=[], bigrams=[],
             del tokens[pos:pos + 2]
 
     if extra_stopwords:
-        new_tokens = [token for token in tokens if token not in extra_stopwords]
+        stem_extra_stopwords = [stemmize(word)
+                                for word in extra_stopwords]
+        new_tokens = [token
+                      for token in tokens
+                      if token not in stem_extra_stopwords]
     else:
         new_tokens = tokens
 
