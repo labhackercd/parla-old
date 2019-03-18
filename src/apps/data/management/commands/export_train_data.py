@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.utils.text import slugify
 from apps.data import models
 from calendar import monthrange
 from dateutil.rrule import rrule, MONTHLY
@@ -45,9 +46,8 @@ THEME_RELATION = {
 class Command(BaseCommand):
     help = 'Export train data'
 
-    def handle(self, *args, **options):
-        qs = models.Speech.objects.filter(author__author_type='Deputado')
-        csv_file = open('train.csv', 'w')
+    def process_theme(self, theme, qs, force_id=None):
+        csv_file = open('train/' + slugify(theme) + '.csv', 'w')
         writer = csv.writer(csv_file)
         writer.writerow([
             'sentencas',
@@ -104,9 +104,45 @@ class Command(BaseCommand):
                         if THEME_RELATION[theme.name]:
                             themes[THEME_RELATION[theme.name]] = 'x'
 
+                    if force_id:
+                        themes[force_id] = 'x'
+
                     if themes != [''] * 38:
                         blob = TextBlob(speech.summary)
                         for sentence in blob.sentences:
                             writer.writerow([sentence.raw] + themes)
 
         csv_file.close()
+
+    def handle(self, *args, **options):
+        qs = models.Speech.objects.all()
+
+        click.echo('Impeachment')
+        self.process_theme('impeachment', qs.filter(
+            indexes__icontains='IMPEACHMENT'
+        ), 33)
+
+        click.echo('Corrupção')
+        self.process_theme('corrupcao', qs.filter(
+            indexes__icontains='CORRUPÇÃO'
+        ), 34)
+
+        click.echo('Serviço Público')
+        self.process_theme('servico-publico', qs.filter(
+            indexes__icontains='SERVIDOR PÚBLICO'
+        ), 35)
+
+        click.echo('Reforma Política')
+        self.process_theme('reforma-politica', qs.filter(
+            indexes__icontains='REFORMA POLÍTICA'
+        ), 36)
+
+        click.echo('Eleição')
+        self.process_theme('eleicao', qs.filter(
+            indexes__icontains='ELEIÇÃO'
+        ), 37)
+
+        for theme, idx in THEME_RELATION.items():
+            theme_obj = models.SpeechTheme.objects.get(name=theme)
+            click.echo((theme, qs.filter(themes__in=[theme_obj]).count()))
+            self.process_theme(theme, qs.filter(themes__in=[theme_obj]))
