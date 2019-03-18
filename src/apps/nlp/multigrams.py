@@ -25,7 +25,19 @@ STATES_STOPWORDS = [
 
 COMMON_NAMES_STOPWORDS = [
     'eduardo', 'cunha', 'michel', 'temer', 'dilma', 'rouseff', 'jair',
-    'bolsonaro'
+    'bolsonaro', 'joão', 'campos', 'erika', 'érika', 'kokay', 'heráclito',
+    'heraclito', 'fortes', 'Mauro', 'Benevides', 'Luiz', 'Carlos', 'Hauly',
+    'Rodrigo', 'Maia', 'Hildo', 'Rocha', 'Mauro', 'Pereira', 'Luiz', 'Couto',
+    'Glauber', 'Braga', 'Izalci', 'Lucas', 'Roberto', 'Lucena', 'Carlos',
+    'Manato', 'Mauro', 'Pereira', 'Gilberto', 'Nacismento', 'Professor',
+    'Victório', 'Galli', 'Gutemberg', 'Gomes', 'Maria', 'Socorro', 'Medeiro',
+    'Morais', 'Maria', 'Rosário', 'Pedro', 'Parente', 'Fátima', 'Bezerra',
+    'Keiko', 'Ota', 'Alberto', 'Fraga', 'Soraya', 'Santos', 'Efraim', 'Filho'
+]
+
+LEGISLATIVE_STOPWORDS = [
+    'presidencia', 'presidência', 'termos', 'internos', 'assumiu', 'exercício',
+    'convidou', 'compor'
 ]
 
 
@@ -72,7 +84,8 @@ def get_tokens(speech):
         Uma lista palavras do discurso que não estão nas "stopwords".
     """
     stopwords = (nltk_stopwords.words('portuguese') + list(punctuation) +
-                 EXTRA_STOPWORDS + STATES_STOPWORDS + COMMON_NAMES_STOPWORDS)
+                 EXTRA_STOPWORDS + STATES_STOPWORDS + COMMON_NAMES_STOPWORDS +
+                 LEGISLATIVE_STOPWORDS)
     text = clear_speech(speech)
     tokens = word_tokenize(text.lower(), language='portuguese')
     stopwords = [stemmize(word) for word in stopwords]
