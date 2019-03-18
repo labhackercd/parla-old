@@ -160,7 +160,7 @@ def create_speech(data, author):
         phase = 'ORDEM DO DIA'
         day_order_phase = phase.strip().upper()
 
-    if phase is None and data['fase']:
+    if data['fase']:
         phase = data['fase'].strip().upper()
     else:
         return None

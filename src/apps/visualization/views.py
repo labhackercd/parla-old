@@ -190,7 +190,7 @@ def manifestation(request, speech_id, token):
     speech = get_object_or_404(Speech, pk=speech_id)
     search = re.compile(r'\b(%s)\b' % token, re.I)
     original = search.sub('<span class="-highlight">\\1</span>',
-                          speech.original)
+                          speech.html)
 
     return JsonResponse(
         {
