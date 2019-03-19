@@ -7,6 +7,7 @@ from string import punctuation
 from django.conf import settings
 from apps.nlp import stopwords
 from apps.nlp import cache
+import pickle
 import nltk
 import csv
 import re
@@ -54,7 +55,7 @@ LABELS_RELATION = {
     37: 'eleicao',
 }
 
-EXCLUDED_THEMES = [1, 22, 25, 27]
+EXCLUDED_THEMES = [1, 22, 25, 27, 6, 7]
 
 MACRO_THEMES_RELATION = {
     'cidades-desenvolvimento-urbano': 'cidades-transportes',
@@ -188,78 +189,41 @@ def load_dataset():
 
 
 @lru_cache()
-def load_macrotheme_dataset():
-    _, theme_dataset = load_dataset()
-    return [
-        (sentence, MACRO_THEMES_RELATION[label])
-        for sentence, label in theme_dataset
-    ]
+def get_content_classifier():
+    content_dataset, _ = load_dataset()
+    pkl_file = os.path.join(settings.BASE_DIR,
+                            'apps/nlp/content_classifier.pkl')
+    try:
+        classifier = pickle.load(open(pkl_file, 'rb'))
+    except FileNotFoundError:
+        classifier = NaiveBayesClassifier(
+            content_dataset,
+            feature_extractor=freq_feature_extractor
+        )
+        classifier.train()
+        pickle.dump(classifier, open(pkl_file, 'wb'))
+    return classifier
 
 
 @lru_cache()
-def load_theme_dataset():
-    macro_themes_trainset = {
-        'ct-comunicacoes': [],
-        'consumidor': [],
-        'agropecuaria': [],
-        'direitos-humanos': [],
-        'saude': [],
-        'seguranca': [],
-        # 'politica-adm-publica': [],
-        'meio-ambiente-energia': [],
-        'cidades-transportes': [],
-        'educacao-cultura-esporte': [],
-        'justica': [],
-        'trabalho-previdencia-assistencia': [],
-        'economia': [],
-        'relacoes-exteriores': [],
-        'politica-partidos-eleicoes': [],
-        'adm-publica': [],
-    }
-    _, theme_dataset = load_dataset()
-
-    for sentence, label in theme_dataset:
-        macro_theme = MACRO_THEMES_RELATION[label]
-        train_list = macro_themes_trainset.get(macro_theme, [])
-        train_list.append((sentence, label))
-        macro_themes_trainset[macro_theme] = train_list
-    return macro_themes_trainset
-
-
-def get_content_classifier():
-    content_dataset, _ = load_dataset()
-    classifier = NaiveBayesClassifier(
-        content_dataset,
-        feature_extractor=freq_feature_extractor
-    )
-    classifier.train()
-    return classifier
-
-
-def get_macrotheme_classifier():
-    classifier = DecisionTreeClassifier(
-        load_macrotheme_dataset(),
-        feature_extractor=freq_feature_extractor
-    )
-    classifier.train()
-    return classifier
-
-
-def get_theme_classifier(macro_theme=''):
-    dataset = load_theme_dataset()
-    classifier = NaiveBayesClassifier(
-        dataset[macro_theme],
-        feature_extractor=freq_feature_extractor
-    )
-    classifier.train()
+def get_theme_classifier():
+    _, dataset = load_dataset()
+    pkl_file = os.path.join(settings.BASE_DIR,
+                            'apps/nlp/theme_classifier.pkl')
+    try:
+        classifier = pickle.load(open(pkl_file, 'rb'))
+    except FileNotFoundError:
+        classifier = DecisionTreeClassifier(
+            dataset,
+            feature_extractor=freq_feature_extractor
+        )
+        classifier.train()
+        pickle.dump(classifier, open(pkl_file, 'wb'))
     return classifier
 
 
 def has_content(sentence):
-    content_classifier = cache.load_from_cache(
-        'content_classifier',
-        get_content_classifier
-    )
+    content_classifier = get_content_classifier()
 
     prob_dist = content_classifier.prob_classify(sentence)
     if prob_dist.prob(prob_dist.max()) > 0.8:
@@ -273,21 +237,8 @@ def has_content(sentence):
 
 def classify_sentence(sentence):
     if has_content(sentence):
-        macrotheme_classifier = cache.load_from_cache(
-            'macrotheme_classifier',
-            get_macrotheme_classifier
-        )
-        macrotheme = macrotheme_classifier.classify(sentence)
-        theme_classifier = cache.load_from_cache(
-            '{}_classifier'.format(macrotheme),
-            get_theme_classifier,
-            macro_theme=macrotheme
-        )
-        prob_dist = theme_classifier.prob_classify(sentence)
-        if prob_dist.prob(prob_dist.max()) > 0.5:
-            return prob_dist.max()
-        else:
-            return None
+        theme_classifier = get_theme_classifier()
+        return theme_classifier.classify(sentence)
     else:
         return None
 
