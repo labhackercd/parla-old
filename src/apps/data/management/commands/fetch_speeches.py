@@ -10,11 +10,13 @@ class Command(BaseCommand):
     help = 'Import data from Babel'
 
     def handle(self, *args, **options):
-        last_speech = models.Speech.objects.all().order_by('timestamp').last()
+        last_speech = models.Speech.objects.all().order_by('date').last()
         if last_speech:
             initial_date = last_speech.date
         else:
             initial_date = datetime.date(2015, 1, 1)
+
+        initial_date = datetime.date(initial_date.year, initial_date.month, 1)
 
         end_date = datetime.date.today()
         months = rrule(MONTHLY, dtstart=initial_date, until=end_date)
