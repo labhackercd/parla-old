@@ -31,10 +31,23 @@ def get_date_filter(request):
 
 def get_algorithm_filter(request):
     algorithm = request.GET.get('algorithm', None)
-    if algorithm:
-        return Q(algorithm=algorithm)
+    filter_name = request.GET.get('filterName', None)
+    fitler_value = request.GET.get('filterValue', None)
+    q = Q()
+
+    if filter_name and fitler_value:
+        kwargs = {
+            filter_name: fitler_value
+        }
+        q = q & Q(**kwargs)
     else:
-        return Q(algorithm='multigram_bow_without_unigram')
+        q = q & Q(phase__isnull=True, state__isnull=True,
+                  gender__isnull=True, party__isnull=True,)
+
+    if algorithm:
+        return q & Q(algorithm=algorithm)
+    else:
+        return q & Q(algorithm='multigram_bow_without_unigram')
 
 
 LABELS_RELATION = {
@@ -192,11 +205,19 @@ def manifestation(request, speech_id, token):
     original = search.sub('<span class="-highlight">\\1</span>',
                           speech.html)
 
+    max_length = len(speech.content) * 1.1
+    min_length = len(speech.content) * 0.9
+    summary_len = len(speech.summary)
+    if summary_len > min_length and summary_len < max_length:
+        summary = ''
+    else:
+        summary = speech.summary
+
     return JsonResponse(
         {
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
-            'summary': speech.summary,
+            'summary': summary,
             'content': original,
             'indexes': speech.indexes,
         }

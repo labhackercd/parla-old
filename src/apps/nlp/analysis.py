@@ -22,17 +22,48 @@ def get_phases(qs):
     return sorted(set(list(qs.values_list('phase', flat=True))))
 
 
+def get_states(qs):
+    return sorted(set(list(qs.values_list('author__state', flat=True))))
+
+
+def get_parties(qs):
+    return sorted(set(list(qs.values_list('author__party', flat=True))))
+
+
 def decision_tree_analysis_by_phase():
     secho('\nProcessing speeches from ALL phases')
-    speech_list = data.Speech.objects.all().order_by('date')
-    decision_tree_analysis(speech_list, 'TODAS')
+    speech_list = data.Speech.objects.exclude(
+        content__startswith='Ata'
+    ).filter(author__author_type='Deputado').order_by('date')
+    decision_tree_analysis(speech_list)
+
+    secho('\nProcessing speeches from FEMALE authors')
+    decision_tree_analysis(speech_list.filter(author__gender='F'), gender='F')
+
+    secho('\nProcessing speeches from MALE authors')
+    decision_tree_analysis(speech_list.filter(author__gender='M'), gender='M')
+
     for phase in get_phases(speech_list):
-        secho('\nFiltering speeches from phase: {}'.format(phase))
-        filtred_speeches = speech_list.filter(phase=phase)
-        decision_tree_analysis(filtred_speeches, phase)
+        if phase:
+            secho('\nFiltering speeches from phase: {}'.format(phase))
+            filtred_speeches = speech_list.filter(phase=phase)
+            decision_tree_analysis(filtred_speeches, phase=phase)
+
+    for state in get_states(speech_list):
+        if state:
+            secho('\nFiltering speeches from state: {}'.format(state))
+            filtred_speeches = speech_list.filter(author__state=state)
+            decision_tree_analysis(filtred_speeches, state=state)
+
+    for party in get_parties(speech_list):
+        if party:
+            secho('\nFiltering speeches from party: {}'.format(party))
+            filtred_speeches = speech_list.filter(author__party=party)
+            decision_tree_analysis(filtred_speeches, party=party)
 
 
-def decision_tree_analysis(speeches, phase):
+def decision_tree_analysis(speeches, phase=None, gender=None,
+                           state=None, party=None):
     for date in months(speeches):
         days = monthrange(date.year, date.month)[1]
         start_date = datetime.datetime(date.year, date.month, 1)
@@ -69,7 +100,10 @@ def decision_tree_analysis(speeches, phase):
                     start_date=start_date,
                     end_date=end_date,
                     algorithm='decision_tree',
-                    phase=phase
+                    phase=phase,
+                    gender=gender,
+                    state=state,
+                    party=party,
                 )[0]
 
                 analysis.data = final_dict
@@ -88,15 +122,40 @@ def translate_stem(stem, stems_dict):
 
 def multigram_analysis_by_phase(use_unigram=True):
     secho('\nProcessing speeches from ALL phases')
-    speech_list = data.Speech.objects.all().order_by('date')
-    multigrams_analysis(use_unigram, speech_list, 'TODAS')
+    speech_list = data.Speech.objects.exclude(
+        content__startswith='Ata'
+    ).filter(author__author_type='Deputado').order_by('date')
+    multigrams_analysis(use_unigram, speech_list)
+
+    secho('\nProcessing speeches from FEMALE authors')
+    multigrams_analysis(use_unigram, speech_list.filter(author__gender='F'),
+                        gender='F')
+
+    secho('\nProcessing speeches from MALE authors')
+    multigrams_analysis(use_unigram, speech_list.filter(author__gender='M'),
+                        gender='M')
+
     for phase in get_phases(speech_list):
-        secho('\nFiltering speeches from phase: {}'.format(phase))
-        filtred_speeches = speech_list.filter(phase=phase)
-        multigrams_analysis(use_unigram, filtred_speeches, phase)
+        if phase:
+            secho('\nFiltering speeches from phase: {}'.format(phase))
+            filtred_speeches = speech_list.filter(phase=phase)
+            multigrams_analysis(use_unigram, filtred_speeches, phase=phase)
+
+    for state in get_states(speech_list):
+        if state:
+            secho('\nFiltering speeches from state: {}'.format(state))
+            filtred_speeches = speech_list.filter(author__state=state)
+            multigrams_analysis(use_unigram, filtred_speeches, state=state)
+
+    for party in get_parties(speech_list):
+        if party:
+            secho('\nFiltering speeches from party: {}'.format(party))
+            filtred_speeches = speech_list.filter(author__party=party)
+            multigrams_analysis(use_unigram, filtred_speeches, party=party)
 
 
-def multigrams_analysis(use_unigram, speeches, phase):
+def multigrams_analysis(use_unigram, speeches, phase=None, gender=None,
+                        state=None, party=None):
     if use_unigram:
         algorithm = nlp.Analysis.MULTIGRAM_BOW_WITH_UNIGRAM
     else:
@@ -189,7 +248,10 @@ def multigrams_analysis(use_unigram, speeches, phase):
                     start_date=start_date,
                     end_date=end_date,
                     algorithm=algorithm,
-                    phase=phase
+                    phase=phase,
+                    gender=gender,
+                    state=state,
+                    party=party,
                 )[0]
 
                 analysis.data = final_dict
