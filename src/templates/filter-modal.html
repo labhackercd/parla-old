@@ -66,7 +66,7 @@
             <button class="arrow -left js-change-filter" type="button" aria-label="Próximo filtro"></button>
             <div class="options js-filter-options">
 
-              <div class="option js-filter-option -none">
+              <div class="option js-filter-option -none {% if not request.GET.filterName %}-active{% endif %}">
                 <span class="label js-filter-label">Nenhum Filtro</span>
                 <div class="icon">
                   <img src="{% static 'img/no-filter.svg' %}" class="icon">
@@ -74,108 +74,55 @@
                 <p class="description">Mostra todos os resultados disponíveis</p>
               </div>
 
-              <div class="option -active js-filter-option -select">
-                <span class="label js-filter-label">Gênero</span>
+              <div class="option js-filter-option -select {% if request.GET.filterName == 'gender' %}-active{% endif %}">
+                <span class="label js-filter-label" data-filter-value="{{request.GET.filterValue}}">Gênero</span>
                 <div class="icon">
                   <img src="{% static 'img/gender.svg' %}" class="icon">
                 </div>
                 <select class="form-select js-form-select" data-label-part="Gênero: " data-filter-name="gender">
                   <option selected disabled value="">Escolha o gênero</option>
-                  <option value="male">Masculino</option>
-                  <option value="female">Feminino</option>
+                  {% for gender in genders %}
+                    <option value="{{gender}}" {% if request.GET.filterName == 'gender' and request.GET.filterValue == gender %}selected{% endif %}>{% if gender == 'M' %}Masculino{% else %}Feminino{% endif %}</option>
+                  {% endfor %}
                 </select>
               </div>
 
-              <div class="option js-filter-option -select">
-                <span class="label js-filter-label">Estado</span>
+              <div class="option js-filter-option -select {% if request.GET.filterName == 'state' %}-active{% endif %}">
+                <span class="label js-filter-label" data-filter-value="{{request.GET.filterValue}}">Estado</span>
                 <div class="icon">
                   <img src="{% static 'img/state.svg' %}" class="icon">
                 </div>
                 <select class="form-select js-form-select" data-label-part="Estado: " data-filter-name="state">
                   <option selected disabled value="">Escolha o Estado</option>
-                  <option value="acre">Acre</option>
-                  <option value="alagoas">Alagoas</option>
-                  <option value="amapa">Amapá</option>
-                  <option value="amazonas">Amazonas</option>
-                  <option value="bahia">Bahia</option>
-                  <option value="ceara">Ceará</option>
-                  <option value="distrito-federal">Distrito Federal</option>
-                  <option value="espirito-santo">Espírito Santo</option>
-                  <option value="goias">Goiás</option>
-                  <option value="maranhao">Maranhão</option>
-                  <option value="mato-grosso">Mato Grosso</option>
-                  <option value="mato-grosso-do-sul">Mato Grosso do Sul</option>
-                  <option value="minas-gerais">Minas Gerais</option>
-                  <option value="para">Pará</option>
-                  <option value="paraiba">Paraíba</option>
-                  <option value="parana">Paraná</option>
-                  <option value="pernambuco">Pernambuco</option>
-                  <option value="piaui">Piauí</option>
-                  <option value="rio-de-janeiro">Rio de Janeiro</option>
-                  <option value="rio-grande-do-sul">Rio Grande do Sul</option>
-                  <option value="rio-grande-do-norte">Rio Grande do Norte</option>
-                  <option value="rondonia">Rondônia</option>
-                  <option value="roraima">Roraima</option>
-                  <option value="santa-catarina">Santa Catarina</option>
-                  <option value="sao-paulo">São Paulo</option>
-                  <option value="sergipe">Sergipe</option>
-                  <option value="tocantins">Tocantins</option>
+                  {% for state in states %}
+                    <option value="{{state}}" {% if request.GET.filterName == 'state' and request.GET.filterValue == state %}selected{% endif %}>{{state}}</option>
+                  {% endfor %}
                 </select>
               </div>
 
-              <div class="option js-filter-option -select">
-                <span class="label js-filter-label">Partido</span>
+              <div class="option js-filter-option -select {% if request.GET.filterName == 'party' %}-active{% endif %}">
+                <span class="label js-filter-label" data-filter-value="{{request.GET.filterValue}}">Partido</span>
                 <div class="icon">
                   <img src="{% static 'img/party.svg' %}" class="icon">
                 </div>
                 <select class="form-select js-form-select" data-label-part="Partido: " data-filter-name="party">
                   <option selected disabled value="">Escolha o Partido</option>
-                  <option value="pt">PT</option>
-                  <option value="psdb">PSDB</option>
-                  <option value="pp">PP</option>
-                  <option value="pdt">PDT</option>
-                  <option value="ptb">PTB</option>
-                  <option value="dem">DEM</option>
-                  <option value="pr">PR</option>
-                  <option value="psb">PSB</option>
-                  <option value="pps">PPS</option>
-                  <option value="psc">PSC</option>
-                  <option value="prb">PRB</option>
-                  <option value="pcdob">PCdoB</option>
-                  <option value="pv">PV</option>
-                  <option value="psd">PSD</option>
-                  <option value="prp">PRP</option>
-                  <option value="psl">PSL</option>
-                  <option value="pmn">PMN</option>
-                  <option value="phs">PHS</option>
-                  <option value="sd">SD</option>
-                  <option value="ptc">PTC</option>
-                  <option value="avante">AVANTE</option>
-                  <option value="dc">DC</option>
-                  <option value="pode">PODE</option>
-                  <option value="psol">PSOL</option>
-                  <option value="prtb">PRTB</option>
-                  <option value="pros">PROS</option>
-                  <option value="patri">PATRI</option>
-                  <option value="pmb">PMB</option>
-                  <option value="ppl">PPL</option>
-                  <option value="novo">NOVO</option>
-                  <option value="rede">REDE</option>
-                  <option value="pstu">PSTU</option>
-                  <option value="pcb">PCB</option>
-                  <option value="pco">PCO</option>
+                  {% for party in parties %}
+                    <option value="{{party}}" {% if request.GET.filterName == 'party' and request.GET.filterValue == party %}selected{% endif %}>{{party}}</option>
+                  {% endfor %}
                 </select>
               </div>
 
-              <div class="option js-filter-option -select">
-                <span class="label js-filter-label">Fase</span>
+              <div class="option js-filter-option -select {% if request.GET.filterName == 'phase' %}-active{% endif %}">
+                <span class="label js-filter-label" data-filter-value="{{request.GET.filterValue}}">Fase</span>
                 <div class="icon">
                   <img src="{% static 'img/phase.svg' %}" class="icon">
                 </div>
                 <select class="form-select js-form-select" data-label-part="Fase: " data-filter-name="phase">
                   <option selected disabled value="">Escolha a fase</option>
-                  <option value="pe">Pequeno Expediente</option>
-                  <option value="ge">Grande Expediente</option>
+                  {% for phase in phases %}
+                    <option value="{{phase}}" {% if request.GET.filterName == 'phase' and request.GET.filterValue == phase %}selected{% endif %}>{{phase}}</option>
+                  {% endfor %}
                 </select>
               </div>
 

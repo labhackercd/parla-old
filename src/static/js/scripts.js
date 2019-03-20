@@ -73,7 +73,7 @@ $('.js-back-word-chart').on('click', function() {
     $('.js-back').addClass('_hidden');
     $('.js-player-controls').removeClass('-hide');
     if (selectedThroughPlayer === true) {
-      $('.js-range-player').removeClass('-hide');  
+      $('.js-range-player').removeClass('-hide');
     } else {
       $('.js-active-slider').removeClass('-hide');
     }
@@ -107,7 +107,7 @@ $('.js-back').on('click', function() {
         $('.js-inactive-slider').addClass('-hide');
 
         if (selectedThroughPlayer === true) {
-          $('.js-range-player').removeClass('-hide');  
+          $('.js-range-player').removeClass('-hide');
 
         } else {
           $('.js-active-slider').removeClass('-hide');
@@ -222,8 +222,18 @@ $('.js-filter-indicators').each(function(){
 $(this).closest('.js-filter-select').find('.js-filter-option.-active');
 
 $('.js-filter-options').each(function(){
-  var currentLabel = $(this).find('.js-filter-option.-active .js-filter-label').text();
-  $(this).closest('.js-filter-dropdown').find('.js-selected-label').text(currentLabel);
+  var currentLabel = $(this).find('.js-filter-option.-active .js-filter-label');
+  if (currentLabel.text() !== "Nenhum Filtro") {
+    var newLabel = currentLabel.text();
+
+    if($(this).find('.js-filter-option').is('.-select')) {
+      newLabel = currentLabel.text() + ': ' + currentLabel.data('filterValue');
+    }
+
+    $(this).closest('.js-filter-dropdown').find('.js-selected-label').text(newLabel);
+  } else {
+    $(this).closest('.js-filter-dropdown').find('.js-selected-label').text('Nenhum');
+  }
 });
 
 $('.js-change-filter').click(function(){
