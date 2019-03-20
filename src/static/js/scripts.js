@@ -13,6 +13,8 @@ function getUrlParameters(manualParams = false, returnTimelineValues = false) {
   var parsedEndDate = endDate;
   var parsedInitialDate = initialDate;
   var algorithm = searchParams.get('algorithm');
+  var filterName = searchParams.get('filterName');
+  var filterValue = searchParams.get('filterValue');
   var urlParameters = {};
 
   if (initialDate) {
@@ -29,6 +31,14 @@ function getUrlParameters(manualParams = false, returnTimelineValues = false) {
 
   if (algorithm) {
     urlParameters['algorithm'] = algorithm;
+  }
+
+  if (filterValue) {
+    urlParameters['filterValue'] = filterValue;
+  }
+
+  if (filterName) {
+    urlParameters['filterName'] = filterName;
   }
 
   if (returnTimelineValues) {
