@@ -1,0 +1,149 @@
+.filter-select {
+  position: relative;
+
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 315px;
+  padding: 30px 8vw;
+
+  transition: all .5s $swift-out;
+
+  background-color: #F7F7F7;
+
+  @at-root .filter-dropdown.-closed #{&} {
+    height: 0;
+    padding: 0;
+
+    transition: all .3s $swift-out;
+  }
+
+  & > .options {
+    font-size: 14px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    flex: 1 0 auto;
+    justify-content: center;
+
+    max-width: 30ch;
+  }
+
+  & > .options > .option {
+    position: absolute;
+
+    display: none;
+    align-items: center;
+    flex: 1 0 auto;
+    flex-direction: column;
+
+    opacity: 0;
+  }
+
+  & > .options > .option.-active {
+    display: flex;
+
+    animation: zoom-in-reveal .3s ease forwards;
+  }
+
+  & > .options > .option.-fadeleft {
+    animation: fade-to-left .3s ease forwards;
+  }
+
+  & > .options > .option.-faderight {
+    animation: fade-to-right .3s ease forwards;
+  }
+
+  & > .options > .option > .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 175px;
+  }
+
+  & > .options > .option > .description {
+    font-size: 14px;
+
+    max-width: 30ch;
+
+    text-align: center;
+  }
+
+  & > .options > .option > .label {
+    font-size: 18px;
+
+    white-space: pre-wrap;
+  }
+
+  & > .arrow {
+    width: 45px;
+    height: 45px;
+
+    cursor: pointer;
+  }
+
+  & > .arrow::after {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    content: '';
+    transition: transform .3s $swift-out;
+
+    background-image: url('../img/pip-arrow.svg');
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  & > .arrow.-left {
+    margin-left: -15px;
+  }
+
+  & > .arrow.-right {
+    margin-right: -15px;
+  }
+
+  & > .arrow.-left::after {
+    transform: scaleX(-1);
+  }
+
+  & > .arrow.-left:hover::after {
+    transform: scaleX(-1) translateX(7px);
+  }
+
+  & > .arrow.-right:hover::after {
+    transform: translateX(7px);
+  }
+
+  & > .indicators {
+    position: absolute;
+    bottom: 20px;
+
+    display: flex;
+  }
+
+  & > .indicators > .indicator {
+    display: flex;
+
+    width: 5px;
+    height: 5px;
+    margin: 0 3px;
+
+    transition: background-color .15s ease;
+
+    border: 3px solid $color-purple-dark;
+    border-radius: 50%;
+  }
+
+  & > .indicators > .indicator.-active {
+    background-color: $color-purple-dark;
+  }
+}

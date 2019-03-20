@@ -329,6 +329,9 @@ function onlyLoadWordChart(callback, manualParams = false) {
         if (interval) {
           clearInterval(interval)
           $('.js-player-pause').addClass('-hide');
+          if (currentTick < 500) {
+            $('.js-player-play').removeClass('-hide');
+          }
         };
         $('.js-circle').one('transitionend', function(){
           currentPage.addClass('_hidden');
@@ -384,7 +387,9 @@ function wordChart() {
       if (interval) {
         clearInterval(interval)
         $('.js-player-pause').addClass('-hide');
-        $('.js-player-play').removeClass('-hide');
+        if (currentTick < 500) {
+          $('.js-player-play').removeClass('-hide');
+        }
       };
       $('.js-circle').one('transitionend', function(){
         currentPage.addClass('_hidden');

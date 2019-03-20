@@ -4,9 +4,12 @@
   top: 0;
   left: 0;
 
+  display: flex;
+  flex-direction: column;
+
   box-sizing: border-box;
   width: 100%;
-  padding: 20px 8vw 30px 8vw;
+  height: 100%;
 
   transition: transform cubic-bezier(.55,0,.1,1) .5s;
   transform: translateY(-105%);
@@ -22,16 +25,18 @@
   & > .nav {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     justify-content: space-between;
+
+    height: 55px;
+    padding: 0 8vw;
   }
 
   & > .content {
     display: flex;
+    overflow: auto;
+    overflow: overlay;
     flex-direction: column;
-
-    max-width: 30rem;
-    margin: 0 auto;
-    margin-bottom: 20px;
   }
 
   & > .content > label {
@@ -71,6 +76,7 @@
 
   & > .content > .hint {
     font-size: 12px;
+
     margin-top: 5px;
   }
 
@@ -95,22 +101,6 @@
     &:hover {
       background-color: lighten($color-purple-dark, 5%);
     }
-  }
-
-  & > .content > select {
-    font-weight: 600;
-
-    margin-top: 4px;
-    padding-top: 6px;
-    padding-right: 21px;
-    padding-bottom: 6px;
-
-    color: $color-purple-dark;
-    border-bottom: 1px solid #000;
-    background-image: url('../img/dropdown-arrow.svg');
-    background-repeat: no-repeat;
-    background-position: 100% 58%;
-    background-size: 16px;
   }
 
   & > .nav > a {

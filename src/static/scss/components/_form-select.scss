@@ -1,0 +1,20 @@
+.form-select {
+  font-weight: 600;
+
+  margin-top: 4px;
+  padding-top: 6px;
+  padding-right: 21px;
+  padding-bottom: 6px;
+
+  color: $color-purple-dark;
+  border-bottom: 1px solid #000;
+  background-image: url('../img/dropdown-arrow.svg');
+  background-repeat: no-repeat;
+  background-position: 100% 58%;
+  background-size: 16px;
+
+  & > option:disabled {
+    color: transparent;
+    background-color: transparent;
+  }
+}

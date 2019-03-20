@@ -63,7 +63,7 @@
 
     cursor: pointer;
 
-    background-image: url('../img/filter-white.svg');
+    background-image: url('../img/gear-white.svg');
     background-repeat: no-repeat;
     background-position: center;
   }
@@ -72,7 +72,7 @@
     color: #000;
 
     & > .filter {
-      background-image: url('../img/filter-black.svg');
+      background-image: url('../img/gear-black.svg');
     }
 
     & > .info > .back {

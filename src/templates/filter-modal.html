@@ -1,18 +1,198 @@
+{% load staticfiles %}
+
 <form class="filter-modal js-filter-form" action="/" method="GET">
   <div class="nav">
-    <a href="#" class="title">Filtros</a>
+    <a href="#" class="title">Configurar</a>
     <div class="close"></div>
   </div>
   <div class="content">
-    <label for="data">Algoritimos</label>
-    <select name="algorithm" class="algorithm js-form-select-algorithm">
-      <option value="multigram_bow_without_unigram" data-hint="Mostra as expressões mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}selected{% endif %}>Saco de Palavras (sem unigrams)</option>
-      <option value="multigram_bow_with_unigram" data-hint="Mostra as expressões de uma palavra só mais frequentes nos discursos" {% if request.GET.algorithm == 'multigram_bow_with_unigram' %}selected{% endif %}>Saco de Palavras</option>
-      <option value="decision_tree" data-hint="Classifica os discursos em 33 temas pré-estabelecidos" {% if request.GET.algorithm == 'decision_tree' %}selected{% endif %}>Decision Tree + Naive Bayes</option>
-    </select>
-    <span class="hint js-form-hint-algorithm"></span>
+    <ul class="filters">
+
+      <li class="filter">
+        <div class="filter-dropdown -closed js-filter-dropdown">
+
+          <button type="button" class="js-toggle-dropdown">
+            <img src="{% static 'img/algorithm.svg' %}" class="icon">
+            <div class="content">
+              <span class="label">Algoritimo</span>
+              <span class="selected js-selected-label -algorithm">Saco de Palavras</span>
+            </div>
+            <img src="{% static 'img/pip-arrow-purple.svg' %}" class="arrow">
+          </button>
+
+          <div class="filter-select js-filter-select">
+            <button class="arrow -left js-change-filter js-update-algorithm" type="button" aria-label="Próximo algoritimo"></button>
+
+            <div class="options js-filter-options">
+
+              <div class="option js-filter-option {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}-active{% endif %}" data-form-value="multigram_bow_without_unigram">
+                <span class="label js-filter-label">Saco de Palavras</span>
+                <div class="icon">
+                  <img src="{% static 'img/bag-of-words-multigram.svg' %}" class="icon">
+                </div>
+                <p class="description">Mostra as expressões mais frequentes nos discursos</p>
+              </div>
+
+              <div class="option js-filter-option {% if request.GET.algorithm == 'decision_tree' %}-active{% endif %}" data-form-value="decision_tree">
+                <span class="label js-filter-label">Decision Tree</span>
+                <div class="icon">
+                  <img src="{% static 'img/decision-tree.svg' %}" class="icon">
+                </div>
+                <p class="description">Classifica os discursos em 31 temas pré-estabelecidos</p>
+              </div>
+
+            </div>
+            <button class="arrow -right js-change-filter js-update-algorithm" type="button" aria-label="Algoritimo anterior"></button>
+            {# <div class="indicators js-filter-indicators"></div> #}
+          </div>
+
+        </div>
+      </li>
+
+      <li class="filter">
+        <div class="filter-dropdown -closed js-filter-dropdown">
+
+          <button type="button" class="js-toggle-dropdown">
+            <img src="{% static 'img/filter.svg' %}" class="icon">
+            <div class="content">
+              <span class="label">Filtro</span>
+              <span class="selected js-selected-label -filter">Nenhum</span>
+            </div>
+            <img src="{% static 'img/pip-arrow-purple.svg' %}" class="arrow">
+          </button>
+
+
+          <div class="filter-select js-filter-select">
+            <button class="arrow -left js-change-filter" type="button" aria-label="Próximo filtro"></button>
+            <div class="options js-filter-options">
+
+              <div class="option js-filter-option -none">
+                <span class="label js-filter-label">Nenhum Filtro</span>
+                <div class="icon">
+                  <img src="{% static 'img/no-filter.svg' %}" class="icon">
+                </div>
+                <p class="description">Mostra todos os resultados disponíveis</p>
+              </div>
+
+              <div class="option -active js-filter-option -select">
+                <span class="label js-filter-label">Gênero</span>
+                <div class="icon">
+                  <img src="{% static 'img/gender.svg' %}" class="icon">
+                </div>
+                <select class="form-select js-form-select" data-label-part="Gênero: ">
+                  <option selected disabled value="">Escolha o gênero</option>
+                  <option value="male">Masculino</option>
+                  <option value="female">Feminino</option>
+                </select>
+              </div>
+
+              <div class="option js-filter-option -select">
+                <span class="label js-filter-label">Estado</span>
+                <div class="icon">
+                  <img src="{% static 'img/state.svg' %}" class="icon">
+                </div>
+                <select class="form-select js-form-select" data-label-part="Estado: ">
+                  <option selected disabled value="">Escolha o Estado</option>
+                  <option value="acre">Acre</option>
+                  <option value="alagoas">Alagoas</option>
+                  <option value="amapa">Amapá</option>
+                  <option value="amazonas">Amazonas</option>
+                  <option value="bahia">Bahia</option>
+                  <option value="ceara">Ceará</option>
+                  <option value="distrito-federal">Distrito Federal</option>
+                  <option value="espirito-santo">Espírito Santo</option>
+                  <option value="goias">Goiás</option>
+                  <option value="maranhao">Maranhão</option>
+                  <option value="mato-grosso">Mato Grosso</option>
+                  <option value="mato-grosso-do-sul">Mato Grosso do Sul</option>
+                  <option value="minas-gerais">Minas Gerais</option>
+                  <option value="para">Pará</option>
+                  <option value="paraiba">Paraíba</option>
+                  <option value="parana">Paraná</option>
+                  <option value="pernambuco">Pernambuco</option>
+                  <option value="piaui">Piauí</option>
+                  <option value="rio-de-janeiro">Rio de Janeiro</option>
+                  <option value="rio-grande-do-sul">Rio Grande do Sul</option>
+                  <option value="rio-grande-do-norte">Rio Grande do Norte</option>
+                  <option value="rondonia">Rondônia</option>
+                  <option value="roraima">Roraima</option>
+                  <option value="santa-catarina">Santa Catarina</option>
+                  <option value="sao-paulo">São Paulo</option>
+                  <option value="sergipe">Sergipe</option>
+                  <option value="tocantins">Tocantins</option>
+                </select>
+              </div>
+
+              <div class="option js-filter-option -select">
+                <span class="label js-filter-label">Partido</span>
+                <div class="icon">
+                  <img src="{% static 'img/party.svg' %}" class="icon">
+                </div>
+                <select class="form-select js-form-select" data-label-part="Partido: ">
+                  <option selected disabled value="">Escolha o Partido</option>
+                  <option value="pt">PT</option>
+                  <option value="psdb">PSDB</option>
+                  <option value="pp">PP</option>
+                  <option value="pdt">PDT</option>
+                  <option value="ptb">PTB</option>
+                  <option value="dem">DEM</option>
+                  <option value="pr">PR</option>
+                  <option value="psb">PSB</option>
+                  <option value="pps">PPS</option>
+                  <option value="psc">PSC</option>
+                  <option value="prb">PRB</option>
+                  <option value="pcdob">PCdoB</option>
+                  <option value="pv">PV</option>
+                  <option value="psd">PSD</option>
+                  <option value="prp">PRP</option>
+                  <option value="psl">PSL</option>
+                  <option value="pmn">PMN</option>
+                  <option value="phs">PHS</option>
+                  <option value="sd">SD</option>
+                  <option value="ptc">PTC</option>
+                  <option value="avante">AVANTE</option>
+                  <option value="dc">DC</option>
+                  <option value="pode">PODE</option>
+                  <option value="psol">PSOL</option>
+                  <option value="prtb">PRTB</option>
+                  <option value="pros">PROS</option>
+                  <option value="patri">PATRI</option>
+                  <option value="pmb">PMB</option>
+                  <option value="ppl">PPL</option>
+                  <option value="novo">NOVO</option>
+                  <option value="rede">REDE</option>
+                  <option value="pstu">PSTU</option>
+                  <option value="pcb">PCB</option>
+                  <option value="pco">PCO</option>
+                </select>
+              </div>
+
+              <div class="option js-filter-option -select">
+                <span class="label js-filter-label">Fase</span>
+                <div class="icon">
+                  <img src="{% static 'img/phase.svg' %}" class="icon">
+                </div>
+                <select class="form-select js-form-select" data-label-part="Fase: ">
+                  <option selected disabled value="">Escolha a fase</option>
+                  <option value="pe">Pequeno Expediente</option>
+                  <option value="ge">Grande Expediente</option>
+                </select>
+              </div>
+
+            </div>
+            <button class="arrow -right js-change-filter" type="button" aria-label="Filtro anterior"></button>
+            {# <div class="indicators js-filter-indicators"></div> #}
+          </div>
+
+        </div>
+      </li>
+
+    </ul>
     <input type="hidden" class="js-initialDate" name="initialDate">
     <input type="hidden" class="js-endDate" name="endDate">
+    <input type="hidden" class="js-algorithm-input" name="algorithm" value="{{ request.GET.algorithm }}">
+    <input type="hidden" class="js-filter-name" name="filterName" value="{{ request.GET.filter }}">
+    <input type="hidden" class="js-filter-value" name="filterValue" value="{{ request.GET.filter }}">
     <button class="button">Aplicar filtros</button>
   </div>
 </form>

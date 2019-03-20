@@ -4,11 +4,98 @@ $swift-out: cubic-bezier(.55, 0, .1, 1);
 @keyframes show-label {
   0% {
     transform: translateY(-2rem);
+
     opacity: 0;
   }
 
   100% {
     transform: translateY(0);
+
     opacity: 1;
+  }
+}
+
+@keyframes zoom-in-reveal {
+  0% {
+    transform: scale(.9);
+
+    opacity: 0;
+  }
+
+
+  100% {
+    transform: scale(1);
+
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-out-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(2);
+  }
+
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-to-left {
+  0% {
+    transform: translateX(0);
+
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+
+  100% {
+    transform: translateX(-2rem);
+
+    opacity: 0;
+  }
+}
+
+@keyframes fadein-to-left {
+  0% {
+    transform: translateX(2rem);
+
+    opacity: 0;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+
+  100% {
+    transform: translateX(0);
+
+    opacity: 1;
+  }
+}
+
+@keyframes fade-to-right {
+  0% {
+    transform: translateX(0);
+
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+
+  100% {
+    transform: translateX(2rem);
+
+    opacity: 0;
   }
 }

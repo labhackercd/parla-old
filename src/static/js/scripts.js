@@ -203,9 +203,127 @@ $('.js-filter-form').submit(function() {
   $('.js-endDate').val(parameters.parsedEndDate);
 })
 
-$('.js-form-hint-algorithm').text($(`.js-form-select-algorithm option[value=${$('.js-form-select-algorithm').val()}]`).data('hint'))
-
-$(".js-form-select-algorithm").change(function(){
-  $('.js-form-hint-algorithm').text($(`.js-form-select-algorithm option[value=${$('.js-form-select-algorithm').val()}]`).data('hint'))
+$('.js-toggle-dropdown').click(function(){
+  $(this).closest('.js-filter-dropdown').toggleClass('-closed');
 });
 
+/*$('.js-filter-options').each(function(){
+  $(this).find('.js-filter-option').each(function(){
+    $(this).closest('.js-filter-select').find('.js-filter-indicators').append('<span class="indicator js-filter-indicator"></span>')
+  });
+});
+
+$('.js-filter-indicators').each(function(){
+  selectedOptionIndex = $(this).closest('.js-filter-options').find('.js-filter-option.-active').index()
+
+  $(this).find('.js-filter-indicator').eq(selectedOptionIndex).addClass('-active');
+});*/
+
+$(this).closest('.js-filter-select').find('.js-filter-option.-active');
+
+$('.js-filter-options').each(function(){
+  var currentLabel = $(this).find('.js-filter-option.-active .js-filter-label').text();
+  $(this).closest('.js-filter-dropdown').find('.js-selected-label').text(currentLabel);
+});
+
+$('.js-change-filter').click(function(){
+  changeFilter = $(this);
+  direction = null;
+  fadeClass = null;
+  label = null;
+  algorithmID = null;
+  updatedFilter = null;
+  selectedOptionVal = null;
+  selectedOptionLabel = null;
+  currentFilter = changeFilter.closest('.js-filter-select').find('.js-filter-option.-active');
+
+  if(changeFilter.is('.-left')) {
+    direction = 'left';
+    fadeClass = '-faderight'
+  } else {
+    direction = 'right'
+    fadeClass = '-fadeleft'
+  }
+
+  currentFilter.addClass(fadeClass).one('animationend', function(){
+    if (direction === 'right') {
+      if (currentFilter.next().length === 1) {
+        updatedFilter = currentFilter.next();
+        label = updatedFilter.find('.js-filter-label').text();
+
+      } else {
+        updatedFilter = currentFilter.siblings().first();
+        label = updatedFilter.find('.js-filter-label').text();
+      }
+
+    } else {
+
+      if (currentFilter.prev().length === 1) {
+        updatedFilter = currentFilter.prev();
+        label = updatedFilter.find('.js-filter-label').text();
+
+      } else {
+        updatedFilter = currentFilter.siblings().last();
+        label = updatedFilter.find('.js-filter-label').text();
+      }
+    }
+
+    updatedFilter.addClass('-active');
+    algorithmID = updatedFilter.data('formValue');
+
+    currentFilter.removeClass('-active');
+    currentFilter.removeClass(fadeClass);
+
+    if (changeFilter.is('.js-update-algorithm')) {
+      updateLabel('algorithm', label);
+      $('.js-algorithm-input').val(algorithmID);
+    }
+
+    if ((updatedFilter).is('.-none')) {
+      updateLabel('filter', 'Nenhum');
+    }
+
+    if ((updatedFilter).is('.-select')) {
+
+      updatedVal = $(this).find('.js-form-select option:selected').val();
+      currentSelect = $(this).find('.js-form-select');
+
+      if ($('.js-selected-label.-filter').text() !== "Nenhum") {
+        if (updatedVal === "") {
+          updateLabel('filter', 'Nenhum');
+        } else {
+          updateSelectLabel(currentSelect);
+        }
+      }
+    }
+
+  });
+});
+
+function updateSelectLabel(select) {
+  if (select.val() !== null) {
+    selectedOptionLabelPart = select.data('labelPart');
+    selectedOptionLabel = select.find(':selected').text();
+    label = selectedOptionLabelPart + selectedOptionLabel
+  }
+
+  updateLabel('filter', label);
+}
+
+$('.js-form-select').change(function(){
+  updateSelectLabel($(this));
+});
+
+function updateLabel(labelID, newLabel) {
+  $(`.js-selected-label.-${labelID}`).addClass('-fadeout').one('animationend', function(){
+    $(this).text(newLabel);
+    $(this).removeClass('-fadeout');
+    $(this).addClass('-fadein').one('animationend', function(){
+      $(this).removeClass('-fadein');
+    });
+  });
+}
+
+$('.js-update-label').click(function(){
+  $(this).closest('.js-filter-select').find('.js-filter-option.-active')
+});

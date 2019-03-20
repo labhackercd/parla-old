@@ -1,0 +1,57 @@
+.filter-dropdown {
+  display: flex;
+  flex-direction: column;
+
+  & > button {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    padding: 25px 8vw;
+
+    cursor: pointer;
+  }
+
+  & > button > .icon {
+    margin-right: 25px;
+  }
+
+  & > button > .arrow {
+    margin-left: auto;
+
+    transition: transform .3s ease;
+    transform: rotate(90deg);
+
+    @at-root .-closed#{&} {
+      transform: rotate(0deg);
+    }
+  }
+
+  & > button > .content {
+    line-height: 1.5;
+
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  & > button > .content > .name {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  & > button > .content > .selected {
+    font-size: 12px;
+
+    color: $color-purple-dark;
+  }
+
+  & > button > .content > .-fadein {
+    animation: zoom-out-reveal 0.2s $swift-out forwards;
+  }
+
+  & > button > .content > .-fadeout {
+    animation: fade-to-left 0.2s $swift-out forwards;
+  }
+}
