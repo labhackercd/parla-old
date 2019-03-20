@@ -25,7 +25,7 @@
 
             <div class="options js-filter-options">
 
-              <div class="option js-filter-option {% if request.GET.algorithm == 'multigram_bow_without_unigram' %}-active{% endif %}" data-form-value="multigram_bow_without_unigram">
+              <div class="option js-filter-option {% if request.GET.algorithm == 'multigram_bow_without_unigram' or not request.GET.algorithm %}-active{% endif %}" data-form-value="multigram_bow_without_unigram">
                 <span class="label js-filter-label">Saco de Palavras</span>
                 <div class="icon">
                   <img src="{% static 'img/bag-of-words-multigram.svg' %}" class="icon">
@@ -190,7 +190,7 @@
     </ul>
     <input type="hidden" class="js-initialDate" name="initialDate">
     <input type="hidden" class="js-endDate" name="endDate">
-    <input type="hidden" class="js-algorithm-input" name="algorithm" value="{{ request.GET.algorithm }}">
+    <input type="hidden" class="js-algorithm-input" name="algorithm" value="{{ request.GET.algorithm|default:'multigram_bow_without_unigram' }}">
     <input type="hidden" class="js-filter-name" name="filterName" value="{{ request.GET.filter }}">
     <input type="hidden" class="js-filter-value" name="filterValue" value="{{ request.GET.filter }}">
     <button class="button">Aplicar filtros</button>

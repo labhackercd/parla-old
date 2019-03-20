@@ -280,7 +280,9 @@ $('.js-change-filter').click(function(){
     }
 
     if ((updatedFilter).is('.-none')) {
-      updateLabel('filter', 'Nenhum');
+      if (updatedFilter.find('.js-form-select option:selected').val() !== "" && $('.js-selected-label.-filter').text() !== "Nenhum") {
+        updateLabel('filter', 'Nenhum');
+      }
 
       $('.js-filter-name').val('');
       $('.js-filter-value').val('');
@@ -288,18 +290,25 @@ $('.js-change-filter').click(function(){
 
     if ((updatedFilter).is('.-select')) {
 
-      updatedVal = $(this).find('.js-form-select option:selected').val();
-      currentSelect = $(this).find('.js-form-select');
+      updatedVal = updatedFilter.find('.js-form-select option:selected').val();
+      currentSelect = updatedFilter.find('.js-form-select');
 
-      if ($('.js-selected-label.-filter').text() !== "Nenhum") {
-        if (updatedVal === "") {
+      if (currentSelect.find('option:selected').val() !== "") {
+        updateSelectLabel(currentSelect);
+
+        $('.js-filter-name').val(currentSelect.data('filterName'));
+        $('.js-filter-value').val(currentSelect.val());
+
+      } else {
+
+        $('.js-filter-name').val('');
+        $('.js-filter-value').val('');
+
+        if ($('.js-selected-label.-filter').text() !== "Nenhum") {
           updateLabel('filter', 'Nenhum');
-        } else {
-          updateSelectLabel(currentSelect);
         }
       }
     }
-
   });
 });
 
