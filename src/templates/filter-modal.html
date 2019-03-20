@@ -193,6 +193,8 @@
     <input type="hidden" class="js-algorithm-input" name="algorithm" value="{{ request.GET.algorithm|default:'multigram_bow_without_unigram' }}">
     <input type="hidden" class="js-filter-name" name="filterName" value="{{ request.GET.filter }}">
     <input type="hidden" class="js-filter-value" name="filterValue" value="{{ request.GET.filter }}">
-    <button class="button">Aplicar filtros</button>
+    <div class="footer">
+      <button class="button">Aplicar</button>
+    </div>
   </div>
 </form>
