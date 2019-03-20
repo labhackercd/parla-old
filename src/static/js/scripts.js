@@ -281,6 +281,9 @@ $('.js-change-filter').click(function(){
 
     if ((updatedFilter).is('.-none')) {
       updateLabel('filter', 'Nenhum');
+
+      $('.js-filter-name').val('');
+      $('.js-filter-value').val('');
     }
 
     if ((updatedFilter).is('.-select')) {
@@ -311,7 +314,11 @@ function updateSelectLabel(select) {
 }
 
 $('.js-form-select').change(function(){
-  updateSelectLabel($(this));
+  var currentSelect = $(this);
+  updateSelectLabel(currentSelect);
+
+  $('.js-filter-name').val(currentSelect.data('filterName'));
+  $('.js-filter-value').val(currentSelect.val());
 });
 
 function updateLabel(labelID, newLabel) {
