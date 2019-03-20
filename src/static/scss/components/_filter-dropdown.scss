@@ -11,6 +11,10 @@
     padding: 25px 8vw;
 
     cursor: pointer;
+
+    @include bp-mediumup {
+      padding: 25px 2.5rem;
+    }
   }
 
   & > button > .icon {

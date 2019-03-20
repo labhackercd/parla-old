@@ -15,6 +15,10 @@
 
   background-color: #F7F7F7;
 
+  @include bp-mediumup {
+    padding: 30px 2.5rem;
+  }
+
   @at-root .filter-dropdown.-closed #{&} {
     height: 0;
     padding: 0;
