@@ -16,19 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from apps.nlp import analysis
-from apps.data import models
-qs = models.Speech.objects.all()
+from parla import views
+
 
 urlpatterns = [
-    path('', TemplateView.as_view(
-        template_name='home.html',
-        extra_context={
-            'states': analysis.get_states(qs),
-            'phases': analysis.get_phases(qs),
-            'parties': analysis.get_parties(qs),
-            'genders': ['M', 'F'],
-        })),
+    path('', views.HomeView.as_view()),
     path('sobre/', TemplateView.as_view(template_name='about.html')),
     path('metodologia/', TemplateView.as_view(template_name='methodology.html')),
     path('admin/', admin.site.urls),
