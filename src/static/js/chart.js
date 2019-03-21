@@ -337,6 +337,7 @@ function onlyLoadWordChart(callback, manualParams = false) {
           currentPage.addClass('_hidden');
           setNavigationTitle(data.token);
           $('.js-back').removeClass('_hidden');
+          $('.js-open-menu').addClass('-hide');
 
         });
         tokensChart(data.stem);
@@ -395,6 +396,7 @@ function wordChart() {
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
+        $('.js-open-menu').addClass('-hide');
 
       });
       tokensChart(data.stem);

@@ -2,6 +2,17 @@
 
 
 {% block content %}
+  <nav class="app-menu js-menu">
+    <div class="nav">
+      <a href="#" class="title">Menu</a>
+      <div class="close js-close-menu"></div>
+    </div>
+    <div class="links">
+      <a href="/sobre">Sobre o Parla</a>
+      <a href="/metodologia">Metodologias usadas</a>
+    </div>
+  </nav>
+  {% include "navbar.html" %}
   <main>
     <div class="hex-loading -visible js-loading">
       <svg class="js-loading-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

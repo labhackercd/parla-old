@@ -19,6 +19,25 @@
     align-items: center;
   }
 
+  & > .info > .menu {
+    flex: 0 0 auto;
+
+    width: 26px;
+    height: 44px;
+    margin-right: 15px;
+
+    cursor: pointer;
+
+    background-image: url('../img/menu.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  & > .info > .menu.-hide {
+    display: none;
+  }
+
+
   & > .info > .back {
     position: relative;
     z-index: map-get($z-index, back);
@@ -40,8 +59,6 @@
 
     display: flex;
     flex-direction: column;
-
-    width: 90%;
 
     text-transform: uppercase;
   }
