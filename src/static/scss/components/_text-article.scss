@@ -1,0 +1,75 @@
+.text-article {
+  display: flex;
+  align-items: center;
+  flex: 1 0 auto;
+  flex-direction: column;
+
+  margin-top: 55px;
+  margin-bottom: 3em;
+
+  & > .video {
+    display: block;
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: calc(100vh - 185px);
+
+    @include bp-mediumup {
+      height: calc(100vh - 235px);
+    }
+  }
+
+  & > .text {
+    font-size: 16px;
+
+    max-width: 66ch;
+    margin: 0 8vw;
+
+    @include bp-mediumup {
+      font-size: 20px;
+    }
+  }
+
+  & > .text > h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.25;
+
+    margin-top: 1.75em;
+
+    color: black;
+
+    @include bp-mediumup {
+      font-size: 36px;
+    }
+  }
+
+  & > .text > h2 {
+    font-size: 18px;
+    line-height: 1.25;
+
+    margin-top: .5em;
+    margin-bottom: 1.75em;
+
+    color: hsla(0, 0%, 50%, 1);
+
+    @include bp-mediumup {
+      font-size: 22px;
+    }
+  }
+
+  & > .text > p {
+    font-size: 16px;
+    line-height: 1.8;
+
+    color: #000;
+
+    @include bp-mediumup {
+      font-size: 20px;
+    }
+  }
+
+  & > .text > p + p {
+    margin-top: 2em;
+  }
+}

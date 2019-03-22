@@ -34,8 +34,14 @@ body {
     color: #FFF;
   }
 
-  &.-animating, &.-processing {
+  &.-animating,
+  &.-processing {
     pointer-events: none;
+  }
+
+  &.-article {
+    overflow-y: auto;
+    overflow-y: overlay;
   }
 }
 
@@ -57,7 +63,7 @@ main {
 
 input {
   font-family: 'Roboto', sans-serif;
-  &[type="checkbox"] {
+  &[type='checkbox'] {
     appearance: checkbox;
   }
 }
