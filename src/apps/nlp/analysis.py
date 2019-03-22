@@ -178,35 +178,17 @@ def multigrams_analysis(use_unigram, speeches, phase=None, gender=None,
             for speech in bar:
                 tokens, stems_dict = multigrams.get_tokens(speech.content)
                 limit = 2
-                stop_fivegrams = []
-                stop_quadgrams = []
                 stop_trigrams = []
                 stop_bigrams = []
-                fivegrams = multigrams.ngrams_by_limit(tokens, 5, limit)
 
-                if fivegrams:
-                    stop_fivegrams = list(list(zip(*fivegrams))[0])
-
-                quadgram_tokens = multigrams.clean_tokens(tokens,
-                                                          stop_fivegrams)
-                quadgrams = multigrams.ngrams_by_limit(quadgram_tokens,
-                                                       4, limit)
-
-                if quadgrams:
-                    stop_quadgrams = list(list(zip(*quadgrams))[0])
-
-                trigram_tokens = multigrams.clean_tokens(tokens,
-                                                         stop_fivegrams,
-                                                         stop_quadgrams)
+                trigram_tokens = multigrams.clean_tokens(tokens)
                 trigrams = multigrams.ngrams_by_limit(trigram_tokens,
                                                       3, limit)
 
                 if trigrams:
                     stop_trigrams = list(list(zip(*trigrams))[0])
 
-                bigram_tokens = multigrams.clean_tokens(
-                    tokens, stop_fivegrams, stop_quadgrams, stop_trigrams
-                )
+                bigram_tokens = multigrams.clean_tokens(tokens, stop_trigrams)
 
                 bigrams = multigrams.ngrams_by_limit(bigram_tokens,
                                                      2, limit)
@@ -215,21 +197,27 @@ def multigrams_analysis(use_unigram, speeches, phase=None, gender=None,
                     stop_bigrams = list(list(zip(*bigrams))[0])
 
                 onegram_tokens = multigrams.clean_tokens(
-                    tokens, stop_fivegrams,
-                    stop_quadgrams, stop_trigrams,
+                    tokens, stop_trigrams,
                     stop_bigrams, stopwords.ONEGRAM_STOPWORDS
                 )
                 onegrams = multigrams.ngrams_by_limit(onegram_tokens, 1)
 
                 if use_unigram:
-                    result_tokens = (onegrams + bigrams + trigrams +
-                                     quadgrams + fivegrams)
+                    result_tokens = (onegrams + bigrams + trigrams)
                 else:
-                    result_tokens = (bigrams + trigrams + quadgrams +
-                                     fivegrams)
+                    result_tokens = (bigrams + trigrams)
 
                 for token in result_tokens:
-                    word_token = translate_stem(' '.join(token[0]), stems_dict)
+                    valid_tokens = []
+                    for idx in range(len(token[0])):
+                        if idx < len(token[0]) - 1:
+                            if token[0][idx] != token[0][idx + 1]:
+                                valid_tokens.append(token[0][idx])
+                        else:
+                            valid_tokens.append(token[0][idx])
+
+                    word_token = translate_stem(' '.join(valid_tokens),
+                                                stems_dict)
                     token_data = final_dict.get(word_token, {})
                     authors = token_data.get('authors', {})
                     author_data = authors.get(speech.author.id, {})

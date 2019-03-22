@@ -116,8 +116,7 @@ def ngrams_by_limit(tokens, n, limit=0):
     return result
 
 
-def clean_tokens(tokens, fivegrams=[], quadgrams=[], trigrams=[], bigrams=[],
-                 extra_stopwords=None):
+def clean_tokens(tokens, trigrams=[], bigrams=[], extra_stopwords=None):
     """
     Função que retorna uma lista de tokens filtradas pelos argumentos passados.
     Argumentos:
@@ -132,29 +131,6 @@ def clean_tokens(tokens, fivegrams=[], quadgrams=[], trigrams=[], bigrams=[],
         Uma lista de tokens removendo os n-gramas e stopwords passados nos
         argumentos.
     """
-    if fivegrams:
-        pos_fivegram = []
-        for i in range(len(tokens) - 4):
-            for word1, word2, word3, word4, word5 in fivegrams:
-                if (tokens[i] == word1 and tokens[i + 1] == word2 and
-                   tokens[i + 2] == word3 and tokens[i + 3] == word4 and
-                   tokens[i + 4] == word5):
-                    pos_fivegram.append(i)
-
-        for pos in reversed(pos_fivegram):
-            del tokens[pos:pos + 5]
-
-    if quadgrams:
-        pos_quadgram = []
-        for i in range(len(tokens) - 3):
-            for word1, word2, word3, word4 in quadgrams:
-                if (tokens[i] == word1 and tokens[i + 1] == word2 and
-                   tokens[i + 2] == word3 and tokens[i + 3] == word4):
-                    pos_quadgram.append(i)
-
-        for pos in reversed(pos_quadgram):
-            del tokens[pos:pos + 4]
-
     if trigrams:
         pos_trigram = []
         for i in range(len(tokens) - 2):
