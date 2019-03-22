@@ -37,7 +37,7 @@ COMMON_NAMES_STOPWORDS = [
 
 LEGISLATIVE_STOPWORDS = [
     'presidencia', 'presidência', 'termos', 'internos', 'assumiu', 'exercício',
-    'convidou', 'compor'
+    'convidou', 'compor', 'concedo', 'aparte', 'tomei', 'decisão'
 ]
 
 
@@ -56,9 +56,9 @@ def months(queryset):
 
 def clear_speech(text):
     text = re.sub(r'\([^)]*\)', '', text)
-    text = re.sub(r'[OA] SRA?[\w\s.]+-', '', text)
+    text = re.sub(r'[OAoa] [Ss][Rr][Aa]?\.?\s?[\w\wÀ-ú\s]+-?', '', text)
+    text = re.sub(r'\\-', '', text)
     text = re.sub(r'PRONUNCIAMENTO[\sA-Z]+\s', '', text)
-#     text = re.sub(r'[^\w\s]', ' ', text)
     text = re.sub(r'\s[\.\"]+', ' ', text)
     text = re.sub(r'\s+', ' ', text)
     text = re.sub(r'[Vv]\.[Ee][Xx][Aa]\.', 'v.exa', text)
