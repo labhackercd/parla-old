@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<nav class="app-menu js-menu">
+  <div class="nav">
+    <a href="#" class="title">Menu</a>
+    <div class="close js-close-menu"></div>
+  </div>
+  <div class="links">
+    <a href="/">Início</a>
+    <a href="/sobre">Sobre o Parla</a>
+  </div>
+</nav>
+<div class="nav-bar -negative -article">
+  <button class="filter js-open-filter -hide" type="button"></button>
+  <div class="info js-info">
+    <a href="/" class="back js-back"></a>
+    <div class="breadcrumb">
+      <h1 class="title js-title">Metodologias usadas</h1>
+      <h2 class="name js-name"></h2>
+    </div>
+  </div>
+  <button class="menu js-open-menu" type="button"></button>
+</div>
+
+  <main>
+    <article class="text-article">
+      <div class="text">
+        <h1>Algoritimos à serviço do cidadão</h1>
+        <h2>As metodologias por detrás do Parla</h1>
+
+        <p>O Parla obtêm os discursos dos deputados diretamente do Banco de Discursos da Câmara dos Deputados. Entretanto, é possível obter os discursos também por meio da <a href="https://dadosabertos.camara.leg.br/">página de dados abertos da Câmara.</a></p>
+
+        <p>A fim de reduzir a complexidade e o tamanho do vocabulário, bem como focar no que é usual e significativo no texto, O Parla utiliza apenas as palavras de média frequência no discurso. Por isso é preciso retirar as palavras de conteúdo desnecessário e as palavras pouco frequentes — as que aparecem em 99% dos discursos ou em menos de 1%. Essas palavras mais frequentes normalmente não geram conteúdo significativo e correspondem a conjunções, preposições, artigos, pronomes e verbos como os de ligação.</p>
+
+        <p>São também retiradas as palavras e expressões que são utilizadas muito comumente no processo legislativo, mas que não geram conteúdo significativo, como as falas procedurais do Presidente, a leitura da ata e da agenda, eleições da Mesa, orações e homenagens. Estas listas de palavras são chamadas de listas de stopwords (inserir hiperlink para a lista de stopwords publicada, incluindo os nome dos deputados e dos Estados).</p>
+
+        <p>Após a remoção das stopwords, é necessário reduzir a variabilidade das palavras por meio de stemming. Stemming é a redução da palavra a seu radical por meio da remoção de seu final, como em plurais ou conjugações verbais, a fim de reduzir as palavras à sua forma básica e agrupá-las, utilizando para isso um algoritmo mais complexo que identifica a origem da palavra e retorna apenas sua lemma ou raiz.</p>
+
+        <p>Após o stemming, as ocorrências individuais de cada palavra são chamadas de tokens e o conteúdo do discurso está finalmente pronto para ser convertido em dados quantitativos. O saco de palavras é o método mais simples e mais usado para transformar cada discurso em um vetor único cujo valor é determinado pela ausência ou presença de um token no documento, pela frequência desses tokens ou pela frequência normalizada pelo tamanho do discurso. O objetivo é criar uma matriz de documentos e termos (Document Term Matrix – DTM) na qual cada linha representa um discurso e cada coluna representa um token único. Como cada célula da matriz denota o número de vezes que o token indicado na coluna aparece no discurso indicado na linha, cada discurso é representado por um vetor único.</p>
+
+        <p>Para aplicar o Naive Bayes-Decision Tree foi necessário primeiro definir os temas e, depois, ensinar o algoritmo a classificar nesses temas. Em princípio, foi utilizada a tabela de classificação e indexação de temas da Câmara dos Deputados (publicar a lista de temas abaixo). Depois, foram retirados os temas “Homenagens e Datas Comemorativas” e “Processo Legislativo e Atuação Parlamentar”, por conterem as atividades de representação parlamentar, não contribuindo com conteúdo ao debate temático. Outros dois temas – “Administração Pública” e “Política, Partidos e Eleições” – foram considerados muito amplos, mas como esses temas contem conteúdo significativo eles foram divididos. Assim, o tema “Administração Pública” foi separado em “Impeachment”, “Corrupção” e “Serviço Público” e o tem “Política, Partidos e Eleições” foi separado em “Reforma Política” e “Eleição”.  </p>    
+
+      </div>
+    </article>
+  </main>
+  <div class="hex-bg -visible">
+    <div class="element"></div>
+    <div class="element"></div>
+    <div class="element"></div>
+    <div class="element"></div>
+    <div class="element"></div>
+  </div>
+{% endblock content %}

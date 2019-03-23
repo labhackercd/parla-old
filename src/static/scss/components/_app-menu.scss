@@ -2,7 +2,7 @@
   position: fixed;
   z-index: map-get($z-index, filter-modal);
   top: 0;
-  left: 0;
+  right: 0;
 
   display: flex;
   flex-direction: column;
@@ -12,18 +12,14 @@
   height: 100%;
 
   transition: transform cubic-bezier(.55,0,.1,1) .5s;
-  transform: translateY(-105%);
+  transform: translateX(105%);
 
   color: #000;
   background-color: #FFF;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, .25);
+  box-shadow: -6px 0 13px 0 rgba(0, 0, 0, .25);
 
   @include bp-mediumup {
     width: 30rem;
-
-    transform: translateX(-105%);
-
-    box-shadow: 6px 0 13px 0 rgba(0, 0, 0, .25);
   }
 
   &.-active {

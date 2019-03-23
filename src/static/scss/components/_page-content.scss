@@ -9,5 +9,9 @@
 
       opacity: 1;
     }
+
+     > g {
+      transform: translateY(50px);
+    }
   }
 }

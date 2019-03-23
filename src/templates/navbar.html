@@ -1,11 +1,14 @@
+{% load staticfiles %}
+
 <div class="nav-bar">
-  <div class="info">
+  <button class="filter js-open-filter" type="button"></button>
+  <img class="logo js-logo" src="{% static 'img/logo.svg' %}" alt="Logo Parla">
+  <div class="info -hide js-info">
     <div class="back _hidden js-back"></div>
-    <button class="menu js-open-menu"></button>
     <div class="breadcrumb">
       <h1 class="title js-title">Parla</h1>
       <h2 class="name js-name"></h2>
     </div>
   </div>
-  <div class="filter js-open-filter"></div>
+  <button class="menu js-open-menu" type="button"></button>
 </div>

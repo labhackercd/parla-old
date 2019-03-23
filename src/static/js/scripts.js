@@ -56,18 +56,22 @@ function getUrlParameters(manualParams = false, returnTimelineValues = false) {
 
 $('.js-open-filter').click(function() {
   $('.js-filter-form').addClass('-active');
+  // $('body').addClass('-moveright');
 });
 
 $('.js-close-filter').click(function() {
   $('.js-filter-form').removeClass('-active');
+  // $('body').removeClass('-moveright');
 });
 
 $('.js-open-menu').click(function() {
   $('.js-menu').addClass('-active');
+  // $('body').addClass('-moveleft');
 });
 
 $('.js-close-menu').click(function() {
   $('.js-menu').removeClass('-active');
+  // $('body').removeClass('-moveleft');
 });
 
 
@@ -90,7 +94,9 @@ $('.js-back-word-chart').on('click', function() {
     $('.js-page-token').addClass('-active');
     $('.js-page:not(.js-page-token)').remove();
     $('.js-back').addClass('_hidden');
-    $('.js-open-menu').removeClass('-hide');
+    $('.js-open-filter').removeClass('-hide');
+    $('.js-logo').removeClass('-hide');
+    $('.js-info').addClass('-hide');
     $('.js-player-controls').removeClass('-hide');
     if (selectedThroughPlayer === true) {
       $('.js-range-player').removeClass('-hide');
@@ -146,7 +152,9 @@ $('.js-back').on('click', function() {
       } else if (visiblePage === 'authors') {
         setNavigationTitle('Parla');
         $('.js-back').addClass('_hidden');
-        $('.js-open-menu').removeClass('-hide');
+        $('.js-open-filter').removeClass('-hide');
+        $('.js-logo').removeClass('-hide');
+        $('.js-info').addClass('-hide');
       }
 
 

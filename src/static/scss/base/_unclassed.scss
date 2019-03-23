@@ -43,12 +43,36 @@ body {
     overflow-y: auto;
     overflow-y: overlay;
   }
+
+  &.-moveright {
+    & > main,
+    & .nav-bar {
+      transform: translateX(100%);
+
+      @include bp-mediumup {
+        transform: translateX(30rem);
+      }
+    }
+  }
+
+  &.-moveleft {
+    & > main,
+    & .nav-bar {
+      transform: translateX(-100%);
+
+      @include bp-mediumup {
+        transform: translateX(-30rem);
+      }
+    }
+  }
 }
 
 main {
   display: flex;
   flex: 1;
   flex-direction: column;
+
+  transition: transform cubic-bezier(.55,0,.1,1) .5s;
 }
 
 .wrapper {
@@ -72,7 +96,6 @@ input {
   padding: 2px 4px;
   padding-right: 0;
 
-  cursor: pointer;
   transition: all .2s cubic-bezier(.19, .01, .03, 1.01);
   text-decoration: none;
 

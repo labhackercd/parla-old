@@ -14,18 +14,18 @@
     width: 100%;
     height: calc(100vh - 185px);
 
-    @include bp-mediumup {
+    @include bp-smallup {
       height: calc(100vh - 235px);
     }
   }
 
   & > .text {
-    font-size: 16px;
+    font-size: 14px;
 
     max-width: 66ch;
     margin: 0 8vw;
 
-    @include bp-mediumup {
+    @include bp-smallup {
       font-size: 20px;
     }
   }
@@ -39,7 +39,7 @@
 
     color: black;
 
-    @include bp-mediumup {
+    @include bp-smallup {
       font-size: 36px;
     }
   }
@@ -53,23 +53,27 @@
 
     color: hsla(0, 0%, 50%, 1);
 
-    @include bp-mediumup {
+    @include bp-smallup {
       font-size: 22px;
     }
   }
 
   & > .text > p {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.8;
 
     color: #000;
 
-    @include bp-mediumup {
+    @include bp-smallup {
       font-size: 20px;
     }
   }
 
   & > .text > p + p {
     margin-top: 2em;
+  }
+
+  & > .text > p > a {
+    @include link-style();
   }
 }

@@ -1,0 +1,25 @@
+@mixin link-style($font-weight: inherit, $negative: false) {
+  font-weight: $font-weight;
+
+  cursor: pointer;
+  transition: all .25s $swift-out;
+  text-decoration: none;
+
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  @include bp-mediumup {
+    background-size: 0 100%;
+    &:hover {
+      background-size: 100% 100%;
+    }
+  }
+
+  @if $negative == true {
+    color: #FFF;
+    background-image: linear-gradient(180deg,transparent 65%,rgba(#FFF, .3) 0);
+  } @else {
+    color: $color-purple-dark;
+    background-image: linear-gradient(180deg,transparent 65%,rgba($color-purple-dark, .3) 0);
+  }
+}

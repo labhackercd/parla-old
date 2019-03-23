@@ -8,15 +8,41 @@
   padding-right: 8vw;
   padding-left: 8vw;
 
+  transition: transform cubic-bezier(.55,0,.1,1) .5s;
+
   color: #FFF;
 
   &.-article {
     position: fixed;
-    box-sizing: border-box;
     top: 0;
+
+    box-sizing: border-box;
     width: 100%;
-    background-color: rgba(#FFF, 0.92);
-    box-shadow: 0px 3px 10px 0px rgba(#000, 0.4);
+
+    background-color: rgba(#FFF, .92);
+    box-shadow: 0 3px 10px 0 rgba(#000, .4);
+  }
+
+  & > .logo.-hide {
+    display: none;
+  }
+
+  & > .menu {
+    flex: 0 0 auto;
+
+    width: 44px;
+    height: 44px;
+    margin-right: -9px;
+
+    cursor: pointer;
+
+    background-image: url('../img/menu-white.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  & > .menu.-hide {
+    display: none;
   }
 
   & a {
@@ -28,24 +54,9 @@
     align-items: center;
   }
 
-  & > .info > .menu {
-    flex: 0 0 auto;
-
-    width: 26px;
-    height: 44px;
-    margin-right: 15px;
-
-    cursor: pointer;
-
-    background-image: url('../img/menu.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  & > .info > .menu.-hide {
+  & > .info.-hide {
     display: none;
   }
-
 
   & > .info > .back {
     position: relative;
@@ -82,10 +93,9 @@
   }
 
   & > .filter {
-    width: 22px;
-    height: 20px;
-    margin-right: -10px;
-    padding: 10px;
+    width: 44px;
+    height: 44px;
+    margin-left: -9px;
 
     cursor: pointer;
 
@@ -94,11 +104,16 @@
     background-position: center;
   }
 
+
+  & > .filter.-hide {
+    display: none;
+  }
+
   &.-negative {
     color: #000;
 
-    & > .filter {
-      background-image: url('../img/gear-black.svg');
+    & > .menu {
+      background-image: url('../img/menu-black.svg');
     }
 
     & > .info > .back {

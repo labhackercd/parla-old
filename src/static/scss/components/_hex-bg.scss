@@ -1,5 +1,5 @@
 .hex-bg {
-  position: absolute;
+  position: fixed;
   z-index: map-get($z-index, hex-bg);
 
   display: flex;

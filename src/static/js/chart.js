@@ -294,7 +294,7 @@ function updateCanvasSize(canvas) {
 
   var svg = $(chart).closest('.js-svg-root');
   svg.attr('width', '100%');
-  svg.attr('viewBox', `0 0 ${bbox.width} 565`)
+  svg.attr('viewBox', `0 0 ${bbox.width} 615`)
 }
 
 function setTransformOrigin(canvas) {
@@ -337,7 +337,9 @@ function onlyLoadWordChart(callback, manualParams = false) {
           currentPage.addClass('_hidden');
           setNavigationTitle(data.token);
           $('.js-back').removeClass('_hidden');
-          $('.js-open-menu').addClass('-hide');
+          $('.js-open-filter').addClass('-hide');
+          $('.js-logo').addClass('-hide');
+          $('.js-info').removeClass('-hide');
 
         });
         tokensChart(data.stem);
@@ -396,7 +398,9 @@ function wordChart() {
         currentPage.addClass('_hidden');
         setNavigationTitle(data.token);
         $('.js-back').removeClass('_hidden');
-        $('.js-open-menu').addClass('-hide');
+        $('.js-open-filter').addClass('-hide');
+        $('.js-logo').addClass('-hide');
+        $('.js-info').removeClass('-hide');
 
       });
       tokensChart(data.stem);
