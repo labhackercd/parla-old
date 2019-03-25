@@ -7,6 +7,7 @@ from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from collections import Counter
 from django.http import JsonResponse
+import locale
 import re
 from django.utils.text import slugify
 
@@ -200,6 +201,7 @@ def token_author_manifestations(request, token, author_id):
 
 
 def manifestation(request, speech_id, token):
+    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     speech = get_object_or_404(Speech, pk=speech_id)
     search = re.compile(r'\b(%s)\b' % token, re.I)
     original = search.sub('<span class="-highlight">\\1</span>',
@@ -215,8 +217,10 @@ def manifestation(request, speech_id, token):
 
     return JsonResponse(
         {
-            'date': speech.date.strftime('%d/%m/%Y'),
+            'date': speech.date.strftime('%d de %B de %Y'),
             'time': speech.time.strftime('%H:%M'),
+            'phase': speech.phase,
+            'author': speech.author.name,
             'summary': summary,
             'content': original,
             'indexes': speech.indexes,

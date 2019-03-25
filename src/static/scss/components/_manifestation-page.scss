@@ -1,10 +1,14 @@
 .manifestation-page {
   position: fixed;
+  z-index: 80;
+  top: 0;
 
+  display: flex;
   overflow: none;
 
   box-sizing: border-box;
-  height: calc(100% - 55px);
+  width: 100%;
+  height: 100%;
 
   transition: all .35s cubic-bezier(.55, 0, .1, 1);
   transform: translateY(100%);
@@ -16,58 +20,149 @@
     transform: translateY(0);
   }
 
-  & > .header {
-    padding: 17px 8vw 17px 8vw;
+  & > .content {
+    display: flex;
+    overflow-y: auto;
+    overflow-y: overlay;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    padding: 0 8vw 0 8vw;
+
+    -webkit-overflow-scrolling: touch;
   }
 
-  & > .header > strong {
-    font-size: 18px;
-    font-weight: bold;
+  & > .content > .text {
+    font-size: 14px;
+
+    max-width: 66ch;
+    height: 100%;
+    padding-top: 55px;
+
+    @include bp-smallup {
+      font-size: 20px;
+    }
   }
 
-  & > .header > .close-manifestation {
-    position: absolute;
-    top: 13px;
-    right: 8vw;
+  & > .content > .text > h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.25;
 
-    display: inline-block;
+    margin-top: 1.75em;
 
-    width: 16px;
-    height: 16px;
-    margin-right: -10px;
-    padding: 10px;
+    @include bp-smallup {
+      font-size: 36px;
+    }
+  }
 
-    background-image: url('../img/close.svg');
+  & > .content > .text > h2 {
+    font-size: 16px;
+    line-height: 1.25;
+
+    margin-top: .25em;
+    margin-bottom: 1.75em;
+
+    @include bp-smallup {
+      font-size: 22px;
+    }
+  }
+
+  & > .content > .text > .summary {
+    font-size: 16px;
+    line-height: 1.5;
+
+    margin-top: .5em;
+    margin-bottom: 1.75em;
+
+    color: gray;
+
+    @include bp-smallup {
+      font-size: 22px;
+    }
+  }
+
+  & > .content > .text > .separator {
+    font-size: 16px;
+
+    height: 20px;
+    margin-bottom: 1.75em;
+
+    background-image: url('../img/speech-separator.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 50%;
+
+    @include bp-smallup {
+      font-size: 22px;
+    }
   }
 
-  & > .content {
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+  & > .content > .text > .speech span {
+    font-size: 14px !important;
+    line-height: 1.8 !important;
 
-    height: calc(100% - 55px);
-    padding: 0 8vw 0 8vw;
+    @include bp-smallup {
+      font-size: 20px !important;
+    }
   }
 
-  & > .content > p {
+  & > .content > .text > .speech p {
+    font-size: 14px;
+
+    margin-top: 2em;
+
+    @include bp-smallup {
+      font-size: 20px;
+    }
+  }
+
+  & > .content > .text > .endseparator {
+    height: 20px;
+    margin-bottom: 1.75em;
+
+    background-image: url('../img/speech-separator-end.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  & > .content > .text > .info > span {
+    font-size: 16px;
+    font-weight: 600;
+
+    @include bp-smallup {
+      font-size: 22px;
+    }
+  }
+
+  & > .content > .text > .info > p {
     font-size: 14px;
     line-height: 1.5;
-    padding-bottom: 30px;
+
+    margin-top: .2em;
+
+    @include bp-smallup {
+      font-size: 20px;
+    }
   }
 
-  & > .indexes {
-    padding: 0 8vw 0 8vw;
-    font-size: 0.8rem;
-    margin-bottom: 1rem;
+  & > .content > .text > .info {
+    font-size: 14px;
 
-    span {
-      font-weight: bold;
+    margin-top: 1.5em;
+
+    @include bp-smallup {
+      font-size: 20px;
     }
+  }
 
-    p {
-      font-size: 0.7rem;
+  & > .content > .text > .spacer {
+    font-size: 14px;
+
+    padding-bottom: 2.5em;
+
+    @include bp-smallup {
+      font-size: 20px;
     }
   }
 }

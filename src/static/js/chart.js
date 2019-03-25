@@ -555,24 +555,47 @@ function manifestationPage(manifestationId, tokenId) {
     }
 
     manifestationPage.html(`
-      <div class="header">
-        <div class='close-manifestation'></div>
-        <strong class='date'>${data.date}  às </strong>
-        <strong class='time'>${data.time}</strong>
-      </div>
-      <div class="content">
-        <p>${data.summary}</p>
-        <p>${data.content}</p>
-        <div class="indexes">
-          <span>Indexação</span>
-          <p>${indexes}</p>
+
+      <div class="nav-bar -negative -article">
+        <div class="info js-info">
+          <div class="back -rotate js-close-manifestation"></div>
+          <div class="breadcrumb">
+            <h1 class="title">${$('.js-title').text()}</h1>
+            <h2 class="name js-name">Discurso de ${data.author}</h2>
+          </div>
         </div>
+        <button class="menu js-open-menu" type="button"></button>
+      </div>
+
+      <div class="content">
+        <div class="text">
+          <h1>Discurso de ${data.author}</h1>
+          <h2>${data.date} às ${data.time}</h2>
+          <p class="summary">${data.summary}</p>
+          <div class="separator"></div>
+          <div class="speech">${data.content}</div>
+          <div class="endseparator"></div>
+          <div class="info">
+            <span>Fase:</span>
+            <p>${data.phase}</p>
+          </div>
+          <div class="info">
+            <span>Indexação:</span>
+            <p>${data.indexes}</p>
+          </div>
+          <div class="spacer"></div>
+        <div>
       </div>
     `);
     manifestationPage.addClass('-open');
 
-    $('.close-manifestation').on('click', function() {
+    $('.js-close-manifestation').on('click', function() {
       manifestationPage.removeClass('-open');
+    });
+
+    $('.js-open-menu').click(function() {
+      $('.js-menu').addClass('-active');
+      // $('body').addClass('-moveleft');
     });
     visiblePage = 'manifestation';
   })
