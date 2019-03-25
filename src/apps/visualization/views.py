@@ -9,6 +9,7 @@ from collections import Counter
 from django.http import JsonResponse
 import locale
 import re
+import nltk
 from django.utils.text import slugify
 
 
@@ -189,11 +190,14 @@ def token_author_manifestations(request, token, author_id):
     max_occurrence = bow.most_common(1)[0][1]
     for speech_id, occurrences in bow.most_common(50):
         speech = data_models.Speech.objects.get(pk=speech_id)
+        preview = speech.summary[:200]
+        if len(preview) == 200:
+            preview = preview + '...'
         obj = {
             'id': speech.id,
             'date': speech.date.strftime('%d/%m/%Y'),
             'time': speech.time.strftime('%H:%M'),
-            'preview': speech.content[:70] + '...',
+            'preview': preview,
             'ratio': occurrences / max_occurrence,
         }
         final_dict.append(obj)
@@ -203,9 +207,16 @@ def token_author_manifestations(request, token, author_id):
 def manifestation(request, speech_id, token):
     locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     speech = get_object_or_404(Speech, pk=speech_id)
-    search = re.compile(r'\b(%s)\b' % token, re.I)
-    original = search.sub('<span class="-highlight">\\1</span>',
-                          speech.html)
+    stemmer = nltk.RSLPStemmer()
+    regexes = [
+        r'\b{}[\w\wÀ-ù]*'.format(stemmer.stem(stem))
+        for stem in token.split()
+    ]
+    original = speech.html
+    for regex in regexes:
+        search = re.compile(r'(%s)' % regex, re.I)
+        original = search.sub('<span class="-highlight">\\1</span>',
+                              original)
 
     max_length = len(speech.content) * 1.1
     min_length = len(speech.content) * 0.9
