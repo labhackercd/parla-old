@@ -3,6 +3,16 @@
 <!DOCTYPE html>
 <html>
   <head>
+    {# Analytics #}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-70690943-6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-70690943-6');
+    </script>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -14,6 +24,7 @@
     <link rel="stylesheet" href="{% static '/scss/vendor/jqrangeslider-classic.css' %}"/>
     <link rel="shortcut icon" type="image/png" href="{% static '/img/favicon.png' %}"/>
   </head>
+  
   <body {% if "sobre" in request.path or "metodologia" in request.path %}class="-invertedbg -article"{% endif %}>
     {% block content %}
 
