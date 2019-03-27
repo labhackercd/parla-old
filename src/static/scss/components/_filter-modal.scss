@@ -16,7 +16,7 @@
 
   color: #000;
   background-color: #FFF;
-  box-shadow: 6px 0 13px 0 rgba(0, 0, 0, .25);
+  box-shadow: 3px 0 10px -5px rgba(#000, 0.3);
 
   @include bp-mediumup {
     width: 30rem;
@@ -102,7 +102,7 @@
     height: 5rem;
 
     background-color: #FFF;
-    box-shadow: 0 -2px 10px 0 rgba(0, 0, 0, .2);
+    box-shadow: 0px -3px 10px -5px rgba(#000, 0.3);
   }
 
   & > .content > .footer > .button {
@@ -147,8 +147,8 @@
 
   & > .nav > .title {
     font-family: 'Roboto';
-    font-size: 17px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 500;
 
     text-decoration: none;
     text-transform: uppercase;

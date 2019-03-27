@@ -14,13 +14,14 @@
 
   &.-article {
     position: fixed;
+    z-index: 1;
     top: 0;
 
     box-sizing: border-box;
     width: 100%;
 
     background-color: rgba(#FFF, .92);
-    box-shadow: 0 3px 10px 0 rgba(#000, .4);
+    box-shadow: 0 0 18px -5px rgba(#000, .3);
   }
 
   & > .logo.-hide {
@@ -64,8 +65,8 @@
 
     width: 44px;
     height: 44px;
+    margin-right: 4px;
     margin-left: -11px;
-    margin-right: 6px;
 
     cursor: pointer;
 
@@ -80,6 +81,7 @@
 
   & > .info > .breadcrumb {
     font-size: 16px;
+    line-height: 1.25;
 
     display: flex;
     flex-direction: column;
@@ -88,12 +90,15 @@
   }
 
   & > .info > .breadcrumb > .title {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 500;
   }
 
   & > .info > .breadcrumb > .name {
-    font-size: 10px;
+    font-size: 11px;
+    font-weight: 500;
+
+    letter-spacing: 1px;
   }
 
   & > .filter {
