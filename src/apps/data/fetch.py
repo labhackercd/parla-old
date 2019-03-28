@@ -26,6 +26,29 @@ DAY_ORDER = set([
     'FALA DO PRESIDENTE OU NO EXERCÍCIO DA PRESIDÊNCIA',
 ])
 
+PHASE_RELATION = {
+    'ABERTURA': 'OUTROS',
+    'APARTE': 'OUTROS',
+    'APRESENTAÇÃO DE PROPOSIÇÃO': 'OUTROS',
+    'REPRESENTANTE DO PARTIDO': 'OUTROS',
+    'OUTROS': 'OUTROS',
+    'EXPLICAÇÃO PESSOAL': 'OUTROS',
+    'DECLARAÇÃO DE VOTO': 'OUTROS',
+    'ENCERRAMENTO': 'OUTROS',
+
+    'COMUNICAÇÃO PARLAMENTAR': 'COMUNICAÇÕES PARLAMENTARES',
+    'COMUNICAÇÕES PARLAMENTARES': 'COMUNICAÇÕES PARLAMENTARES',
+
+    'BREVES COMUNICAÇÕES': 'BREVES COMUNICAÇÕES',
+    'COMISSÃO GERAL': 'COMISSÃO GERAL',
+    'GRANDE EXPEDIENTE': 'GRANDE EXPEDIENTE',
+    'HOMENAGEM': 'HOMENAGEM',
+    'PEQUENO EXPEDIENTE': 'PEQUENO EXPEDIENTE',
+
+    'ORDEM DO DIA': 'ORDEM DO DIA',
+    'REGISTRO DE VOTO': 'ORDEM DO DIA',
+}
+
 EXCLUDED_PHASES = set([
 ])
 
@@ -153,17 +176,19 @@ def create_speech(data, author):
     else:
         summary = None
 
-    phase = data['generic6']
-    day_order_phase = None
-
-    if phase in DAY_ORDER:
-        phase = 'ORDEM DO DIA'
-        day_order_phase = phase.strip().upper()
-
     if data['fase']:
-        phase = data['fase'].strip().upper()
+        original_phase = data['fase'].strip().upper()
+    elif data['generic6']:
+        original_phase = data['generic6']
     else:
-        return None
+        return Non
+e
+    day_order_phase = None
+    if original_phase in DAY_ORDER:
+        original_phase = 'ORDEM DO DIA'
+        day_order_phase = original_phase.strip().upper()
+
+    phase = PHASE_RELATION[original_phase]
 
     if data['docdatetime'] is not None:
         speech_datetime = datetime.strptime(
@@ -185,6 +210,7 @@ def create_speech(data, author):
         'date': speech_datetime.date(),
         'time': speech_datetime.time(),
         'phase': phase,
+        'original_phase': original_phase,
         'day_order_phase': day_order_phase,
         'summary': summary,
         'author': author,

@@ -10,6 +10,7 @@ class Speech(models.Model):
     date = models.DateField()
     time = models.TimeField()
     phase = models.CharField(max_length=50)
+    original_phase = models.CharField(max_length=50)
     day_order_phase = models.CharField(max_length=50, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now=True)
     summary = models.TextField(null=True, blank=True)
