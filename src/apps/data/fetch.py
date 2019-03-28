@@ -181,8 +181,7 @@ def create_speech(data, author):
     elif data['generic6']:
         original_phase = data['generic6']
     else:
-        return Non
-e
+        return None
     day_order_phase = None
     if original_phase in DAY_ORDER:
         original_phase = 'ORDEM DO DIA'
