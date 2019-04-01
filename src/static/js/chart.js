@@ -516,8 +516,6 @@ function authorsChart(tokenId, authorId) {
       var timestamp = $('<div class="timestamp">');
 
       timestamp.append($(`<span class="date">${element.date}</span>`));
-      timestamp.append($(`<span> às </span>`));
-      timestamp.append($(`<span class="time">${element.time}</span>`));
 
       content.append(timestamp);
       content.append($(`<p>${element.preview}</p>`));
@@ -570,7 +568,7 @@ function manifestationPage(manifestationId, tokenId) {
       <div class="content">
         <div class="text">
           <h1>Discurso de ${data.author}</h1>
-          <h2>${data.date} às ${data.time}</h2>
+          <h2>${data.date}</h2>
           <p class="summary">${data.summary}</p>
           <div class="separator"></div>
           <div class="speech">${data.content}</div>
