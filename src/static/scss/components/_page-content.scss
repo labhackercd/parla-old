@@ -14,8 +14,4 @@
       transform: translateY(50px);
     }
   }
-
-  &:not(._hidden) + & {
-    display: none;
-  }
 }

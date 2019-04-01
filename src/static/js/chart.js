@@ -558,7 +558,7 @@ function manifestationPage(manifestationId, tokenId) {
 
       <div class="nav-bar -negative -article">
         <div class="info js-info">
-          <div class="back -rotate js-close-manifestation"></div>
+          <div class="back js-close-manifestation"></div>
           <div class="breadcrumb">
             <h1 class="title">${$('.js-title').text()}</h1>
             <h2 class="name js-name">Discurso de ${data.author}</h2>
