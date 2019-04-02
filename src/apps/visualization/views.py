@@ -172,6 +172,7 @@ def token_authors(request, token):
 
 
 def token_author_manifestations(request, token, author_id):
+    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     date_filter = get_date_filter(request)
     analyses = models.Analysis.objects.filter(
         date_filter &
@@ -195,7 +196,7 @@ def token_author_manifestations(request, token, author_id):
             preview = preview + '...'
         obj = {
             'id': speech.id,
-            'date': speech.date.strftime('%d/%m/%Y'),
+            'date': speech.date.strftime('%d de %B de %Y'),
             'time': speech.time.strftime('%H:%M'),
             'preview': preview,
             'ratio': occurrences / max_occurrence,
