@@ -15,6 +15,11 @@ class SpeechAdmin(admin.ModelAdmin):
         'date',
         'phase',
         'themes',
+        'author__author_type',
+    )
+    search_fields = (
+        'content',
+        'author__name'
     )
 
 
