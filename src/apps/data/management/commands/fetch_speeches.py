@@ -9,6 +9,14 @@ import click
 class Command(BaseCommand):
     help = 'Import data from Babel'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            dest='force',
+            help='Force import all speeches',
+        )
+
     def handle(self, *args, **options):
         last_speech = models.Speech.objects.all().order_by('date').last()
         if last_speech:
@@ -16,7 +24,12 @@ class Command(BaseCommand):
         else:
             initial_date = datetime.date(2015, 1, 1)
 
-        initial_date = datetime.date(initial_date.year, initial_date.month, 1)
+        if options['force']:
+            initial_date = datetime.date(2015, 1, 1)
+        else:
+            initial_date = datetime.date(initial_date.year,
+                                         initial_date.month,
+                                         1)
 
         end_date = datetime.date.today()
         months = rrule(MONTHLY, dtstart=initial_date, until=end_date)

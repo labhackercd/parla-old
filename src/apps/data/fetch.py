@@ -202,18 +202,21 @@ def create_speech(data, author):
         url_params['numInsercao'][0],
     )
 
-    obj = models.Speech.objects.get_or_create(identifier=identifier, defaults={
-        'content': speech,
-        'html': html_body,
-        'indexes': indexes,
-        'date': speech_datetime.date(),
-        'time': speech_datetime.time(),
-        'phase': phase,
-        'original_phase': original_phase,
-        'day_order_phase': day_order_phase,
-        'summary': summary,
-        'author': author,
-    })[0]
+    obj = models.Speech.objects.update_or_create(
+        identifier=identifier,
+        defaults={
+            'content': speech,
+            'html': html_body,
+            'indexes': indexes,
+            'date': speech_datetime.date(),
+            'time': speech_datetime.time(),
+            'phase': phase,
+            'original_phase': original_phase,
+            'day_order_phase': day_order_phase,
+            'summary': summary,
+            'author': author,
+        }
+    )[0]
 
     return obj
 
