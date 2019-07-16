@@ -71,6 +71,7 @@ main {
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
 
   transition: transform cubic-bezier(.55,0,.1,1) .5s;
 }
@@ -79,6 +80,7 @@ main {
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
 
   transition: mask-image .35s cubic-bezier(.55, 0, .1, 1);
 
