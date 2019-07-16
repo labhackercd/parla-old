@@ -1,7 +1,8 @@
 .page-content {
   display: flex;
-  flex: 1 0 auto;
+  flex: 1;
   justify-content: center;
+  min-height: 0;
 
    > svg {
     g {
